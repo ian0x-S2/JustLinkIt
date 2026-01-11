@@ -15,7 +15,21 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Plus, Search, Sparkles, FileJson, FileText } from '@lucide/svelte';
+	import * as Command from '$lib/components/ui/command';
+	import * as Popover from '$lib/components/ui/popover';
+	import {
+		Home,
+		Hash,
+		Sparkles,
+		FileJson,
+		FileText,
+		Plus,
+		Search,
+		Loader2,
+		X,
+		Check,
+		ChevronsUpDown
+	} from '@lucide/svelte';
 
 	let showForm = $state(false);
 	let editingLink = $state<Link | null>(null);
@@ -23,10 +37,97 @@
 	let searchInput = $state('');
 	let filteredLinksList = $state<Link[]>([]);
 
+	// New Link Input State
+	let newLinkUrl = $state('');
+	let isFetchingOg = $state(false);
+	let ogPreview = $state<Partial<Link> | null>(null);
+	let tagInput = $state('');
+	let tagPopoverOpen = $state(false);
+
+	function addTagToPreview(tag: string) {
+		const cleanTag = tag.trim().toLowerCase();
+		if (cleanTag && ogPreview) {
+			if (!ogPreview.tags) ogPreview.tags = [];
+			if (!ogPreview.tags.includes(cleanTag)) {
+				ogPreview.tags = [...ogPreview.tags, cleanTag];
+			}
+			tagInput = '';
+			tagPopoverOpen = false;
+		}
+	}
+
+	function removeTagFromPreview(tagToRemove: string) {
+		if (ogPreview && ogPreview.tags) {
+			ogPreview.tags = ogPreview.tags.filter((t) => t !== tagToRemove);
+		}
+	}
+
 	$effect(() => {
 		search.query = searchInput;
 		filteredLinksList = getFilteredLinks();
 	});
+
+	// URL detection and metadata fetch
+	$effect(() => {
+		const urlPattern = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+		const match = newLinkUrl.match(urlPattern);
+		
+		if (match && match[0] && (!ogPreview || ogPreview.url !== match[0])) {
+			handleUrlPaste(match[0]);
+		}
+	});
+
+	async function handleUrlPaste(url: string) {
+		isFetchingOg = true;
+		try {
+			const response = await fetch('/api/opengraph', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ url })
+			});
+			if (response.ok) {
+				const data = await response.json();
+				ogPreview = {
+					url,
+					title: data.title || '',
+					description: data.description || '',
+					image: data.image || '',
+				tags: [],
+				createdAt: Date.now()
+				};
+			}
+		} catch (err) {
+			console.error('Failed to fetch OG data', err);
+		} finally {
+			isFetchingOg = false;
+		}
+	}
+
+	function clearPreview() {
+		newLinkUrl = '';
+		ogPreview = null;
+		isFetchingOg = false;
+		tagInput = '';
+	}
+
+	function handleQuickPost() {
+		if (ogPreview && ogPreview.url) {
+			addLink({
+				url: ogPreview.url,
+				title: ogPreview.title || '',
+				description: ogPreview.description || '',
+				image: ogPreview.image || '',
+				tags: ogPreview.tags || [],
+				createdAt: Date.now()
+			});
+			clearPreview();
+		}
+	}
+
+	// Computed suggestions for tags
+	let tagSuggestions = $derived(
+		getAllTags().filter((t) => !ogPreview?.tags?.includes(t))
+	);
 
 	function handleEdit(link: Link) {
 		editingLink = link;
@@ -138,27 +239,137 @@
 		</header>
 
 		<!-- "What's happening?" Style Input Area -->
-		<div class="p-4 border-b flex gap-3">
-			<div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-				<Plus class="h-6 w-6 text-primary" />
-			</div>
-			<div class="flex-1">
-				<button 
-					class="w-full text-left px-0 py-2 text-xl text-muted-foreground hover:bg-transparent border-none focus:ring-0"
-					onclick={handleAdd}
+		<div class="border-b p-4 pb-3">
+			<div class="flex gap-3">
+				<div
+					class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10"
 				>
-					Add a new link...
-				</button>
-				<div class="flex justify-between items-center mt-4 pt-2 border-t">
-					<div class="flex gap-1 text-primary">
-						<Button variant="ghost" size="icon" class="h-9 w-9 rounded-full" onclick={handleAdd}>
-							<Plus class="h-5 w-5" />
-						</Button>
-					</div>
-					<Button onclick={handleAdd} class="rounded-full px-6 font-bold">
-						Post Link
-					</Button>
+					<Plus class="h-6 w-6 text-primary" />
 				</div>
+				<div class="flex-1 space-y-3">
+					<Input
+						bind:value={newLinkUrl}
+						placeholder="Paste a link here..."
+						class="border-none bg-transparent px-0 py-2 text-xl shadow-none focus-visible:ring-0"
+					/>
+
+					{#if isFetchingOg}
+						<div class="flex items-center gap-2 py-4 text-sm text-muted-foreground">
+							<Loader2 class="h-4 w-4 animate-spin" />
+							<span>Fetching link metadata...</span>
+						</div>
+					{:else if ogPreview}
+						<div class="group relative mt-2">
+							<button
+								onclick={clearPreview}
+								class="absolute -right-2 -top-2 z-10 rounded-full border bg-background p-1 shadow-sm transition-colors hover:bg-muted"
+							>
+								<X class="h-4 w-4" />
+							</button>
+							<div class="rounded-xl border bg-card shadow-sm relative">
+								<div class="flex h-32 overflow-hidden rounded-t-xl">
+									{#if ogPreview.image}
+										<img
+											src={ogPreview.image}
+											alt={ogPreview.title}
+											class="h-full w-40 object-cover border-r"
+										/>
+									{/if}
+									<div class="flex flex-1 flex-col justify-center p-4">
+										<h3 class="line-clamp-2 text-base font-bold leading-tight">{ogPreview.title}</h3>
+										<p class="mt-1 line-clamp-2 text-sm text-muted-foreground">
+											{ogPreview.description}
+										</p>
+										<p class="mt-2 truncate text-xs text-primary/60">{ogPreview.url}</p>
+									</div>
+								</div>
+								
+								<!-- Tags Section in Preview -->
+								<div class="border-t bg-muted/20 p-3 rounded-b-xl overflow-visible">
+									<div class="flex flex-wrap gap-2 items-center">
+										{#each ogPreview.tags || [] as tag}
+											<Badge variant="secondary" class="h-6 px-2 text-xs gap-1 rounded-md">
+												#{tag}
+												<button onclick={() => removeTagFromPreview(tag)} class="hover:text-destructive">
+													<X class="h-3 w-3" />
+												</button>
+											</Badge>
+										{/each}
+										
+										<Popover.Root bind:open={tagPopoverOpen}>
+											<Popover.Trigger>
+												{#snippet child({ props })}
+													<Button
+														{...props}
+													variant="outline"
+													size="sm"
+													class="h-6 px-2 text-[10px] gap-1 border-dashed border-muted-foreground/30 hover:border-primary/50"
+												>
+													<Plus class="h-3 w-3" />
+													Tag
+												</Button>
+											{/snippet}
+											</Popover.Trigger>
+											<Popover.Content class="w-[200px] p-0" align="start" side="bottom">
+												<Command.Root>
+													<Command.Input 
+														placeholder="Search tags..." 
+														bind:value={tagInput}
+													onkeydown={(e) => {
+																if (e.key === 'Enter' && tagInput.trim()) {
+																e.preventDefault();
+																	addTagToPreview(tagInput);
+															}
+												}}
+												
+													/>
+													<Command.List>
+														<Command.Empty class="p-0">
+															<Button 
+																variant="ghost" 
+															class="w-full justify-start text-[11px] h-8 gap-2 px-2 rounded-none hover:bg-accent"
+														onclick={() => addTagToPreview(tagInput)}
+													>
+														<Plus class="size-3 text-primary" />
+														<span>Create <span class="font-bold">"{tagInput}"</span></span>
+													</Button>
+												</Command.Empty>
+													<Command.Group>
+														{#each tagSuggestions as tag}
+															<Command.Item
+																value={tag}
+														onSelect={() => addTagToPreview(tag)}
+															class="text-xs"
+													>
+															<Hash class="size-3 mr-2 opacity-50" />
+															{tag}
+													</Command.Item>
+												{/each}
+													</Command.Group>
+												</Command.List>
+												</Command.Root>
+											</Popover.Content>
+										</Popover.Root>
+									</div>
+								</div>
+							</div>
+						</div>
+					{/if}
+				</div>
+			</div>
+
+			<!-- Separator that spans full width (-mx-4 compensation for parent p-4) -->
+			<div class="mt-3 flex items-center justify-between border-t pt-3 -mx-4 px-4">
+				<div class="flex gap-1 text-primary">
+					<!-- Toolbar space -->
+				</div>
+				<Button 
+					onclick={handleQuickPost} 
+					disabled={!ogPreview}
+					class="rounded-full px-6 font-bold"
+				>
+					Post Link
+				</Button>
 			</div>
 		</div>
 
