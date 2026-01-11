@@ -114,27 +114,33 @@
 		</Sidebar>
 
 		<div class="flex-1 flex justify-center bg-muted/5">
-			<main class="w-full max-w-2xl min-h-screen bg-background border-x relative">
+			<main class="w-full max-w-2xl min-h-screen bg-background border-x relative shadow-sm">
 				{@render children?.()}
 			</main>
 
 			<!-- Right Column (Trends/Discovery) - Hidden on smaller screens -->
-			<aside class="hidden lg:block w-[320px] px-6 py-6 sticky top-0 h-screen overflow-y-auto">
-				<div class="bg-muted/30 rounded-2xl p-4 border space-y-4">
-					<h2 class="font-bold px-2">What's happening</h2>
-					<div class="space-y-4">
+			<aside class="hidden lg:block w-[400px] pl-12 pr-8 py-6 sticky top-0 h-screen overflow-y-auto">
+				<div class="bg-background rounded-2xl p-5 border shadow-sm space-y-4">
+					<h2 class="font-bold px-2 text-lg tracking-tight">What's happening</h2>
+					<div class="space-y-5">
 						<div class="px-2 py-1 hover:bg-muted/50 rounded-lg transition-colors cursor-pointer group">
-							<p class="text-[11px] text-muted-foreground">Trending in Tech</p>
-							<p class="font-bold text-sm group-hover:text-primary transition-colors">#Svelte5</p>
+							<p class="text-[11px] text-muted-foreground uppercase font-semibold tracking-wider">
+								Trending in Tech
+							</p>
+							<p class="font-bold text-[15px] group-hover:text-primary transition-colors">#Svelte5</p>
 							<p class="text-[11px] text-muted-foreground">1,234 links</p>
 						</div>
 						<div class="px-2 py-1 hover:bg-muted/50 rounded-lg transition-colors cursor-pointer group">
-							<p class="text-[11px] text-muted-foreground">Local-first Apps</p>
-							<p class="font-bold text-sm group-hover:text-primary transition-colors">#BunRuntime</p>
+							<p class="text-[11px] text-muted-foreground uppercase font-semibold tracking-wider">
+								Local-first Apps
+							</p>
+							<p class="font-bold text-[15px] group-hover:text-primary transition-colors">
+								#BunRuntime
+							</p>
 							<p class="text-[11px] text-muted-foreground">856 links</p>
 						</div>
 					</div>
-					<Button variant="link" class="text-xs text-primary p-2 h-auto">Show more</Button>
+					<Button variant="link" class="text-sm text-primary p-2 h-auto font-medium">Show more</Button>
 				</div>
 			</aside>
 		</div>
