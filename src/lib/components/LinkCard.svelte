@@ -13,16 +13,46 @@
 	import { ExternalLink, Edit2, Trash2, Sparkles } from '@lucide/svelte';
 	import { formatDistanceToNow } from 'date-fns';
 
+	import { aiConfig, updateLink } from '$lib/store.svelte';
+	import { generateSummary, suggestTags } from '$lib/ai-client';
+
 	interface Props {
 		link: Link;
 		onedit: (link: Link) => void;
 		ondelete: (id: string) => void;
-		ondeletesummary?: (id: string) => void;
 	}
 
-	let { link, onedit, ondelete, ondeletesummary }: Props = $props();
+	let { link, onedit, ondelete }: Props = $props();
 
 	let imageError = $state(false);
+	let aiLoading = $state(false);
+
+	async function handleGenerateSummary() {
+		if (aiLoading) return;
+		aiLoading = true;
+		try {
+			const summary = await generateSummary(link.url, link.title, link.description);
+			updateLink(link.id, { aiSummary: summary });
+		} catch (error) {
+			console.error(error);
+		} finally {
+			aiLoading = false;
+		}
+	}
+
+	async function handleSuggestTags() {
+		if (aiLoading) return;
+		aiLoading = true;
+		try {
+			const newTags = await suggestTags(link.url, link.title, link.description);
+			const uniqueTags = Array.from(new Set([...link.tags, ...newTags]));
+			updateLink(link.id, { tags: uniqueTags });
+		} catch (error) {
+			console.error(error);
+		} finally {
+			aiLoading = false;
+		}
+	}
 
 	function getRandomColor(seed: string): string {
 		let hash = 0;
@@ -84,36 +114,66 @@
 		</div>
 
 		{#if link.aiSummary}
-			<div class="mt-3 rounded-lg bg-purple-50 p-3 text-sm">
-				<div class="flex items-center gap-1 font-semibold text-purple-700">
-					<Sparkles class="h-3 w-3" />
-					AI Summary
+			<div class="mt-3 rounded-lg bg-purple-50 p-3 text-sm border border-purple-100">
+				<div class="flex items-center justify-between font-semibold text-purple-700">
+					<div class="flex items-center gap-1">
+						<Sparkles class="h-3 w-3" />
+						AI Summary
+					</div>
+					<Button
+						variant="ghost"
+						size="icon"
+						class="h-6 w-6 text-purple-700 hover:text-purple-800 hover:bg-purple-100"
+						onclick={() => updateLink(link.id, { aiSummary: undefined })}
+					>
+						<Trash2 class="h-3.5 w-3.5" />
+					</Button>
 				</div>
-				<p class="mt-1 text-purple-600">{link.aiSummary}</p>
+				<p class="mt-1 text-purple-600 leading-relaxed">{link.aiSummary}</p>
 			</div>
 		{/if}
 
-		{#if link.tags.length > 0}
-			<div class="mt-3 flex flex-wrap gap-1">
-				{#each link.tags as tag}
-					<Badge variant="secondary" class="text-xs">#{tag}</Badge>
-				{/each}
-			</div>
-		{/if}
+		<div class="mt-3 flex flex-wrap gap-1">
+			{#each link.tags as tag}
+				<Badge variant="secondary" class="text-xs">#{tag}</Badge>
+			{/each}
+			{#if aiConfig.enabled && !aiLoading}
+				<Button
+					variant="outline"
+					size="sm"
+					class="h-5 px-2 text-[10px] border-dashed border-purple-200 text-purple-600 hover:bg-purple-50 hover:text-purple-700"
+					onclick={handleSuggestTags}
+				>
+					<Sparkles class="mr-1 h-3 w-3" />
+					Suggest Tags
+				</Button>
+			{/if}
+		</div>
 	</CardHeader>
 
 	<CardFooter class="flex items-center justify-between text-xs text-muted-foreground">
 		<time>{formatDistanceToNow(link.createdAt, { addSuffix: true })}</time>
-		<div class="flex gap-2">
-			<Button variant="ghost" size="sm" onclick={() => onedit(link)}>
-				<Edit2 class="h-4 w-4" />
-			</Button>
-			{#if link.aiSummary && ondeletesummary}
-				<Button variant="ghost" size="sm" onclick={() => ondeletesummary(link.id)}>
+		<div class="flex gap-1">
+			{#if aiConfig.enabled && !link.aiSummary}
+				<Button
+					variant="ghost"
+					size="sm"
+					class="h-8 w-8 p-0 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+					onclick={handleGenerateSummary}
+					disabled={aiLoading}
+				>
 					<Sparkles class="h-4 w-4" />
 				</Button>
 			{/if}
-			<Button variant="ghost" size="sm" onclick={() => ondelete(link.id)}>
+			<Button variant="ghost" size="sm" class="h-8 w-8 p-0" onclick={() => onedit(link)}>
+				<Edit2 class="h-4 w-4" />
+			</Button>
+			<Button
+				variant="ghost"
+				size="sm"
+				class="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+				onclick={() => ondelete(link.id)}
+			>
 				<Trash2 class="h-4 w-4" />
 			</Button>
 		</div>

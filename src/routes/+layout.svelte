@@ -26,9 +26,24 @@
 
 	const navigation = [
 		{
+			label: 'Links',
+			href: '/',
+			icon: Tag
+		},
+		{
 			label: 'Tags',
 			href: '/tags',
 			icon: Tag
+		},
+		{
+			label: 'Suggestions',
+			href: '/suggestions',
+			icon: Sparkles
+		},
+		{
+			label: 'Settings',
+			href: '/settings',
+			icon: Sparkles
 		},
 		{
 			label: 'Discovery',
