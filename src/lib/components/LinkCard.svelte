@@ -69,79 +69,95 @@
 	const bgColor = $derived(getRandomColor(link.url));
 </script>
 
-<Card class="overflow-hidden transition-shadow hover:shadow-md">
-	<div class="aspect-video w-full overflow-hidden" style="background-color: {bgColor}">
-		{#if link.image && !imageError}
-			<img
-				src={link.image}
-				alt={link.title || 'Link preview'}
-				class="h-full w-full object-cover"
-				onerror={() => (imageError = true)}
-			/>
-		{:else}
-			<div class="flex h-full items-center justify-center">
-				<div class="text-center">
-					<div class="text-4xl font-bold text-white/60">
-						{#if link.title}
-							{link.title.charAt(0).toUpperCase()}
-						{:else}
-							{link.url.charAt(0).toUpperCase()}
-						{/if}
-					</div>
-				</div>
-			</div>
-		{/if}
+<div class="flex gap-3 p-4 hover:bg-muted/30 transition-colors border-b last:border-0 group">
+	<!-- Avatar/Icon Side -->
+	<div class="shrink-0">
+		<div 
+			class="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden shrink-0 shadow-sm"
+			style="background-color: {bgColor}"
+		>
+			{#if link.image && !imageError}
+				<img
+					src={link.image}
+					alt=""
+					class="h-full w-full object-cover"
+					onerror={() => (imageError = true)}
+				/>
+			{:else}
+				{link.title?.charAt(0).toUpperCase() || link.url.charAt(0).toUpperCase()}
+			{/if}
+		</div>
 	</div>
 
-	<CardHeader>
-		<div class="flex items-start justify-between gap-2">
-			<div class="flex-1 space-y-1">
-				<CardTitle>
-					<a
-						href={link.url}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="flex items-center gap-1 hover:underline"
-					>
-						{link.title || link.url}
-						<ExternalLink class="h-4 w-4" />
-					</a>
-				</CardTitle>
-				{#if link.description}
-					<CardDescription class="line-clamp-2">{link.description}</CardDescription>
-				{/if}
+	<!-- Content Side -->
+	<div class="flex-1 min-w-0 space-y-2">
+		<div class="flex items-center justify-between gap-2">
+			<div class="flex items-center gap-1.5 min-w-0">
+				<a
+					href={link.url}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="font-bold hover:underline truncate text-[15px] block"
+				>
+					{link.title || link.url}
+				</a>
+				<span class="text-muted-foreground text-sm truncate">
+					· {formatDistanceToNow(link.createdAt, { addSuffix: true })}
+				</span>
 			</div>
 		</div>
 
+		{#if link.description}
+			<p class="text-[15px] leading-normal text-foreground/90 break-words">
+				{link.description}
+			</p>
+		{/if}
+
+		{#if link.image && !imageError}
+			<div class="mt-3 rounded-2xl overflow-hidden border bg-muted/20 max-w-lg">
+				<img
+					src={link.image}
+					alt={link.title || 'Preview'}
+					class="w-full h-auto object-cover max-h-[300px]"
+				/>
+			</div>
+		{/if}
+
 		{#if link.aiSummary}
-			<div class="mt-3 rounded-lg bg-purple-50 p-3 text-sm border border-purple-100">
-				<div class="flex items-center justify-between font-semibold text-purple-700">
-					<div class="flex items-center gap-1">
+			<div class="mt-3 rounded-2xl bg-purple-50/50 p-3 text-[14px] border border-purple-100/50 relative group/summary">
+				<div class="flex items-center justify-between mb-1">
+					<div class="flex items-center gap-1.5 font-bold text-purple-700 text-xs uppercase tracking-wider">
 						<Sparkles class="h-3 w-3" />
 						AI Summary
 					</div>
 					<Button
 						variant="ghost"
 						size="icon"
-						class="h-6 w-6 text-purple-700 hover:text-purple-800 hover:bg-purple-100"
+						class="h-6 w-6 opacity-0 group-hover/summary:opacity-100 transition-opacity text-purple-700 hover:bg-purple-100"
 						onclick={() => updateLink(link.id, { aiSummary: undefined })}
 					>
 						<Trash2 class="h-3.5 w-3.5" />
 					</Button>
 				</div>
-				<p class="mt-1 text-purple-600 leading-relaxed">{link.aiSummary}</p>
+				<p class="text-purple-900/80 leading-relaxed">{link.aiSummary}</p>
 			</div>
 		{/if}
 
-		<div class="mt-3 flex flex-wrap gap-1">
+		<div class="flex flex-wrap gap-1.5 pt-1">
 			{#each link.tags as tag}
-				<Badge variant="secondary" class="text-xs">#{tag}</Badge>
+				<button 
+					class="text-primary hover:underline text-[14px]"
+					onclick={() => {}} 
+				>
+					#{tag}
+				</button>
 			{/each}
+			
 			{#if aiConfig.enabled && !aiLoading}
 				<Button
-					variant="outline"
+					variant="ghost"
 					size="sm"
-					class="h-5 px-2 text-[10px] border-dashed border-purple-200 text-purple-600 hover:bg-purple-50 hover:text-purple-700"
+					class="h-6 px-2 text-[11px] text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-full"
 					onclick={handleSuggestTags}
 				>
 					<Sparkles class="mr-1 h-3 w-3" />
@@ -149,33 +165,49 @@
 				</Button>
 			{/if}
 		</div>
-	</CardHeader>
 
-	<CardFooter class="flex items-center justify-between text-xs text-muted-foreground">
-		<time>{formatDistanceToNow(link.createdAt, { addSuffix: true })}</time>
-		<div class="flex gap-1">
-			{#if aiConfig.enabled && !link.aiSummary}
-				<Button
-					variant="ghost"
-					size="sm"
-					class="h-8 w-8 p-0 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-					onclick={handleGenerateSummary}
-					disabled={aiLoading}
-				>
-					<Sparkles class="h-4 w-4" />
-				</Button>
-			{/if}
-			<Button variant="ghost" size="sm" class="h-8 w-8 p-0" onclick={() => onedit(link)}>
-				<Edit2 class="h-4 w-4" />
+		<!-- Tweet-style Actions -->
+		<div class="flex items-center justify-between max-w-md pt-2 -ml-2 text-muted-foreground">
+			<Button 
+				variant="ghost" 
+				size="sm" 
+				class="h-8 gap-2 hover:text-primary hover:bg-primary/10 rounded-full px-3"
+				onclick={handleGenerateSummary}
+				disabled={aiLoading || !aiConfig.enabled || !!link.aiSummary}
+			>
+				<Sparkles class="h-4.5 w-4.5" />
+				<span class="text-xs">Summary</span>
 			</Button>
-			<Button
-				variant="ghost"
-				size="sm"
-				class="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+			
+			<Button 
+				variant="ghost" 
+				size="sm" 
+				class="h-8 gap-2 hover:text-green-600 hover:bg-green-600/10 rounded-full px-3"
+				onclick={() => onedit(link)}
+			>
+				<Edit2 class="h-4.5 w-4.5" />
+				<span class="text-xs">Edit</span>
+			</Button>
+
+			<Button 
+				variant="ghost" 
+				size="sm" 
+				class="h-8 gap-2 hover:text-destructive hover:bg-destructive/10 rounded-full px-3"
 				onclick={() => ondelete(link.id)}
 			>
-				<Trash2 class="h-4 w-4" />
+				<Trash2 class="h-4.5 w-4.5" />
+				<span class="text-xs">Delete</span>
+			</Button>
+
+			<Button 
+				variant="ghost" 
+				size="sm" 
+				class="h-8 w-8 p-0 hover:text-primary hover:bg-primary/10 rounded-full"
+				onclick={() => window.open(link.url, '_blank')}
+			>
+				<ExternalLink class="h-4.5 w-4.5" />
 			</Button>
 		</div>
-	</CardFooter>
-</Card>
+	</div>
+</div>
+
