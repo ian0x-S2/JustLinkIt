@@ -1,3 +1,12 @@
+# Project Context: Local-First Desktop MVP
+You are building an MVP for a local-first desktop application with the following architecture:
+- **Framework:** SvelteKit (using Svelte 5 Runes).
+- **Runtime & Packaging:** Bun (packaged as a standalone binary).
+- **Execution Model:** Operates as a local web server on `localhost`, automatically launching the default system browser upon startup.
+- **Data Philosophy:** Local-first, prioritizing offline performance and local data persistence.
+
+---
+
 You are able to use the Svelte MCP server, where you have access to comprehensive Svelte 5 and SvelteKit documentation. Here's how to use the available tools effectively:
 
 ## Available MCP Tools:
