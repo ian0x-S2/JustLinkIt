@@ -57,7 +57,7 @@
 	function getRandomColor(seed: string): string {
 		let hash = 0;
 		for (let i = 0; i < seed.length; i++) {
-			hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+			hash = (hash << 5) - hash + seed.charCodeAt(i);
 			hash = hash & hash;
 		}
 		const hue = Math.abs(hash) % 360;
@@ -69,11 +69,11 @@
 	const bgColor = $derived(getRandomColor(link.url));
 </script>
 
-<div class="flex gap-3 p-4 hover:bg-muted/30 transition-colors border-b last:border-0 group">
+<div class="group flex gap-3 border-b p-4 transition-colors last:border-0 hover:bg-muted/30">
 	<!-- Avatar/Icon Side -->
 	<div class="shrink-0">
-		<div 
-			class="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold text-lg overflow-hidden shrink-0 shadow-sm"
+		<div
+			class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-lg font-bold text-white shadow-sm"
 			style="background-color: {bgColor}"
 		>
 			{#if link.image && !imageError}
@@ -90,74 +90,78 @@
 	</div>
 
 	<!-- Content Side -->
-	<div class="flex-1 min-w-0 space-y-2">
+	<div class="min-w-0 flex-1 space-y-2">
 		<div class="flex items-center justify-between gap-2">
-			<div class="flex items-center gap-1.5 min-w-0">
+			<div class="flex min-w-0 items-center gap-1.5">
 				<a
 					href={link.url}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="font-bold hover:underline truncate text-[15px] block"
+					class="block truncate text-[15px] font-bold hover:underline"
 				>
 					{link.title || link.url}
 				</a>
-				<span class="text-muted-foreground text-sm truncate">
+				<span class="truncate text-sm text-muted-foreground">
+					{#if link.publisher}
+						· {link.publisher}
+					{/if}
 					· {formatDistanceToNow(link.createdAt, { addSuffix: true })}
 				</span>
 			</div>
 		</div>
 
 		{#if link.description}
-			<p class="text-[15px] leading-normal text-foreground/90 break-words">
+			<p class="wrap-break-wor text-[15px] leading-normal text-foreground/90">
 				{link.description}
 			</p>
 		{/if}
 
 		{#if link.image && !imageError}
-			<div class="mt-3 rounded-2xl overflow-hidden border bg-muted/20 max-w-lg">
+			<div class="mt-3 max-w-lg overflow-hidden rounded-2xl border bg-muted/20">
 				<img
 					src={link.image}
 					alt={link.title || 'Preview'}
-					class="w-full h-auto object-cover max-h-[300px]"
+					class="h-auto max-h-75 w-full object-cover"
 				/>
 			</div>
 		{/if}
 
 		{#if link.aiSummary}
-			<div class="mt-3 rounded-2xl bg-purple-50/50 p-3 text-[14px] border border-purple-100/50 relative group/summary">
-				<div class="flex items-center justify-between mb-1">
-					<div class="flex items-center gap-1.5 font-bold text-purple-700 text-xs uppercase tracking-wider">
+			<div
+				class="group/summary relative mt-3 rounded-2xl border border-purple-100/50 bg-purple-50/50 p-3 text-[14px]"
+			>
+				<div class="mb-1 flex items-center justify-between">
+					<div
+						class="flex items-center gap-1.5 text-xs font-bold tracking-wider text-purple-700 uppercase"
+					>
 						<Sparkles class="h-3 w-3" />
 						AI Summary
 					</div>
 					<Button
 						variant="ghost"
 						size="icon"
-						class="h-6 w-6 opacity-0 group-hover/summary:opacity-100 transition-opacity text-purple-700 hover:bg-purple-100"
+						class="h-6 w-6 text-purple-700 opacity-0 transition-opacity group-hover/summary:opacity-100 hover:bg-purple-100"
 						onclick={() => updateLink(link.id, { aiSummary: undefined })}
 					>
 						<Trash2 class="h-3.5 w-3.5" />
 					</Button>
 				</div>
-				<p class="text-purple-900/80 leading-relaxed">{link.aiSummary}</p>
+				<p class="leading-relaxed text-purple-900/80">{link.aiSummary}</p>
 			</div>
 		{/if}
 
 		<div class="flex flex-wrap gap-1.5 pt-1">
 			{#each link.tags as tag}
-				<button 
-					class="text-primary hover:underline text-[14px]"
-					onclick={() => {}} 
-				>
+				<button class="text-[14px] text-primary hover:underline" onclick={() => {}}>
 					#{tag}
 				</button>
 			{/each}
-			
+
 			{#if aiConfig.enabled && !aiLoading}
 				<Button
 					variant="ghost"
 					size="sm"
-					class="h-6 px-2 text-[11px] text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-full"
+					class="h-6 rounded-full px-2 text-[11px] text-purple-600 hover:bg-purple-50 hover:text-purple-700"
 					onclick={handleSuggestTags}
 				>
 					<Sparkles class="mr-1 h-3 w-3" />
@@ -167,42 +171,42 @@
 		</div>
 
 		<!-- Tweet-style Actions -->
-		<div class="flex items-center justify-between max-w-md pt-2 -ml-2 text-muted-foreground">
-			<Button 
-				variant="ghost" 
-				size="sm" 
-				class="h-8 gap-2 hover:text-primary hover:bg-primary/10 rounded-full px-3"
+		<div class="-ml-2 flex max-w-md items-center justify-between pt-2 text-muted-foreground">
+			<Button
+				variant="ghost"
+				size="sm"
+				class="h-8 gap-2 rounded-full px-3 hover:bg-primary/10 hover:text-primary"
 				onclick={handleGenerateSummary}
 				disabled={aiLoading || !aiConfig.enabled || !!link.aiSummary}
 			>
 				<Sparkles class="h-4.5 w-4.5" />
 				<span class="text-xs">Summary</span>
 			</Button>
-			
-			<Button 
-				variant="ghost" 
-				size="sm" 
-				class="h-8 gap-2 hover:text-green-600 hover:bg-green-600/10 rounded-full px-3"
+
+			<Button
+				variant="ghost"
+				size="sm"
+				class="h-8 gap-2 rounded-full px-3 hover:bg-green-600/10 hover:text-green-600"
 				onclick={() => onedit(link)}
 			>
 				<Edit2 class="h-4.5 w-4.5" />
 				<span class="text-xs">Edit</span>
 			</Button>
 
-			<Button 
-				variant="ghost" 
-				size="sm" 
-				class="h-8 gap-2 hover:text-destructive hover:bg-destructive/10 rounded-full px-3"
+			<Button
+				variant="ghost"
+				size="sm"
+				class="h-8 gap-2 rounded-full px-3 hover:bg-destructive/10 hover:text-destructive"
 				onclick={() => ondelete(link.id)}
 			>
 				<Trash2 class="h-4.5 w-4.5" />
 				<span class="text-xs">Delete</span>
 			</Button>
 
-			<Button 
-				variant="ghost" 
-				size="sm" 
-				class="h-8 w-8 p-0 hover:text-primary hover:bg-primary/10 rounded-full"
+			<Button
+				variant="ghost"
+				size="sm"
+				class="h-8 w-8 rounded-full p-0 hover:bg-primary/10 hover:text-primary"
 				onclick={() => window.open(link.url, '_blank')}
 			>
 				<ExternalLink class="h-4.5 w-4.5" />
@@ -210,4 +214,3 @@
 		</div>
 	</div>
 </div>
-

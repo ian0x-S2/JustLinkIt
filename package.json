@@ -24,6 +24,7 @@
 		"@tailwindcss/forms": "^0.5.10",
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.17",
+		"@types/metascraper": "^5.41.0",
 		"@types/node": "^24",
 		"bits-ui": "^2.14.4",
 		"clsx": "^2.1.1",
@@ -51,6 +52,15 @@
 	"dependencies": {
 		"@jesterkit/exe-sveltekit": "^0.1.7",
 		"date-fns": "^4.1.0",
+		"metascraper": "^5.49.15",
+		"metascraper-author": "^5.49.15",
+		"metascraper-clearbit": "^5.49.2",
+		"metascraper-description": "^5.49.15",
+		"metascraper-image": "^5.49.15",
+		"metascraper-logo": "^5.49.15",
+		"metascraper-publisher": "^5.49.15",
+		"metascraper-title": "^5.49.15",
+		"metascraper-url": "^5.49.15",
 		"mode-watcher": "^1.1.0"
 	}
 }

@@ -28,6 +28,9 @@ let title = $state("");
 let description = $state("");
 let tags = $state("");
 let image = $state("");
+let author = $state("");
+let publisher = $state("");
+let logo = $state("");
 let isSaving = $state(false);
 let isLoadingPreview = $state(false);
 
@@ -39,12 +42,18 @@ $effect(() => {
     description = link.description || "";
     tags = link.tags.join(", ") || "";
     image = link.image || "";
+    author = link.author || "";
+    publisher = link.publisher || "";
+    logo = link.logo || "";
   } else if (open) {
     url = "";
     title = "";
     description = "";
     tags = "";
     image = "";
+    author = "";
+    publisher = "";
+    logo = "";
   }
 });
 
@@ -69,6 +78,9 @@ async function fetchOpenGraphPreview() {
       if (data.title && !title) title = data.title;
       if (data.description && !description) description = data.description;
       if (data.image && !image) image = data.image;
+      if (data.author && !author) author = data.author;
+      if (data.publisher && !publisher) publisher = data.publisher;
+      if (data.logo && !logo) logo = data.logo;
     }
   } catch {
     // Ignore errors, user can manually enter data
@@ -92,6 +104,9 @@ async function handleSubmit() {
       title: title.trim() || null,
       description: description.trim() || null,
       image: image.trim() || null,
+      author: author.trim() || null,
+      publisher: publisher.trim() || null,
+      logo: logo.trim() || null,
       tags: tagList,
     };
 

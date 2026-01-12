@@ -1,7 +1,32 @@
-interface OpenGraphData {
+import metascraper from 'metascraper';
+import mTitle from 'metascraper-title';
+import mDescription from 'metascraper-description';
+import mImage from 'metascraper-image';
+import mLogo from 'metascraper-logo';
+import mClearbit from 'metascraper-clearbit';
+import mPublisher from 'metascraper-publisher';
+import mAuthor from 'metascraper-author';
+import mUrl from 'metascraper-url';
+
+const scraper = metascraper([
+	mTitle(),
+	mDescription(),
+	mImage(),
+	mLogo(),
+	mClearbit(),
+	mPublisher(),
+	mAuthor(),
+	mUrl()
+]);
+
+export interface OpenGraphData {
 	title: string | null;
 	description: string | null;
 	image: string | null;
+	author?: string | null;
+	publisher?: string | null;
+	logo?: string | null;
+	url?: string | null;
 }
 
 export async function fetchOpenGraph(url: string): Promise<OpenGraphData> {
@@ -14,40 +39,23 @@ export async function fetchOpenGraph(url: string): Promise<OpenGraphData> {
 		});
 
 		if (!response.ok) {
-			return { title: null, description: null, image: null };
+			return { title: null, description: null, image: null, url };
 		}
 
 		const html = await response.text();
-		return parseOpenGraph(html, url);
-	} catch {
-		return { title: null, description: null, image: null };
+		const metadata = await scraper({ html, url });
+
+		return {
+			title: metadata.title || null,
+			description: metadata.description || null,
+			image: metadata.image || null,
+			author: metadata.author || null,
+			publisher: metadata.publisher || null,
+			logo: metadata.logo || null,
+			url: metadata.url || url
+		};
+	} catch (error) {
+		console.error('Error fetching metadata:', error);
+		return { title: null, description: null, image: null, url };
 	}
-}
-
-function parseOpenGraph(html: string, baseUrl: string): OpenGraphData {
-	const titleMatch = html.match(/<meta\s+property=["']og:title["']\s+content=["']([^"']+)["']/i);
-	const descriptionMatch = html.match(
-		/<meta\s+property=["']og:description["']\s+content=["']([^"']+)["']/i
-	);
-	const imageMatch = html.match(/<meta\s+property=["']og:image["']\s+content=["']([^"']+)["']/i);
-	const twitterImageMatch = html.match(
-		/<meta\s+name=["']twitter:image["']\s+content=["']([^"']+)["']/i
-	);
-
-	let image = imageMatch?.[1] || twitterImageMatch?.[1] || null;
-	if (image && !image.startsWith('http')) {
-		try {
-			image = new URL(image, baseUrl).href;
-		} catch {
-			image = null;
-		}
-	}
-
-	const fallbackTitle = html.match(/<title>([^<]+)<\/title>/i)?.[1] || null;
-
-	return {
-		title: titleMatch?.[1] || fallbackTitle,
-		description: descriptionMatch?.[1] || null,
-		image
-	};
 }

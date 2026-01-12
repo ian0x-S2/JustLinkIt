@@ -4,6 +4,9 @@ export interface Link {
 	title: string | null;
 	description: string | null;
 	image: string | null;
+	author?: string | null;
+	publisher?: string | null;
+	logo?: string | null;
 	createdAt: number;
 	updatedAt: number;
 	tags: string[];
