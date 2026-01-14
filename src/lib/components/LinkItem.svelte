@@ -55,31 +55,32 @@
 			</div>
 		</div>
 
-		<!-- Content -->
-		<div class="min-w-0 flex-1 flex items-center gap-4">
-			<div class="min-w-0 flex-1">
-					<div class="flex items-center gap-3">
-						<a
-							href={link.url}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="text-[14px] font-medium leading-none text-foreground hover:text-primary transition-colors truncate"
-						>
-							{link.title || link.url}
-						</a>
-						{#if link.description}
-							<span class="text-[12px] text-muted-foreground/50 truncate font-normal hidden lg:block max-w-[400px]">
-								— {link.description}
-							</span>
-						{/if}
-						<span class="text-[11px] text-muted-foreground/40 font-normal shrink-0 ml-auto group-hover:hidden">
-							{getDomain(link.url)}
-						</span>
+				<!-- Content -->
+				<div class="min-w-0 flex-1 flex items-center gap-4">
+					<div class="min-w-0 flex-1 py-0.5">
+						<div class="flex flex-col gap-0.5">
+							<div class="flex items-center gap-2">
+								<a
+									href={link.url}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="text-[14px] font-semibold leading-tight text-foreground hover:text-primary transition-colors truncate"
+								>
+									{link.title || link.url}
+								</a>
+								<span class="text-[11px] text-muted-foreground/40 font-normal shrink-0">
+									{getDomain(link.url)}
+								</span>
+							</div>
+							{#if link.description}
+								<p class="text-[12px] text-muted-foreground/60 line-clamp-1 font-normal leading-normal">
+									{link.description}
+								</p>
+							{/if}
+						</div>
 					</div>
-			</div>
-
-			<div class="hidden md:flex items-center gap-1.5 shrink-0 max-w-[200px] overflow-hidden">
-				{#each link.tags as tag (tag)}
+		
+					<div class="hidden md:flex items-center gap-1.5 shrink-0 max-w-[200px] overflow-hidden">				{#each link.tags as tag (tag)}
 					<Badge
 						variant="secondary"
 						class="h-5 px-1.5 text-[10px] font-medium bg-muted/50 text-muted-foreground border-none rounded"

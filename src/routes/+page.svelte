@@ -9,6 +9,7 @@
 	import { FileText, Edit2 } from '@lucide/svelte';
 	import { formatDistanceToNow } from 'date-fns';
 	import { Button } from '$lib/components/ui/button';
+	import { Badge } from '$lib/components/ui/badge';
 
 	let showForm = $state(false);
 	let editingLink = $state<Link | null>(null);
@@ -51,7 +52,7 @@
 				{/each}
 			</div>
 		{:else}
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-6">
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 p-6">
 				{#each filteredLinksList as link (link.id)}
 					<button 
 						class="group relative flex flex-col overflow-hidden rounded-xl border bg-card text-left transition-all hover:shadow-md hover:ring-1 hover:ring-primary/20"
@@ -75,6 +76,17 @@
 									{link.description}
 								</p>
 							{/if}
+							
+							{#if link.tags.length > 0}
+								<div class="mt-4 flex flex-wrap gap-1.5">
+									{#each link.tags as tag}
+										<Badge variant="secondary" class="px-2 py-0.5 text-[10px] h-5 font-medium bg-muted/60 text-muted-foreground border-none">
+											{tag}
+										</Badge>
+									{/each}
+								</div>
+							{/if}
+
 							<div class="mt-auto pt-4 flex items-center justify-between text-[10px] text-muted-foreground">
 								<span class="truncate max-w-[100px]">{new URL(link.url).hostname.replace('www.', '')}</span>
 								<span>{formatDistanceToNow(link.createdAt, { addSuffix: true })}</span>
