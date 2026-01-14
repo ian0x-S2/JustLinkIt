@@ -1,89 +1,65 @@
 <script lang="ts">
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import { 
 		Inbox, 
-		Library, 
-		Sparkles, 
+		Star, 
+		Archive, 
+		Trash2, 
 		Settings, 
-		Link as LinkIcon,
-		Archive,
-		Star,
-		Search,
-		Plus,
-		ChevronDown,
-		Moon,
-		Sun
-	} from '@lucide/svelte';
-	import { page } from '$app/state';
-	import { toggleMode } from 'mode-watcher';
+		Moon, 
+		Sun,
+		Command,
+		Plus
+	} from "@lucide/svelte";
+	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+	import { mode, setMode } from "mode-watcher";
+	import { Button } from "$lib/components/ui/button";
 
-	const navigation = [
-		{
-			label: 'Inbox',
-			href: '/',
-			icon: Inbox
-		},
-		{
-			label: 'All Links',
-			href: '/library',
-			icon: Library
-		},
-		{
-			label: 'Favorites',
-			href: '/favorites',
-			icon: Star
-		},
-		{
-			label: 'Archive',
-			href: '/archive',
-			icon: Archive
-		}
+	const navMain = [
+		{ title: "Inbox", icon: Inbox, isActive: true },
+		{ title: "Favorites", icon: Star },
+		{ title: "Archive", icon: Archive },
+		{ title: "Trash", icon: Trash2 },
 	];
 
-	const secondaryNav = [
-		{
-			label: 'AI Suggestions',
-			href: '/suggestions',
-			icon: Sparkles
-		},
-		{
-			label: 'Settings',
-			href: '/settings',
-			icon: Settings
-		}
-	];
+	function toggleMode() {
+		// Use direct access to mode store via $ if possible, 
+		// but since we had issues, let's use a more direct toggle if setMode supports it
+		// or just read from the document attribute as a fallback for SSR safety
+		const isDark = document.documentElement.classList.contains("dark");
+		setMode(isDark ? "light" : "dark");
+	}
 </script>
 
 <Sidebar.Root collapsible="icon" class="border-r">
-	<Sidebar.Header class="h-14 border-b p-0 flex items-center justify-center">
-		<div class="flex items-center gap-3 w-full px-4 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
-			<div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-				<LinkIcon class="h-5 w-5" />
+	<Sidebar.Header class="h-12 px-0 flex items-center border-b">
+		<div class="flex items-center gap-2 px-4 w-full justify-start overflow-hidden group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+			<div class="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm shrink-0">
+				<Command class="h-3.5 w-3.5" />
 			</div>
-			<div class="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-				<span class="truncate font-bold">Workspace</span>
-				<span class="truncate text-xs text-muted-foreground">Personal Library</span>
-			</div>
+			<span class="font-bold text-[13px] tracking-tight truncate group-data-[collapsible=icon]:hidden">
+				Workspace
+			</span>
 		</div>
 	</Sidebar.Header>
 
 	<Sidebar.Content>
 		<Sidebar.Group>
-			<Sidebar.GroupLabel class="group-data-[collapsible=icon]:hidden">Application</Sidebar.GroupLabel>
+			<Sidebar.GroupLabel class="px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">
+				Library
+			</Sidebar.GroupLabel>
 			<Sidebar.GroupContent>
 				<Sidebar.Menu>
-					{#each navigation as item (item.href)}
+					{#each navMain as item}
 						<Sidebar.MenuItem>
-							<Sidebar.MenuButton
-								tooltip={item.label}
-								isActive={page.url.pathname === item.href}
+							<Sidebar.MenuButton 
+								isActive={item.isActive}
+								class="h-8 px-3 text-[13px] transition-colors hover:bg-muted/50 data-[active=true]:bg-muted data-[active=true]:font-medium rounded-md"
 							>
-								{#snippet child({ props })}
-									<a href={item.href} {...props}>
-										<item.icon class="h-4 w-4" />
-										<span>{item.label}</span>
-									</a>
+								{#snippet tooltipContent()}
+									{item.title}
 								{/snippet}
+								<item.icon class="h-4 w-4 mr-2" />
+								<span class="group-data-[collapsible=icon]:hidden">{item.title}</span>
 							</Sidebar.MenuButton>
 						</Sidebar.MenuItem>
 					{/each}
@@ -91,65 +67,45 @@
 			</Sidebar.GroupContent>
 		</Sidebar.Group>
 
-		<Sidebar.Separator />
-
-		<Sidebar.Group>
-			<Sidebar.GroupLabel class="group-data-[collapsible=icon]:hidden">Organization</Sidebar.GroupLabel>
-			<Sidebar.GroupContent>
-				<Sidebar.Menu>
-					{#each secondaryNav as item (item.href)}
-						<Sidebar.MenuItem>
-							<Sidebar.MenuButton
-								tooltip={item.label}
-								isActive={page.url.pathname === item.href}
-							>
-								{#snippet child({ props })}
-									<a href={item.href} {...props}>
-										<item.icon class="h-4 w-4" />
-										<span>{item.label}</span>
-									</a>
-								{/snippet}
-							</Sidebar.MenuButton>
-						</Sidebar.MenuItem>
-					{/each}
-				</Sidebar.Menu>
-			</Sidebar.GroupContent>
+		<Sidebar.Group class="mt-auto border-t pt-2">
+			<Sidebar.Menu>
+				<Sidebar.MenuItem>
+					<Sidebar.MenuButton 
+						class="h-8 px-3 text-[13px] text-muted-foreground hover:text-foreground rounded-md transition-colors"
+					>
+						<Plus class="h-4 w-4 mr-2" />
+						<span class="group-data-[collapsible=icon]:hidden">New Workspace</span>
+					</Sidebar.MenuButton>
+				</Sidebar.MenuItem>
+			</Sidebar.Menu>
 		</Sidebar.Group>
 	</Sidebar.Content>
 
-	<Sidebar.Footer class="p-2 border-t">
-		<Sidebar.Menu>
-			<Sidebar.MenuItem>
-				<Sidebar.MenuButton 
-					tooltip="Toggle Theme" 
-					onclick={toggleMode}
-					class="group-data-[collapsible=icon]:justify-center"
-				>
-					<div class="flex items-center gap-3 w-full group-data-[collapsible=icon]:justify-center">
-						<div class="relative flex h-4 w-4 shrink-0 items-center justify-center">
-							<Sun class="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-							<Moon class="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-						</div>
-						<span class="truncate group-data-[collapsible=icon]:hidden">Appearance</span>
-					</div>
-				</Sidebar.MenuButton>
-			</Sidebar.MenuItem>
+	<Sidebar.Footer class="border-t p-2">
+		<div class="flex flex-col gap-1 group-data-[collapsible=icon]:items-center">
+			<!-- Theme Toggle -->
+			<Button
+				variant="ghost"
+				size="sm"
+				class="h-8 w-full justify-start px-2 gap-2 text-[12px] font-medium text-muted-foreground hover:text-foreground rounded-md group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
+				onclick={toggleMode}
+			>
+				<div class="relative h-4 w-4 flex items-center justify-center">
+					<Sun class="h-3.5 w-3.5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+					<Moon class="absolute h-3.5 w-3.5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+				</div>
+				<span class="group-data-[collapsible=icon]:hidden">Toggle Theme</span>
+			</Button>
 
-			<Sidebar.MenuItem>
-				<Sidebar.MenuButton 
-					tooltip="Settings" 
-					isActive={page.url.pathname === '/settings'}
-					class="group-data-[collapsible=icon]:justify-center"
-				>
-					{#snippet child({ props })}
-						<a href="/settings" {...props}>
-							<Settings class="h-4 w-4 shrink-0" />
-							<span class="truncate group-data-[collapsible=icon]:hidden">Settings</span>
-						</a>
-					{/snippet}
-				</Sidebar.MenuButton>
-			</Sidebar.MenuItem>
-		</Sidebar.Menu>
+			<!-- Settings -->
+			<Button
+				variant="ghost"
+				size="sm"
+				class="h-8 w-full justify-start px-2 gap-2 text-[12px] font-medium text-muted-foreground hover:text-foreground rounded-md group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
+			>
+				<Settings class="h-3.5 w-3.5" />
+				<span class="group-data-[collapsible=icon]:hidden">Settings</span>
+			</Button>
+		</div>
 	</Sidebar.Footer>
-	<Sidebar.Rail />
 </Sidebar.Root>

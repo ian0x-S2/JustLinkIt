@@ -7,8 +7,7 @@
 		Search, 
 		List, 
 		LayoutGrid, 
-		ChevronRight,
-		Inbox
+		ChevronRight
 	} from '@lucide/svelte';
 	import { search } from '$lib/store.svelte';
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
@@ -42,7 +41,7 @@
 			</nav>
 		</div>
 
-		<!-- Center Section: Search Bar (Linear Style) -->
+		<!-- Center Section: Search Bar -->
 		<div class="flex-1 max-w-md">
 			<div class="relative group">
 				<Search class="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/40" />
@@ -64,35 +63,21 @@
 			<div class="flex items-center gap-0.5 border rounded-md p-0.5 bg-muted/20">
 				<Tooltip.Provider delayDuration={0}>
 					<Tooltip.Root>
-						<Tooltip.Trigger asChild>
-							{#snippet children(props)}
-								<Button
-									variant="ghost"
-									size="icon"
-									class="h-6.5 w-6.5 rounded-[4px] {viewMode === 'list' ? 'bg-background shadow-sm text-foreground border' : 'text-muted-foreground'}"
-									onclick={() => (viewMode = 'list')}
-									{...props}
-								>
-									<List class="h-3.5 w-3.5" />
-								</Button>
-							{/snippet}
+						<Tooltip.Trigger 
+							class="h-6.5 w-6.5 flex items-center justify-center rounded-[4px] transition-all {viewMode === 'list' ? 'bg-background shadow-sm text-foreground border' : 'text-muted-foreground hover:bg-muted/50'}"
+							onclick={() => (viewMode = 'list')}
+						>
+							<List class="h-3.5 w-3.5" />
 						</Tooltip.Trigger>
 						<Tooltip.Content side="bottom" class="text-[10px] py-1 px-2">List</Tooltip.Content>
 					</Tooltip.Root>
 
 					<Tooltip.Root>
-						<Tooltip.Trigger asChild>
-							{#snippet children(props)}
-								<Button
-									variant="ghost"
-									size="icon"
-									class="h-6.5 w-6.5 rounded-[4px] {viewMode === 'grid' ? 'bg-background shadow-sm text-foreground border' : 'text-muted-foreground'}"
-									onclick={() => (viewMode = 'grid')}
-									{...props}
-								>
-									<LayoutGrid class="h-3.5 w-3.5" />
-								</Button>
-							{/snippet}
+						<Tooltip.Trigger 
+							class="h-6.5 w-6.5 flex items-center justify-center rounded-[4px] transition-all {viewMode === 'grid' ? 'bg-background shadow-sm text-foreground border' : 'text-muted-foreground hover:bg-muted/50'}"
+							onclick={() => (viewMode = 'grid')}
+						>
+							<LayoutGrid class="h-3.5 w-3.5" />
 						</Tooltip.Trigger>
 						<Tooltip.Content side="bottom" class="text-[10px] py-1 px-2">Grid</Tooltip.Content>
 					</Tooltip.Root>
