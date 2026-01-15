@@ -61,9 +61,7 @@ class LinkStore {
 		}
 
 		if (this.selectedTags.length > 0) {
-			result = result.filter((link) => 
-				this.selectedTags.every((tag) => link.tags.includes(tag))
-			);
+			result = result.filter((link) => this.selectedTags.every((tag) => link.tags.includes(tag)));
 		}
 
 		return [...result].sort((a, b) => b.createdAt - a.createdAt);
@@ -78,12 +76,13 @@ class LinkStore {
 	});
 
 	add(link: Omit<Link, 'id' | 'createdAt' | 'updatedAt'>) {
-		this.links.push({
+		const newLink: Link = {
 			...link,
 			id: crypto.randomUUID(),
 			createdAt: Date.now(),
 			updatedAt: Date.now()
-		});
+		};
+		this.links.push(newLink);
 		saveLinks(this.links);
 	}
 
@@ -107,7 +106,7 @@ class LinkStore {
 
 	toggleTag(tag: string) {
 		if (this.selectedTags.includes(tag)) {
-			this.selectedTags = this.selectedTags.filter(t => t !== tag);
+			this.selectedTags = this.selectedTags.filter((t) => t !== tag);
 		} else {
 			this.selectedTags.push(tag);
 		}
@@ -116,28 +115,64 @@ class LinkStore {
 
 export const linkStore = new LinkStore();
 
-// Named exports for compatibility with existing components
-export const addLink = (link: any) => linkStore.add(link);
-export const updateLink = (id: string, updates: any) => linkStore.update(id, updates);
-export const deleteLink = (id: string) => linkStore.remove(id);
-export const updateAIConfig = (config: any) => linkStore.updateConfig(config);
-export const toggleSelectedTag = (tag: string) => linkStore.toggleTag(tag);
-
-// Compatibility objects
+// Usando getters no export para manter reatividade sem quebrar imports nomeados
 export const links = {
-	get all() { return linkStore.links; },
-	add: addLink,
-	remove: deleteLink,
-	update: updateLink
+	get all() {
+		return linkStore.links;
+	},
+	get length() {
+		return linkStore.links.length;
+	},
+	slice(start?: number, end?: number) {
+		return linkStore.links.slice(start, end);
+	},
+	filter(cb: any) {
+		return linkStore.links.filter(cb);
+	},
+	map(cb: any) {
+		return linkStore.links.map(cb);
+	}
+};
+
+export const aiConfig = {
+	get enabled() {
+		return linkStore.aiConfig.enabled;
+	},
+	get baseUrl() {
+		return linkStore.aiConfig.baseUrl;
+	},
+	get apiKey() {
+		return linkStore.aiConfig.apiKey;
+	},
+	get model() {
+		return linkStore.aiConfig.model;
+	}
 };
 
 export const search = {
-	get query() { return linkStore.searchQuery; },
-	set query(v: string) { linkStore.searchQuery = v; },
-	get filteredLinks() { return linkStore.filteredLinks || []; }
+	get query() {
+		return linkStore.searchQuery;
+	},
+	set query(v: string) {
+		linkStore.searchQuery = v;
+	},
+	get filteredLinks() {
+		return linkStore.filteredLinks || [];
+	}
 };
 
 export const selectedTags = {
-	get length() { return linkStore.selectedTags.length; },
+	get all() {
+		return linkStore.selectedTags;
+	},
+	get length() {
+		return linkStore.selectedTags.length;
+	},
 	includes: (tag: string) => linkStore.selectedTags.includes(tag)
 };
+
+export const addLink = (link: any) => linkStore.add(link);
+export const updateLink = (id: string, updates: any) => linkStore.update(id, updates);
+export const deleteLink = (id: string) => linkStore.remove(id);
+export const updateAIConfig = (config: AIConfig) => linkStore.updateConfig(config);
+export const toggleSelectedTag = (tag: string) => linkStore.toggleTag(tag);

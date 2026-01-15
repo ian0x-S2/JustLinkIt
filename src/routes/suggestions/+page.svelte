@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { aiConfig, links } from '$lib/store.svelte';
-	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import {
+		Card,
+		CardContent,
+		CardDescription,
+		CardHeader,
+		CardTitle
+	} from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 	import { Sparkles, AlertCircle } from '@lucide/svelte';
 	import { Separator } from '$lib/components/ui/separator';
@@ -13,7 +19,7 @@
 		loading = true;
 		try {
 			// Basic recurring themes analysis
-			const context = links
+			const context = links.all
 				.slice(0, 20)
 				.map((l) => `Title: ${l.title}\nTags: ${l.tags.join(', ')}`)
 				.join('\n\n');
@@ -66,13 +72,13 @@
 
 	{#if !aiConfig.enabled}
 		<Card class="border-dashed">
-			<CardContent class="flex flex-col items-center justify-center py-10 text-center space-y-4">
-				<div class="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
+			<CardContent class="flex flex-col items-center justify-center space-y-4 py-10 text-center">
+				<div class="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
 					<Sparkles class="h-6 w-6 text-muted-foreground" />
 				</div>
 				<div class="space-y-2">
 					<h3 class="font-semibold">AI Features are Disabled</h3>
-					<p class="text-sm text-muted-foreground max-w-sm">
+					<p class="max-w-sm text-sm text-muted-foreground">
 						Enable advanced features in settings to get insights and themes based on your links.
 					</p>
 				</div>
@@ -88,7 +94,7 @@
 							<CardTitle>Recurring Themes</CardTitle>
 							<CardDescription>Patterns identified across your recent links.</CardDescription>
 						</div>
-						<Button onclick={generateInsights} disabled={loading || links.length === 0}>
+						<Button onclick={generateInsights} disabled={loading || links.all.length === 0}>
 							{#if loading}
 								Analyzing...
 							{:else}
@@ -103,15 +109,19 @@
 						<ul class="space-y-4">
 							{#each insights as insight}
 								<li class="flex items-start gap-3">
-									<div class="mt-1 h-2 w-2 rounded-full bg-primary shrink-0" />
+									<div class="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
 									<span>{insight}</span>
 								</li>
 							{/each}
 						</ul>
-					{:else if links.length === 0}
-						<p class="text-sm text-muted-foreground italic">Add some links first to generate insights.</p>
+					{:else if links.all.length === 0}
+						<p class="text-sm text-muted-foreground italic">
+							Add some links first to generate insights.
+						</p>
 					{:else}
-						<p class="text-sm text-muted-foreground italic">Click the button to analyze your library.</p>
+						<p class="text-sm text-muted-foreground italic">
+							Click the button to analyze your library.
+						</p>
 					{/if}
 				</CardContent>
 			</Card>
