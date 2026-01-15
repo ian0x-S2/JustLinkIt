@@ -81,7 +81,7 @@
 				{#if (search.filteredLinks || []).length === 0}
 					<EmptyState onAdd={handleAddLink} />
 				{:else if viewMode === 'list'}
-					<div class="flex flex-col border-b bg-background shadow-sm">
+					<div class="flex flex-col border-b bg-background">
 						{#each search.filteredLinks as link (link.id)}
 							<LinkItem {link} onedit={handleEditLink} ondelete={handleDeleteLink} />
 						{/each}

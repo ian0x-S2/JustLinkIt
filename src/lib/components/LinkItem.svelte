@@ -2,12 +2,7 @@
 	import type { Link } from '$lib/types';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
-	import { 
-		Edit2, 
-		Trash2, 
-		MoreHorizontal,
-		FileText
-	} from '@lucide/svelte';
+	import { Edit2, Trash2, MoreHorizontal, FileText } from '@lucide/svelte';
 	import { formatDistanceToNow } from 'date-fns';
 	import * as Popover from '$lib/components/ui/popover';
 
@@ -31,11 +26,13 @@
 	}
 </script>
 
-<div class="group border-b bg-background transition-all hover:bg-muted/[0.03]">
+<div class="group border-b bg-background transition-all last:border-0 hover:bg-muted/[0.03]">
 	<div class="flex items-center gap-4 px-4 py-2.5">
 		<!-- Preview: More Geometric -->
 		<div class="shrink-0">
-			<div class="flex h-10 w-10 items-center justify-center rounded-md border bg-muted/20 text-muted-foreground shadow-sm overflow-hidden group-hover:border-border transition-colors">
+			<div
+				class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border bg-muted/20 text-muted-foreground transition-colors group-hover:border-border"
+			>
 				{#if link.image && !imageError}
 					<img
 						src={link.image}
@@ -50,7 +47,7 @@
 		</div>
 
 		<!-- Content: High Precision -->
-		<div class="min-w-0 flex-1 flex items-center gap-6">
+		<div class="flex min-w-0 flex-1 items-center gap-6">
 			<div class="min-w-0 flex-1 py-0.5">
 				<div class="flex flex-col gap-0.5">
 					<div class="flex items-center gap-2">
@@ -58,16 +55,18 @@
 							href={link.url}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="text-[13.5px] font-semibold leading-tight text-foreground hover:text-primary transition-colors truncate"
+							class="truncate text-[13.5px] leading-tight font-semibold text-foreground transition-colors hover:text-primary"
 						>
 							{link.title || link.url}
 						</a>
-						<span class="text-[11px] text-muted-foreground/40 font-medium shrink-0">
+						<span class="shrink-0 text-[11px] font-medium text-muted-foreground/40">
 							{getDomain(link.url)}
 						</span>
 					</div>
 					{#if link.description}
-						<p class="text-[12.5px] text-muted-foreground/60 line-clamp-1 font-normal leading-normal">
+						<p
+							class="line-clamp-1 text-[12.5px] leading-normal font-normal text-muted-foreground/60"
+						>
 							{link.description}
 						</p>
 					{/if}
@@ -75,11 +74,11 @@
 			</div>
 
 			<!-- Tags: Rectangular (Linear) -->
-			<div class="hidden lg:flex items-center gap-1 shrink-0 max-w-[240px] overflow-hidden">
+			<div class="hidden max-w-[240px] shrink-0 items-center gap-1 overflow-hidden lg:flex">
 				{#each link.tags as tag (tag)}
 					<Badge
 						variant="secondary"
-						class="h-5 px-1.5 text-[10px] font-medium bg-muted/40 text-muted-foreground/80 border border-transparent hover:border-border transition-all rounded-[4px]"
+						class="h-5 rounded-[4px] border border-transparent bg-muted/40 px-1.5 text-[10px] font-medium text-muted-foreground/80 transition-all hover:border-border"
 					>
 						{tag}
 					</Badge>
@@ -87,42 +86,52 @@
 			</div>
 
 			<!-- Metadata -->
-			<div class="hidden sm:block shrink-0 w-24 text-[11px] text-muted-foreground/40 text-right font-medium">
+			<div
+				class="hidden w-24 shrink-0 text-right text-[11px] font-medium text-muted-foreground/40 sm:block"
+			>
 				{formatDistanceToNow(link.createdAt, { addSuffix: true })}
 			</div>
 
 			<!-- Actions -->
-			<div class="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+			<div
+				class="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100"
+			>
 				<Popover.Root bind:open={actionsOpen}>
 					<Popover.Trigger asChild>
 						{#snippet children(props)}
-							<Button 
-								variant="ghost" 
-								size="icon" 
-								class="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
+							<Button
+								variant="ghost"
+								size="icon"
+								class="h-7 w-7 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
 								{...props}
 							>
 								<MoreHorizontal class="h-3.5 w-3.5" />
 							</Button>
 						{/snippet}
 					</Popover.Trigger>
-					<Popover.Content align="end" class="w-40 p-1 shadow-md rounded-lg">
+					<Popover.Content align="end" class="w-40 rounded-lg p-1 shadow-md">
 						<div class="flex flex-col gap-0.5">
-							<Button 
-								variant="ghost" 
-								size="sm" 
-								class="justify-start h-8 px-2 text-[12px] font-medium rounded-md"
-								onclick={() => { onedit(link); actionsOpen = false; }}
+							<Button
+								variant="ghost"
+								size="sm"
+								class="h-8 justify-start rounded-md px-2 text-[12px] font-medium"
+								onclick={() => {
+									onedit(link);
+									actionsOpen = false;
+								}}
 							>
 								<Edit2 class="mr-2 h-3 w-3" />
 								<span>Edit</span>
 							</Button>
-							<div class="h-[1px] bg-border my-1"></div>
-							<Button 
-								variant="ghost" 
-								size="sm" 
-								class="justify-start h-8 px-2 text-[12px] font-medium text-destructive hover:text-destructive hover:bg-destructive/10 rounded-md"
-								onclick={() => { ondelete(link.id); actionsOpen = false; }}
+							<div class="my-1 h-[1px] bg-border"></div>
+							<Button
+								variant="ghost"
+								size="sm"
+								class="h-8 justify-start rounded-md px-2 text-[12px] font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
+								onclick={() => {
+									ondelete(link.id);
+									actionsOpen = false;
+								}}
 							>
 								<Trash2 class="mr-2 h-3 w-3" />
 								<span>Delete</span>
