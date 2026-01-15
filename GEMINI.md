@@ -12,6 +12,9 @@ Follow a precise, high-productivity aesthetic inspired by Linear:
 - **Contrast:** Use subtle borders and background layers (`bg-muted/20`) rather than heavy shadows or high-contrast backgrounds.
 - **Precision:** Ensure alignment and consistent padding (usually `px-3` or `px-4`). Use tooltips for icon-only buttons.
 
+## Commit Convention
+- After completing a task or a significant change, always suggest a brief, concise, and objective commit message for the user.
+
 ---
 
 You are able to use the Svelte MCP server, where you have access to comprehensive Svelte 5 and SvelteKit documentation. Here's how to use the available tools effectively:
