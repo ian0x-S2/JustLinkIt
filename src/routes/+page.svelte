@@ -30,6 +30,12 @@
 		}
 	});
 
+	$effect(() => {
+		if (!isAddDialogOpen) {
+			editingLink = null;
+		}
+	});
+
 	function handleAddLink() {
 		editingLink = null;
 		isAddDialogOpen = true;
@@ -92,7 +98,7 @@
 </div>
 
 <Dialog.Root bind:open={isAddDialogOpen}>
-	<Dialog.Content class="sm:max-w-[500px] p-0 overflow-hidden rounded-md">
+	<Dialog.Content class="sm:max-w-[640px] p-0 overflow-hidden border-none shadow-2xl rounded-lg">
 		<LinkForm
 			link={editingLink}
 			onsave={() => (isAddDialogOpen = false)}
