@@ -20,25 +20,18 @@ function saveLinks(links: Link[]) {
 }
 
 function loadAIConfig(): AIConfig {
-	if (!browser)
-		return {
-			enabled: false,
-			baseUrl: 'https://api.openai.com/v1',
-			apiKey: '',
-			model: 'gpt-4o-mini'
-		};
+	const defaultConfig: AIConfig = {
+		enabled: false,
+		baseUrl: 'https://api.openai.com/v1',
+		apiKey: '',
+		model: 'gpt-4o-mini'
+	};
+	if (!browser) return defaultConfig;
 	try {
 		const stored = localStorage.getItem(AI_CONFIG_STORAGE_KEY);
-		return stored
-			? JSON.parse(stored)
-			: { enabled: false, baseUrl: 'https://api.openai.com/v1', apiKey: '', model: 'gpt-4o-mini' };
+		return stored ? JSON.parse(stored) : defaultConfig;
 	} catch {
-		return {
-			enabled: false,
-			baseUrl: 'https://api.openai.com/v1',
-			apiKey: '',
-			model: 'gpt-4o-mini'
-		};
+		return defaultConfig;
 	}
 }
 
@@ -47,82 +40,104 @@ function saveAIConfig(config: AIConfig) {
 	localStorage.setItem(AI_CONFIG_STORAGE_KEY, JSON.stringify(config));
 }
 
-export const links = $state<Link[]>(loadLinks());
-export const aiConfig = $state<AIConfig>(loadAIConfig());
-export const search = $state({ query: '' });
+class LinkStore {
+	links = $state<Link[]>(loadLinks());
+	aiConfig = $state<AIConfig>(loadAIConfig());
+	searchQuery = $state('');
+	selectedTags = $state<string[]>([]);
 
-export function getAllTags(): string[] {
-	const tagSet = new Set<string>();
-	links.forEach((link) => {
-		link.tags.forEach((tag) => tagSet.add(tag));
+	filteredLinks = $derived.by(() => {
+		let result = this.links;
+		const query = (this.searchQuery || '').toLowerCase();
+
+		if (query) {
+			result = result.filter((link) => {
+				const titleMatch = link.title?.toLowerCase().includes(query) ?? false;
+				const urlMatch = link.url.toLowerCase().includes(query);
+				const descMatch = link.description?.toLowerCase().includes(query) ?? false;
+				const tagMatch = link.tags.some((tag) => tag.toLowerCase().includes(query));
+				return titleMatch || urlMatch || descMatch || tagMatch;
+			});
+		}
+
+		if (this.selectedTags.length > 0) {
+			result = result.filter((link) => 
+				this.selectedTags.every((tag) => link.tags.includes(tag))
+			);
+		}
+
+		return [...result].sort((a, b) => b.createdAt - a.createdAt);
 	});
-	return Array.from(tagSet).sort();
-}
 
-export function getFilteredLinks(): Link[] {
-	let result = links;
-
-	const query: string = search.query?.toLowerCase() ?? '';
-
-	if (query) {
-		result = result.filter((link) => {
-			const titleMatch = link.title?.toLowerCase().includes(query) ?? false;
-			const urlMatch = link.url.toLowerCase().includes(query);
-			const descMatch = link.description?.toLowerCase().includes(query) ?? false;
-			const tagMatch = link.tags.some((tag: string) => tag.toLowerCase().includes(query));
-			return titleMatch || urlMatch || descMatch || tagMatch;
+	allTags = $derived.by(() => {
+		const tagSet = new Set<string>();
+		this.links.forEach((link) => {
+			link.tags.forEach((tag) => tagSet.add(tag));
 		});
-	}
-
-	if (selectedTags.length > 0) {
-		result = result.filter((link) => selectedTags.every((tag) => link.tags.includes(tag)));
-	}
-
-	return [...result].sort((a, b) => b.createdAt - a.createdAt);
-}
-
-export function addLink(link: Omit<Link, 'id' | 'createdAt' | 'updatedAt'>) {
-	links.push({
-		...link,
-		id: crypto.randomUUID(),
-		createdAt: Date.now(),
-		updatedAt: Date.now()
+		return Array.from(tagSet).sort();
 	});
-	saveLinks(links);
-}
 
-export function updateLink(id: string, updates: Partial<Link>) {
-	const link = links.find((l) => l.id === id);
-	if (link) {
-		Object.assign(link, updates, { updatedAt: Date.now() });
-		saveLinks(links);
+	add(link: Omit<Link, 'id' | 'createdAt' | 'updatedAt'>) {
+		this.links.push({
+			...link,
+			id: crypto.randomUUID(),
+			createdAt: Date.now(),
+			updatedAt: Date.now()
+		});
+		saveLinks(this.links);
+	}
+
+	update(id: string, updates: Partial<Link>) {
+		const index = this.links.findIndex((l) => l.id === id);
+		if (index !== -1) {
+			this.links[index] = { ...this.links[index], ...updates, updatedAt: Date.now() };
+			saveLinks(this.links);
+		}
+	}
+
+	remove(id: string) {
+		this.links = this.links.filter((l) => l.id !== id);
+		saveLinks(this.links);
+	}
+
+	updateConfig(config: AIConfig) {
+		this.aiConfig = { ...this.aiConfig, ...config };
+		saveAIConfig(this.aiConfig);
+	}
+
+	toggleTag(tag: string) {
+		if (this.selectedTags.includes(tag)) {
+			this.selectedTags = this.selectedTags.filter(t => t !== tag);
+		} else {
+			this.selectedTags.push(tag);
+		}
 	}
 }
 
-export function deleteLink(id: string) {
-	const index = links.findIndex((l) => l.id === id);
-	if (index !== -1) {
-		links.splice(index, 1);
-		saveLinks(links);
-	}
-}
+export const linkStore = new LinkStore();
 
-export function updateAIConfig(config: AIConfig) {
-	Object.assign(aiConfig, config);
-	saveAIConfig(aiConfig);
-}
+// Named exports for compatibility with existing components
+export const addLink = (link: any) => linkStore.add(link);
+export const updateLink = (id: string, updates: any) => linkStore.update(id, updates);
+export const deleteLink = (id: string) => linkStore.remove(id);
+export const updateAIConfig = (config: any) => linkStore.updateConfig(config);
+export const toggleSelectedTag = (tag: string) => linkStore.toggleTag(tag);
 
-export const selectedTags = $state<string[]>([]);
+// Compatibility objects
+export const links = {
+	get all() { return linkStore.links; },
+	add: addLink,
+	remove: deleteLink,
+	update: updateLink
+};
 
-export function toggleSelectedTag(tag: string) {
-	if (selectedTags.includes(tag)) {
-		const index = selectedTags.indexOf(tag);
-		selectedTags.splice(index, 1);
-	} else {
-		selectedTags.push(tag);
-	}
-}
+export const search = {
+	get query() { return linkStore.searchQuery; },
+	set query(v: string) { linkStore.searchQuery = v; },
+	get filteredLinks() { return linkStore.filteredLinks || []; }
+};
 
-export function clearSelectedTags() {
-	selectedTags.length = 0;
-}
+export const selectedTags = {
+	get length() { return linkStore.selectedTags.length; },
+	includes: (tag: string) => linkStore.selectedTags.includes(tag)
+};
