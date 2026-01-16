@@ -15,6 +15,9 @@
 	} from '@lucide/svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
 	import { setMode } from 'mode-watcher';
 	import { Button } from '$lib/components/ui/button';
 	import { workspaces, setActiveWorkspace, addWorkspace, links } from '$lib/store.svelte';
@@ -26,16 +29,21 @@
 		{ id: 'trash', title: 'Trash', icon: Trash2 }
 	] as const;
 
+	let isCreateWorkspaceOpen = $state(false);
+	let newWorkspaceName = $state('');
+
 	function toggleMode() {
 		const isDark = document.documentElement.classList.contains('dark');
 		setMode(isDark ? 'light' : 'dark');
 	}
 
-	function handleCreateWorkspace() {
-		const name = prompt('Workspace Name:');
-		if (name) {
-			const newWs = addWorkspace(name);
+	function handleCreateWorkspace(e?: Event) {
+		e?.preventDefault();
+		if (newWorkspaceName.trim()) {
+			const newWs = addWorkspace(newWorkspaceName.trim());
 			setActiveWorkspace(newWs.id);
+			newWorkspaceName = '';
+			isCreateWorkspaceOpen = false;
 		}
 	}
 </script>
@@ -98,7 +106,7 @@
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator class="my-1" />
 				<DropdownMenu.Item
-					onclick={handleCreateWorkspace}
+					onclick={() => (isCreateWorkspaceOpen = true)}
 					class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] text-muted-foreground hover:text-foreground"
 				>
 					<Plus class="h-3.5 w-3.5" />
@@ -140,7 +148,7 @@
 			<Sidebar.Menu>
 				<Sidebar.MenuItem>
 					<Sidebar.MenuButton
-						onclick={handleCreateWorkspace}
+						onclick={() => (isCreateWorkspaceOpen = true)}
 						class="h-8 rounded-md px-3 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
 					>
 						<Plus class="mr-2 h-4 w-4" />
@@ -182,3 +190,47 @@
 		</div>
 	</Sidebar.Footer>
 </Sidebar.Root>
+
+<Dialog.Root bind:open={isCreateWorkspaceOpen}>
+	<Dialog.Content class="max-w-[320px] rounded-lg">
+		<Dialog.Header>
+			<Dialog.Title class="text-[15px] font-semibold">Create Workspace</Dialog.Title>
+			<Dialog.Description class="text-[12px] text-muted-foreground">
+				Workspaces help you organize links for different projects.
+			</Dialog.Description>
+		</Dialog.Header>
+		<form onsubmit={handleCreateWorkspace} class="mt-4 flex flex-col gap-4">
+			<div class="flex flex-col gap-2">
+				<Label for="ws-name" class="text-[11px] font-medium text-muted-foreground uppercase"
+					>Name</Label
+				>
+				<Input
+					id="ws-name"
+					bind:value={newWorkspaceName}
+					placeholder="My New Project"
+					class="h-9 text-[13px] focus-visible:ring-1"
+					autofocus
+				/>
+			</div>
+			<div class="flex justify-end gap-2">
+				<Button
+					type="button"
+					variant="ghost"
+					size="sm"
+					class="h-8 px-3 text-[12px]"
+					onclick={() => (isCreateWorkspaceOpen = false)}
+				>
+					Cancel
+				</Button>
+				<Button
+					type="submit"
+					size="sm"
+					class="h-8 px-3 text-[12px]"
+					disabled={!newWorkspaceName.trim()}
+				>
+					Create
+				</Button>
+			</div>
+		</form>
+	</Dialog.Content>
+</Dialog.Root>
