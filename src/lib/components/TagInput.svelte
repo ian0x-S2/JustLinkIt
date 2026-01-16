@@ -149,6 +149,8 @@
 								// Se houver um valor válido para criar, cria a tag
 								if (showCreateOption) {
 									addTag(value);
+									e.currentTarget.value = '';
+									value = '';
 								}
 							}
 						}}
@@ -204,7 +206,11 @@
 						{:else}
 							{#if !showCreateOption && !isSearchingSelectedTag}
 								<div class="py-6 text-center text-[12px] text-muted-foreground/60">
-									No results found
+									{#if allTags.all.length === 0}
+										Create your first tag
+									{:else}
+										No results found
+									{/if}
 								</div>
 							{/if}
 						{/each}
