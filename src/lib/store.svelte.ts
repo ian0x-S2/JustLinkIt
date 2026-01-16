@@ -1,9 +1,11 @@
-import type { Link, AIConfig } from './types';
+import type { Link, AIConfig, Workspace } from './types';
 import { browser } from '$app/environment';
 import { SvelteSet } from 'svelte/reactivity';
 
 const LINKS_STORAGE_KEY = 'links_data';
 const AI_CONFIG_STORAGE_KEY = 'ai_config';
+const WORKSPACES_STORAGE_KEY = 'workspaces_data';
+const ACTIVE_WORKSPACE_KEY = 'active_workspace_id';
 
 function loadLinks(): Link[] {
 	if (!browser) return [];
@@ -41,14 +43,55 @@ function saveAIConfig(config: AIConfig) {
 	localStorage.setItem(AI_CONFIG_STORAGE_KEY, JSON.stringify(config));
 }
 
+function loadWorkspaces(): Workspace[] {
+	const defaultWorkspace: Workspace = {
+		id: 'default',
+		name: 'My Workspace',
+		slug: 'my-workspace',
+		createdAt: Date.now()
+	};
+	if (!browser) return [defaultWorkspace];
+	try {
+		const stored = localStorage.getItem(WORKSPACES_STORAGE_KEY);
+		return stored ? JSON.parse(stored) : [defaultWorkspace];
+	} catch {
+		return [defaultWorkspace];
+	}
+}
+
+function saveWorkspaces(workspaces: Workspace[]) {
+	if (!browser) return;
+	localStorage.setItem(WORKSPACES_STORAGE_KEY, JSON.stringify(workspaces));
+}
+
+function loadActiveWorkspaceId(): string {
+	if (!browser) return 'default';
+	return localStorage.getItem(ACTIVE_WORKSPACE_KEY) || 'default';
+}
+
+function saveActiveWorkspaceId(id: string) {
+	if (!browser) return;
+	localStorage.setItem(ACTIVE_WORKSPACE_KEY, id);
+}
+
 class LinkStore {
 	links = $state<Link[]>(loadLinks());
 	aiConfig = $state<AIConfig>(loadAIConfig());
+	workspaces = $state<Workspace[]>(loadWorkspaces());
+	activeWorkspaceId = $state<string>(loadActiveWorkspaceId());
 	searchQuery = $state('');
 	selectedTags = $state<string[]>([]);
 
+	activeWorkspace = $derived.by(() => {
+		return this.workspaces.find((w) => w.id === this.activeWorkspaceId) || this.workspaces[0];
+	});
+
+	workspaceLinks = $derived.by(() => {
+		return this.links.filter((l) => l.workspaceId === this.activeWorkspaceId);
+	});
+
 	filteredLinks = $derived.by(() => {
-		let result = this.links;
+		let result = this.workspaceLinks;
 		const query = (this.searchQuery || '').toLowerCase();
 
 		if (query) {
@@ -70,16 +113,17 @@ class LinkStore {
 
 	allTags = $derived.by(() => {
 		const tagSet = new SvelteSet<string>();
-		this.links.forEach((link) => {
+		this.workspaceLinks.forEach((link) => {
 			link.tags.forEach((tag) => tagSet.add(tag));
 		});
 		return Array.from(tagSet).sort();
 	});
 
-	add(link: Omit<Link, 'id' | 'createdAt' | 'updatedAt'>) {
+	add(link: Omit<Link, 'id' | 'createdAt' | 'updatedAt' | 'workspaceId'>) {
 		const newLink: Link = {
 			...link,
 			id: crypto.randomUUID(),
+			workspaceId: this.activeWorkspaceId,
 			createdAt: Date.now(),
 			updatedAt: Date.now()
 		};
@@ -112,27 +156,66 @@ class LinkStore {
 			this.selectedTags.push(tag);
 		}
 	}
+
+	// Workspace methods
+	setActiveWorkspace(id: string) {
+		this.activeWorkspaceId = id;
+		this.selectedTags = []; // Reset filters when changing workspace
+		saveActiveWorkspaceId(id);
+	}
+
+	addWorkspace(name: string) {
+		const id = crypto.randomUUID();
+		const slug = name
+			.toLowerCase()
+			.replace(/\s+/g, '-')
+			.replace(/[^a-z0-9-]/g, '');
+		const newWorkspace: Workspace = {
+			id,
+			name,
+			slug,
+			createdAt: Date.now()
+		};
+		this.workspaces.push(newWorkspace);
+		saveWorkspaces(this.workspaces);
+		return newWorkspace;
+	}
+
+	removeWorkspace(id: string) {
+		if (this.workspaces.length <= 1) return; // Prevent deleting last workspace
+		this.workspaces = this.workspaces.filter((w) => w.id !== id);
+		this.links = this.links.filter((l) => l.workspaceId !== id);
+		if (this.activeWorkspaceId === id) {
+			this.setActiveWorkspace(this.workspaces[0].id);
+		}
+		saveWorkspaces(this.workspaces);
+		saveLinks(this.links);
+	}
 }
 
 export const linkStore = new LinkStore();
 
-// Usando getters no export para manter reatividade sem quebrar imports nomeados
 export const links = {
 	get all() {
-		return linkStore.links;
+		return linkStore.workspaceLinks;
 	},
 	get length() {
-		return linkStore.links.length;
-	},
-	slice(start?: number, end?: number) {
-		return linkStore.links.slice(start, end);
-	},
-	filter(cb: any) {
-		return linkStore.links.filter(cb);
-	},
-	map(cb: any) {
-		return linkStore.links.map(cb);
+		return linkStore.workspaceLinks.length;
 	}
+};
+
+export const workspaces = {
+	get all() {
+		return linkStore.workspaces;
+	},
+	get active() {
+		return linkStore.activeWorkspace;
+	},
+	set activeId(id: string) {
+		linkStore.setActiveWorkspace(id);
+	},
+	add: (name: string) => linkStore.addWorkspace(name),
+	remove: (id: string) => linkStore.removeWorkspace(id)
 };
 
 export const aiConfig = {
@@ -183,3 +266,6 @@ export const updateLink = (id: string, updates: any) => linkStore.update(id, upd
 export const deleteLink = (id: string) => linkStore.remove(id);
 export const updateAIConfig = (config: AIConfig) => linkStore.updateConfig(config);
 export const toggleSelectedTag = (tag: string) => linkStore.toggleTag(tag);
+export const setActiveWorkspace = (id: string) => linkStore.setActiveWorkspace(id);
+export const addWorkspace = (name: string) => linkStore.addWorkspace(name);
+export const removeWorkspace = (id: string) => linkStore.removeWorkspace(id);

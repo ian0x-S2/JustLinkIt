@@ -1,3 +1,11 @@
+export interface Workspace {
+	id: string;
+	name: string;
+	slug: string;
+	icon?: string;
+	createdAt: number;
+}
+
 export interface Link {
 	id: string;
 	url: string;
@@ -11,6 +19,7 @@ export interface Link {
 	updatedAt: number;
 	tags: string[];
 	aiSummary?: string;
+	workspaceId: string;
 }
 
 export interface AIConfig {

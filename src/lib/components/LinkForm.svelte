@@ -68,7 +68,7 @@
 		if (!url.trim()) return;
 		isSaving = true;
 		try {
-			const linkData = {
+			const linkData: any = {
 				url: url.trim(),
 				title: title.trim() || null,
 				description: description.trim() || null,
@@ -88,11 +88,11 @@
 	}
 </script>
 
-<div class="flex flex-col h-full bg-background antialiased text-foreground">
+<div class="flex h-full flex-col bg-background text-foreground antialiased">
 	<!-- Header: Linear Style -->
-	<div class="px-6 py-4 border-b flex items-center justify-between bg-muted/5">
+	<div class="flex items-center justify-between border-b bg-muted/5 px-6 py-4">
 		<div class="flex items-center gap-2.5">
-			<div class="h-6 w-6 rounded-md bg-primary/10 flex items-center justify-center text-primary">
+			<div class="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary">
 				<Globe class="h-3.5 w-3.5" />
 			</div>
 			<h2 class="text-[14px] font-semibold tracking-tight">
@@ -102,29 +102,32 @@
 	</div>
 
 	<!-- Body: Spacing and Icons -->
-	<div class="px-8 py-8 space-y-7 overflow-y-auto max-h-[75vh]">
-		
+	<div class="max-h-[75vh] space-y-7 overflow-y-auto px-8 py-8">
 		<!-- URL Field -->
 		<div class="space-y-2.5">
 			<div class="flex items-center gap-2">
 				<Globe class="h-3.5 w-3.5 text-muted-foreground/60" />
-				<Label for="url" class="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80">URL</Label>
+				<Label
+					for="url"
+					class="text-[11px] font-bold tracking-widest text-muted-foreground/80 uppercase"
+					>URL</Label
+				>
 			</div>
 			<div class="flex gap-2">
 				<Input
 					id="url"
 					bind:value={url}
 					placeholder="https://example.com"
-					class="h-10 bg-muted/20 border-muted-foreground/10 focus-visible:ring-1 focus-visible:ring-primary/40 rounded-md"
+					class="h-10 rounded-md border-muted-foreground/10 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/40"
 				/>
 				<Button
 					variant="outline"
 					onclick={fetchOpenGraphPreview}
 					disabled={!url || isLoadingPreview}
-					class="h-10 px-4 bg-background border-muted-foreground/10 hover:bg-muted/30"
+					class="h-10 border-muted-foreground/10 bg-background px-4 hover:bg-muted/30"
 				>
 					{#if isLoadingPreview}
-						<Loader2 class="h-3.5 w-3.5 animate-spin mr-2" />
+						<Loader2 class="mr-2 h-3.5 w-3.5 animate-spin" />
 					{/if}
 					Auto-fill
 				</Button>
@@ -135,13 +138,17 @@
 		<div class="space-y-2.5">
 			<div class="flex items-center gap-2">
 				<Type class="h-3.5 w-3.5 text-muted-foreground/60" />
-				<Label for="title" class="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80">Title</Label>
+				<Label
+					for="title"
+					class="text-[11px] font-bold tracking-widest text-muted-foreground/80 uppercase"
+					>Title</Label
+				>
 			</div>
 			<Input
 				id="title"
 				bind:value={title}
 				placeholder="Enter a descriptive title"
-				class="h-10 bg-muted/20 border-muted-foreground/10 focus-visible:ring-1 focus-visible:ring-primary/40 rounded-md"
+				class="h-10 rounded-md border-muted-foreground/10 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/40"
 			/>
 		</div>
 
@@ -149,7 +156,11 @@
 		<div class="space-y-2.5">
 			<div class="flex items-center gap-2">
 				<Tag class="h-3.5 w-3.5 text-muted-foreground/60" />
-				<Label for="tags" class="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80">Tags</Label>
+				<Label
+					for="tags"
+					class="text-[11px] font-bold tracking-widest text-muted-foreground/80 uppercase"
+					>Tags</Label
+				>
 			</div>
 			<TagInput selected={tags} onchange={(newTags) => (tags = newTags)} />
 		</div>
@@ -158,26 +169,32 @@
 		<div class="space-y-2.5">
 			<div class="flex items-center gap-2">
 				<AlignLeft class="h-3.5 w-3.5 text-muted-foreground/60" />
-				<Label for="description" class="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80">Description</Label>
+				<Label
+					for="description"
+					class="text-[11px] font-bold tracking-widest text-muted-foreground/80 uppercase"
+					>Description</Label
+				>
 			</div>
 			<Textarea
 				id="description"
 				bind:value={description}
 				placeholder="Add more context or notes about this link..."
 				rows={3}
-				class="resize-none bg-muted/20 border-muted-foreground/10 focus-visible:ring-1 focus-visible:ring-primary/40 rounded-md py-3"
+				class="resize-none rounded-md border-muted-foreground/10 bg-muted/20 py-3 focus-visible:ring-1 focus-visible:ring-primary/40"
 			/>
 		</div>
 
 		{#if image}
-			<div class="pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
-				<div class="relative aspect-[21/9] rounded-md border border-muted-foreground/10 overflow-hidden bg-muted/20 shadow-inner">
+			<div class="pt-2 duration-300 animate-in fade-in slide-in-from-top-2">
+				<div
+					class="relative aspect-[21/9] overflow-hidden rounded-md border border-muted-foreground/10 bg-muted/20 shadow-inner"
+				>
 					<img src={image} alt="Preview" class="h-full w-full object-cover" />
 					<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
 					<Button
 						variant="ghost"
 						size="icon"
-						class="absolute top-2 right-2 h-7 w-7 bg-background/80 backdrop-blur-sm hover:bg-background shadow-sm rounded-md"
+						class="absolute top-2 right-2 h-7 w-7 rounded-md bg-background/80 shadow-sm backdrop-blur-sm hover:bg-background"
 						onclick={() => (image = '')}
 					>
 						<X class="h-3.5 w-3.5" />
@@ -188,17 +205,25 @@
 	</div>
 
 	<!-- Footer: Clean and Solid -->
-	<div class="px-6 py-4 border-t bg-muted/10 flex items-center justify-between">
-		<div class="text-[11px] text-muted-foreground/50 font-medium">
-			Press <span class="px-1.5 py-0.5 rounded border bg-background font-mono">Esc</span> to cancel
+	<div class="flex items-center justify-between border-t bg-muted/10 px-6 py-4">
+		<div class="text-[11px] font-medium text-muted-foreground/50">
+			Press <span class="rounded border bg-background px-1.5 py-0.5 font-mono">Esc</span> to cancel
 		</div>
 		<div class="flex items-center gap-3">
-			<Button variant="ghost" onclick={oncancel} class="h-9 px-4 text-[13px] font-medium text-muted-foreground hover:text-foreground">
+			<Button
+				variant="ghost"
+				onclick={oncancel}
+				class="h-9 px-4 text-[13px] font-medium text-muted-foreground hover:text-foreground"
+			>
 				Cancel
 			</Button>
-			<Button onclick={handleSubmit} disabled={isSaving || !url.trim()} class="h-9 px-5 text-[13px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm rounded-md">
+			<Button
+				onclick={handleSubmit}
+				disabled={isSaving || !url.trim()}
+				class="h-9 rounded-md bg-primary px-5 text-[13px] font-semibold text-primary-foreground shadow-sm hover:bg-primary/90"
+			>
 				{#if isSaving}
-					<Loader2 class="h-3.5 w-3.5 animate-spin mr-2" />
+					<Loader2 class="mr-2 h-3.5 w-3.5 animate-spin" />
 					Saving...
 				{:else}
 					{link ? 'Update link' : 'Create link'}

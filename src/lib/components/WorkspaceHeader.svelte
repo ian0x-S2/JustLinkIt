@@ -1,24 +1,17 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { 
-		FileJson, 
-		Plus, 
-		Search, 
-		List, 
-		LayoutGrid, 
-		ChevronRight
-	} from '@lucide/svelte';
-	import { search } from '$lib/store.svelte';
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+	import { FileJson, Plus, Search, List, LayoutGrid, ChevronRight } from '@lucide/svelte';
+	import { search, workspaces } from '$lib/store.svelte';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
 	let {
 		title = 'Inbox',
 		onExport,
 		onAddLink,
 		viewMode = $bindable('list')
-	}: { 
+	}: {
 		title?: string;
 		onExport: () => void;
 		onAddLink: () => void;
@@ -26,32 +19,42 @@
 	} = $props();
 </script>
 
-<header class="bg-background shrink-0 border-b h-12">
-	<div class="flex items-center justify-between gap-4 px-3 h-full">
-		
+<header class="h-12 shrink-0 border-b bg-background">
+	<div class="flex h-full items-center justify-between gap-4 px-3">
 		<!-- Left Section: Breadcrumbs -->
-		<div class="flex items-center gap-1.5 min-w-[180px]">
-			<Sidebar.Trigger class="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted shrink-0 rounded-md" />
-			<div class="h-3 w-[1px] bg-border shrink-0 mx-0.5"></div>
-			
-			<nav class="flex items-center gap-1.5 text-[13px] font-medium min-w-0">
-				<span class="text-muted-foreground hover:text-foreground cursor-pointer transition-colors truncate">Library</span>
-				<ChevronRight class="h-3.5 w-3.5 text-muted-foreground/30 shrink-0" />
-				<span class="text-foreground truncate">{title}</span>
+		<div class="flex min-w-[180px] items-center gap-1.5">
+			<Sidebar.Trigger
+				class="h-7 w-7 shrink-0 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+			/>
+			<div class="mx-0.5 h-3 w-[1px] shrink-0 bg-border"></div>
+
+			<nav class="flex min-w-0 items-center gap-1.5 text-[13px] font-medium">
+				<span
+					class="cursor-pointer truncate text-muted-foreground transition-colors hover:text-foreground"
+					>{workspaces.active.name}</span
+				>
+				<ChevronRight class="h-3.5 w-3.5 shrink-0 text-muted-foreground/30" />
+				<span class="truncate text-foreground">{title}</span>
 			</nav>
 		</div>
 
 		<!-- Center Section: Search Bar -->
-		<div class="flex-1 max-w-md">
-			<div class="relative group">
-				<Search class="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/40" />
+		<div class="max-w-md flex-1">
+			<div class="group relative">
+				<Search
+					class="absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/40"
+				/>
 				<Input
 					bind:value={search.query}
 					placeholder="Search or jump to..."
-					class="h-8 w-full border border-border bg-muted/20 hover:bg-muted/40 focus-visible:bg-background pl-8.5 text-[13px] shadow-none focus-visible:ring-1 focus-visible:ring-ring transition-all rounded-md"
+					class="h-8 w-full rounded-md border border-border bg-muted/20 pl-8.5 text-[13px] shadow-none transition-all hover:bg-muted/40 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-ring"
 				/>
-				<div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-0 group-focus-within:opacity-100 transition-opacity">
-					<kbd class="pointer-events-none h-4 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+				<div
+					class="absolute top-1/2 right-2 flex -translate-y-1/2 items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100"
+				>
+					<kbd
+						class="pointer-events-none h-4 items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground select-none"
+					>
 						ESC
 					</kbd>
 				</div>
@@ -59,45 +62,51 @@
 		</div>
 
 		<!-- Right Section: Actions -->
-		<div class="flex items-center gap-1 min-w-[180px] justify-end">
-			<div class="flex items-center gap-0.5 border rounded-md p-0.5 bg-muted/20">
+		<div class="flex min-w-[180px] items-center justify-end gap-1">
+			<div class="flex items-center gap-0.5 rounded-md border bg-muted/20 p-0.5">
 				<Tooltip.Provider delayDuration={0}>
 					<Tooltip.Root>
-						<Tooltip.Trigger 
-							class="h-6.5 w-6.5 flex items-center justify-center rounded-[4px] transition-all {viewMode === 'list' ? 'bg-background shadow-sm text-foreground border' : 'text-muted-foreground hover:bg-muted/50'}"
+						<Tooltip.Trigger
+							class="flex h-6.5 w-6.5 items-center justify-center rounded-[4px] transition-all {viewMode ===
+							'list'
+								? 'border bg-background text-foreground shadow-sm'
+								: 'text-muted-foreground hover:bg-muted/50'}"
 							onclick={() => (viewMode = 'list')}
 						>
 							<List class="h-3.5 w-3.5" />
 						</Tooltip.Trigger>
-						<Tooltip.Content side="bottom" class="text-[10px] py-1 px-2">List</Tooltip.Content>
+						<Tooltip.Content side="bottom" class="px-2 py-1 text-[10px]">List</Tooltip.Content>
 					</Tooltip.Root>
 
 					<Tooltip.Root>
-						<Tooltip.Trigger 
-							class="h-6.5 w-6.5 flex items-center justify-center rounded-[4px] transition-all {viewMode === 'grid' ? 'bg-background shadow-sm text-foreground border' : 'text-muted-foreground hover:bg-muted/50'}"
+						<Tooltip.Trigger
+							class="flex h-6.5 w-6.5 items-center justify-center rounded-[4px] transition-all {viewMode ===
+							'grid'
+								? 'border bg-background text-foreground shadow-sm'
+								: 'text-muted-foreground hover:bg-muted/50'}"
 							onclick={() => (viewMode = 'grid')}
 						>
 							<LayoutGrid class="h-3.5 w-3.5" />
 						</Tooltip.Trigger>
-						<Tooltip.Content side="bottom" class="text-[10px] py-1 px-2">Grid</Tooltip.Content>
+						<Tooltip.Content side="bottom" class="px-2 py-1 text-[10px]">Grid</Tooltip.Content>
 					</Tooltip.Root>
 				</Tooltip.Provider>
 			</div>
 
-			<div class="h-4 w-[1px] bg-border mx-1"></div>
+			<div class="mx-1 h-4 w-[1px] bg-border"></div>
 
-			<Button 
-				variant="ghost" 
-				size="icon" 
-				class="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
+			<Button
+				variant="ghost"
+				size="icon"
+				class="h-7 w-7 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
 				onclick={onExport}
 			>
 				<FileJson class="h-3.5 w-3.5" />
 			</Button>
 
-			<Button 
-				size="sm" 
-				class="h-7 gap-1.5 px-2.5 rounded-md shadow-sm ml-1 text-[12px] font-medium"
+			<Button
+				size="sm"
+				class="ml-1 h-7 gap-1.5 rounded-md px-2.5 text-[12px] font-medium shadow-sm"
 				onclick={onAddLink}
 			>
 				<Plus class="h-3.5 w-3.5" />

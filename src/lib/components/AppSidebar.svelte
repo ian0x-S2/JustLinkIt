@@ -1,64 +1,130 @@
 <script lang="ts">
-	import { 
-		Inbox, 
-		Star, 
-		Archive, 
-		Trash2, 
-		Settings, 
-		Moon, 
+	import {
+		Inbox,
+		Star,
+		Archive,
+		Trash2,
+		Settings,
+		Moon,
 		Sun,
 		Command,
-		Plus
-	} from "@lucide/svelte";
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import { mode, setMode } from "mode-watcher";
-	import { Button } from "$lib/components/ui/button";
+		Plus,
+		ChevronsUpDown,
+		Check,
+		LogOut
+	} from '@lucide/svelte';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import { setMode } from 'mode-watcher';
+	import { Button } from '$lib/components/ui/button';
+	import { workspaces, setActiveWorkspace, addWorkspace } from '$lib/store.svelte';
 
 	const navMain = [
-		{ title: "Inbox", icon: Inbox, isActive: true },
-		{ title: "Favorites", icon: Star },
-		{ title: "Archive", icon: Archive },
-		{ title: "Trash", icon: Trash2 },
+		{ title: 'Inbox', icon: Inbox, isActive: true },
+		{ title: 'Favorites', icon: Star },
+		{ title: 'Archive', icon: Archive },
+		{ title: 'Trash', icon: Trash2 }
 	];
 
 	function toggleMode() {
-		// Use direct access to mode store via $ if possible, 
-		// but since we had issues, let's use a more direct toggle if setMode supports it
-		// or just read from the document attribute as a fallback for SSR safety
-		const isDark = document.documentElement.classList.contains("dark");
-		setMode(isDark ? "light" : "dark");
+		const isDark = document.documentElement.classList.contains('dark');
+		setMode(isDark ? 'light' : 'dark');
+	}
+
+	function handleCreateWorkspace() {
+		const name = prompt('Workspace Name:');
+		if (name) {
+			const newWs = addWorkspace(name);
+			setActiveWorkspace(newWs.id);
+		}
 	}
 </script>
 
 <Sidebar.Root collapsible="icon" class="border-r">
-	<Sidebar.Header class="h-12 px-0 flex items-center border-b">
-		<div class="flex items-center gap-2 px-4 w-full justify-start overflow-hidden group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
-			<div class="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm shrink-0">
-				<Command class="h-3.5 w-3.5" />
-			</div>
-			<span class="font-bold text-[13px] tracking-tight truncate group-data-[collapsible=icon]:hidden">
-				Workspace
-			</span>
-		</div>
+	<Sidebar.Header class="flex h-12 flex-row items-center justify-start border-b p-0 px-2">
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger asChild>
+				{#snippet children(props: any)}
+					<button
+						{...props}
+						class="flex w-full items-center justify-start gap-2 overflow-hidden rounded-md py-1.5 pr-2 pl-1.5 transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:bg-muted/50"
+					>
+						<div
+							class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm"
+						>
+							<Command class="h-3.5 w-3.5" />
+						</div>
+						<div
+							class="flex min-w-0 flex-1 flex-col items-start group-data-[collapsible=icon]:hidden"
+						>
+							<span class="truncate text-[13px] leading-none font-bold tracking-tight">
+								{workspaces.active.name}
+							</span>
+							<span class="mt-0.5 text-[10px] leading-none text-muted-foreground">Free Plan</span>
+						</div>
+						<ChevronsUpDown
+							class="h-3.5 w-3.5 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden"
+						/>
+					</button>
+				{/snippet}
+			</DropdownMenu.Trigger>
+			<DropdownMenu.Content align="start" class="w-56 rounded-md border p-1 shadow-lg">
+				<DropdownMenu.Label
+					class="px-2 py-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase"
+				>
+					Workspaces
+				</DropdownMenu.Label>
+				<DropdownMenu.Group>
+					{#each workspaces.all as ws}
+						<DropdownMenu.Item
+							onclick={() => setActiveWorkspace(ws.id)}
+							class="flex cursor-pointer items-center justify-between rounded-md px-2 py-1.5 text-[13px]"
+						>
+							<div class="flex items-center gap-2">
+								<div
+									class="flex h-5 w-5 items-center justify-center rounded border bg-muted/30 text-[10px] font-bold"
+								>
+									{ws.name.charAt(0)}
+								</div>
+								<span class={ws.id === workspaces.active.id ? 'font-semibold' : ''}>{ws.name}</span>
+							</div>
+							{#if ws.id === workspaces.active.id}
+								<Check class="h-3.5 w-3.5 text-primary" />
+							{/if}
+						</DropdownMenu.Item>
+					{/each}
+				</DropdownMenu.Group>
+				<DropdownMenu.Separator class="my-1" />
+				<DropdownMenu.Item
+					onclick={handleCreateWorkspace}
+					class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] text-muted-foreground hover:text-foreground"
+				>
+					<Plus class="h-3.5 w-3.5" />
+					<span>Create Workspace</span>
+				</DropdownMenu.Item>
+			</DropdownMenu.Content>
+		</DropdownMenu.Root>
 	</Sidebar.Header>
 
 	<Sidebar.Content>
 		<Sidebar.Group>
-			<Sidebar.GroupLabel class="px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">
+			<Sidebar.GroupLabel
+				class="px-3 text-[10px] font-semibold tracking-wider text-muted-foreground/50 uppercase"
+			>
 				Library
 			</Sidebar.GroupLabel>
 			<Sidebar.GroupContent>
 				<Sidebar.Menu>
 					{#each navMain as item}
 						<Sidebar.MenuItem>
-							<Sidebar.MenuButton 
+							<Sidebar.MenuButton
 								isActive={item.isActive}
-								class="h-8 px-3 text-[13px] transition-colors hover:bg-muted/50 data-[active=true]:bg-muted data-[active=true]:font-medium rounded-md"
+								class="h-8 rounded-md px-3 text-[13px] transition-colors hover:bg-muted/50 data-[active=true]:bg-muted data-[active=true]:font-medium"
 							>
 								{#snippet tooltipContent()}
 									{item.title}
 								{/snippet}
-								<item.icon class="h-4 w-4 mr-2" />
+								<item.icon class="mr-2 h-4 w-4" />
 								<span class="group-data-[collapsible=icon]:hidden">{item.title}</span>
 							</Sidebar.MenuButton>
 						</Sidebar.MenuItem>
@@ -70,10 +136,11 @@
 		<Sidebar.Group class="mt-auto border-t pt-2">
 			<Sidebar.Menu>
 				<Sidebar.MenuItem>
-					<Sidebar.MenuButton 
-						class="h-8 px-3 text-[13px] text-muted-foreground hover:text-foreground rounded-md transition-colors"
+					<Sidebar.MenuButton
+						onclick={handleCreateWorkspace}
+						class="h-8 rounded-md px-3 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
 					>
-						<Plus class="h-4 w-4 mr-2" />
+						<Plus class="mr-2 h-4 w-4" />
 						<span class="group-data-[collapsible=icon]:hidden">New Workspace</span>
 					</Sidebar.MenuButton>
 				</Sidebar.MenuItem>
@@ -87,12 +154,14 @@
 			<Button
 				variant="ghost"
 				size="sm"
-				class="h-8 w-full justify-start px-2 gap-2 text-[12px] font-medium text-muted-foreground hover:text-foreground rounded-md group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
+				class="h-8 w-full justify-start gap-2 rounded-md px-2 text-[12px] font-medium text-muted-foreground group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:text-foreground"
 				onclick={toggleMode}
 			>
-				<div class="relative h-4 w-4 flex items-center justify-center">
-					<Sun class="h-3.5 w-3.5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-					<Moon class="absolute h-3.5 w-3.5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+				<div class="relative flex h-4 w-4 items-center justify-center">
+					<Sun class="h-3.5 w-3.5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+					<Moon
+						class="absolute h-3.5 w-3.5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
+					/>
 				</div>
 				<span class="group-data-[collapsible=icon]:hidden">Toggle Theme</span>
 			</Button>
@@ -101,7 +170,8 @@
 			<Button
 				variant="ghost"
 				size="sm"
-				class="h-8 w-full justify-start px-2 gap-2 text-[12px] font-medium text-muted-foreground hover:text-foreground rounded-md group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
+				href="/settings"
+				class="h-8 w-full justify-start gap-2 rounded-md px-2 text-[12px] font-medium text-muted-foreground group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:text-foreground"
 			>
 				<Settings class="h-3.5 w-3.5" />
 				<span class="group-data-[collapsible=icon]:hidden">Settings</span>
