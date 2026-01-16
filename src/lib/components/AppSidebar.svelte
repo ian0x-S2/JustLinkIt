@@ -69,7 +69,7 @@
 				{/snippet}
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content
-				class="w-[var(--radix-dropdown-menu-trigger-width)] min-w-56 rounded-md border p-1 shadow-lg"
+				class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-md border p-1 shadow-lg"
 			>
 				<DropdownMenu.Label
 					class="w-full px-2 py-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase"
