@@ -109,7 +109,7 @@
 						<ul class="space-y-4">
 							{#each insights as insight}
 								<li class="flex items-start gap-3">
-									<div class="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
+									<div class="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary"></div>
 									<span>{insight}</span>
 								</li>
 							{/each}

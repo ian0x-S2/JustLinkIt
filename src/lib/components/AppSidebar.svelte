@@ -43,8 +43,8 @@
 <Sidebar.Root collapsible="icon" class="border-r">
 	<Sidebar.Header class="flex h-12 flex-col justify-center border-b p-0 px-2">
 		<DropdownMenu.Root>
-			<DropdownMenu.Trigger asChild>
-				{#snippet children(props: any)}
+			<DropdownMenu.Trigger>
+				{#snippet child({ props })}
 					<button
 						{...props}
 						class="flex w-full items-center justify-start gap-2 overflow-hidden rounded-md py-1.5 pr-2 pl-1.5 transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:bg-muted/50"
@@ -77,7 +77,7 @@
 					Workspaces
 				</DropdownMenu.Label>
 				<DropdownMenu.Group>
-					{#each workspaces.all as ws}
+					{#each workspaces.all as ws (ws.id)}
 						<DropdownMenu.Item
 							onclick={() => setActiveWorkspace(ws.id)}
 							class="flex cursor-pointer items-center justify-between rounded-md px-2 py-1.5 text-[13px]"
@@ -117,7 +117,7 @@
 			</Sidebar.GroupLabel>
 			<Sidebar.GroupContent>
 				<Sidebar.Menu>
-					{#each navMain as item}
+					{#each navMain as item (item.title)}
 						<Sidebar.MenuItem>
 							<Sidebar.MenuButton
 								isActive={item.isActive}
