@@ -7,7 +7,7 @@
 	import ExportDialog from '$lib/components/ExportDialog.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
-	import { links, search } from '$lib/store.svelte';
+	import { links, search, deleteLink } from '$lib/store.svelte';
 	import type { Link } from '$lib/types';
 
 	let viewMode = $state<'list' | 'grid'>('list');
@@ -48,14 +48,13 @@
 	}
 
 	function handleDeleteLink(id: string) {
-		links.remove(id);
+		deleteLink(id);
 	}
 </script>
 
 <!-- Header Section -->
 <div bind:this={headerEl} class="z-10 w-full shrink-0 bg-background">
 	<WorkspaceHeader
-		title="Inbox"
 		bind:viewMode
 		onExport={() => (isExportDialogOpen = true)}
 		onAddLink={handleAddLink}

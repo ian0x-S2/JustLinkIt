@@ -20,6 +20,9 @@ export interface Link {
 	tags: string[];
 	aiSummary?: string;
 	workspaceId: string;
+	isFavorite?: boolean;
+	isArchived?: boolean;
+	isDeleted?: boolean;
 }
 
 export interface AIConfig {

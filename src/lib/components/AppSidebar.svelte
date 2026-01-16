@@ -17,14 +17,14 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { setMode } from 'mode-watcher';
 	import { Button } from '$lib/components/ui/button';
-	import { workspaces, setActiveWorkspace, addWorkspace } from '$lib/store.svelte';
+	import { workspaces, setActiveWorkspace, addWorkspace, links } from '$lib/store.svelte';
 
 	const navMain = [
-		{ title: 'Inbox', icon: Inbox, isActive: true },
-		{ title: 'Favorites', icon: Star },
-		{ title: 'Archive', icon: Archive },
-		{ title: 'Trash', icon: Trash2 }
-	];
+		{ id: 'inbox', title: 'Inbox', icon: Inbox },
+		{ id: 'favorites', title: 'Favorites', icon: Star },
+		{ id: 'archive', title: 'Archive', icon: Archive },
+		{ id: 'trash', title: 'Trash', icon: Trash2 }
+	] as const;
 
 	function toggleMode() {
 		const isDark = document.documentElement.classList.contains('dark');
@@ -117,10 +117,11 @@
 			</Sidebar.GroupLabel>
 			<Sidebar.GroupContent>
 				<Sidebar.Menu>
-					{#each navMain as item (item.title)}
+					{#each navMain as item (item.id)}
 						<Sidebar.MenuItem>
 							<Sidebar.MenuButton
-								isActive={item.isActive}
+								isActive={links.activeCategory === item.id}
+								onclick={() => (links.activeCategory = item.id)}
 								class="h-8 rounded-md px-3 text-[13px] transition-colors hover:bg-muted/50 data-[active=true]:bg-muted data-[active=true]:font-medium"
 							>
 								{#snippet tooltipContent()}

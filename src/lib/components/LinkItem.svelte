@@ -2,9 +2,10 @@
 	import type { Link } from '$lib/types';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
-	import { Edit2, Trash2, MoreHorizontal, FileText } from '@lucide/svelte';
+	import { Edit2, Trash2, MoreHorizontal, FileText, Star, Archive, RotateCcw } from '@lucide/svelte';
 	import { formatDistanceToNow } from 'date-fns';
 	import * as Popover from '$lib/components/ui/popover';
+	import { toggleFavorite, toggleArchived, toggleDeleted } from '$lib/store.svelte';
 
 	interface Props {
 		link: Link;
@@ -93,9 +94,7 @@
 			</div>
 
 			<!-- Actions -->
-			<div
-				class="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100"
-			>
+			<div class="flex shrink-0 items-center gap-1">
 				<Popover.Root bind:open={actionsOpen}>
 					<Popover.Trigger asChild>
 						{#snippet children(props)}
@@ -109,7 +108,7 @@
 							</Button>
 						{/snippet}
 					</Popover.Trigger>
-					<Popover.Content align="end" class="w-40 rounded-lg p-1 shadow-md">
+					<Popover.Content align="end" class="w-44 rounded-lg p-1 shadow-md">
 						<div class="flex flex-col gap-0.5">
 							<Button
 								variant="ghost"
@@ -123,18 +122,69 @@
 								<Edit2 class="mr-2 h-3 w-3" />
 								<span>Edit</span>
 							</Button>
+
+							{#if !link.isDeleted}
+								<Button
+									variant="ghost"
+									size="sm"
+									class="h-8 justify-start rounded-md px-2 text-[12px] font-medium {link.isFavorite
+										? 'text-yellow-500'
+										: ''}"
+									onclick={() => {
+										toggleFavorite(link.id);
+										actionsOpen = false;
+									}}
+								>
+									<Star class="mr-2 h-3 w-3 {link.isFavorite ? 'fill-current' : ''}" />
+									<span>{link.isFavorite ? 'Remove Favorite' : 'Mark Favorite'}</span>
+								</Button>
+
+								<Button
+									variant="ghost"
+									size="sm"
+									class="h-8 justify-start rounded-md px-2 text-[12px] font-medium"
+									onclick={() => {
+										toggleArchived(link.id);
+										actionsOpen = false;
+									}}
+								>
+									<Archive class="mr-2 h-3 w-3" />
+									<span>{link.isArchived ? 'Unarchive' : 'Archive'}</span>
+								</Button>
+							{/if}
+
+							{#if link.isDeleted}
+								<Button
+									variant="ghost"
+									size="sm"
+									class="h-8 justify-start rounded-md px-2 text-[12px] font-medium"
+									onclick={() => {
+										toggleDeleted(link.id);
+										actionsOpen = false;
+									}}
+								>
+									<RotateCcw class="mr-2 h-3 w-3" />
+									<span>Restore</span>
+								</Button>
+							{/if}
+
 							<div class="my-1 h-[1px] bg-border"></div>
+
 							<Button
 								variant="ghost"
 								size="sm"
 								class="h-8 justify-start rounded-md px-2 text-[12px] font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
 								onclick={() => {
-									ondelete(link.id);
+									if (link.isDeleted) {
+										ondelete(link.id); // Permanent delete
+									} else {
+										toggleDeleted(link.id); // Move to trash
+									}
 									actionsOpen = false;
 								}}
 							>
 								<Trash2 class="mr-2 h-3 w-3" />
-								<span>Delete</span>
+								<span>{link.isDeleted ? 'Delete Permanently' : 'Delete'}</span>
 							</Button>
 						</div>
 					</Popover.Content>

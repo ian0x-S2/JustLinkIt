@@ -79,6 +79,7 @@ class LinkStore {
 	aiConfig = $state<AIConfig>(loadAIConfig());
 	workspaces = $state<Workspace[]>(loadWorkspaces());
 	activeWorkspaceId = $state<string>(loadActiveWorkspaceId());
+	activeCategory = $state<'inbox' | 'favorites' | 'archive' | 'trash'>('inbox');
 	searchQuery = $state('');
 	selectedTags = $state<string[]>([]);
 
@@ -92,6 +93,18 @@ class LinkStore {
 
 	filteredLinks = $derived.by(() => {
 		let result = this.workspaceLinks;
+
+		// Filter by category
+		if (this.activeCategory === 'inbox') {
+			result = result.filter((l) => !l.isArchived && !l.isDeleted);
+		} else if (this.activeCategory === 'favorites') {
+			result = result.filter((l) => l.isFavorite && !l.isDeleted);
+		} else if (this.activeCategory === 'archive') {
+			result = result.filter((l) => l.isArchived && !l.isDeleted);
+		} else if (this.activeCategory === 'trash') {
+			result = result.filter((l) => l.isDeleted);
+		}
+
 		const query = (this.searchQuery || '').toLowerCase();
 
 		if (query) {
@@ -139,6 +152,30 @@ class LinkStore {
 		}
 	}
 
+	toggleFavorite(id: string) {
+		const index = this.links.findIndex((l) => l.id === id);
+		if (index !== -1) {
+			this.links[index].isFavorite = !this.links[index].isFavorite;
+			saveLinks(this.links);
+		}
+	}
+
+	toggleArchived(id: string) {
+		const index = this.links.findIndex((l) => l.id === id);
+		if (index !== -1) {
+			this.links[index].isArchived = !this.links[index].isArchived;
+			saveLinks(this.links);
+		}
+	}
+
+	toggleDeleted(id: string) {
+		const index = this.links.findIndex((l) => l.id === id);
+		if (index !== -1) {
+			this.links[index].isDeleted = !this.links[index].isDeleted;
+			saveLinks(this.links);
+		}
+	}
+
 	remove(id: string) {
 		this.links = this.links.filter((l) => l.id !== id);
 		saveLinks(this.links);
@@ -161,6 +198,7 @@ class LinkStore {
 	setActiveWorkspace(id: string) {
 		this.activeWorkspaceId = id;
 		this.selectedTags = []; // Reset filters when changing workspace
+		this.activeCategory = 'inbox'; // Reset category when changing workspace
 		saveActiveWorkspaceId(id);
 	}
 
@@ -201,6 +239,12 @@ export const links = {
 	},
 	get length() {
 		return linkStore.workspaceLinks.length;
+	},
+	get activeCategory() {
+		return linkStore.activeCategory;
+	},
+	set activeCategory(v: 'inbox' | 'favorites' | 'archive' | 'trash') {
+		linkStore.activeCategory = v;
 	}
 };
 
@@ -264,6 +308,9 @@ export const allTags = {
 export const addLink = (link: any) => linkStore.add(link);
 export const updateLink = (id: string, updates: any) => linkStore.update(id, updates);
 export const deleteLink = (id: string) => linkStore.remove(id);
+export const toggleFavorite = (id: string) => linkStore.toggleFavorite(id);
+export const toggleArchived = (id: string) => linkStore.toggleArchived(id);
+export const toggleDeleted = (id: string) => linkStore.toggleDeleted(id);
 export const updateAIConfig = (config: AIConfig) => linkStore.updateConfig(config);
 export const toggleSelectedTag = (tag: string) => linkStore.toggleTag(tag);
 export const setActiveWorkspace = (id: string) => linkStore.setActiveWorkspace(id);

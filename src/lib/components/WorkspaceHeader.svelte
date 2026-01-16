@@ -2,21 +2,23 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { FileJson, Plus, Search, List, LayoutGrid, ChevronRight } from '@lucide/svelte';
-	import { search, workspaces } from '$lib/store.svelte';
+	import { search, workspaces, links } from '$lib/store.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
 	let {
-		title = 'Inbox',
 		onExport,
 		onAddLink,
 		viewMode = $bindable('list')
 	}: {
-		title?: string;
 		onExport: () => void;
 		onAddLink: () => void;
 		viewMode?: 'list' | 'grid';
 	} = $props();
+
+	const title = $derived(
+		links.activeCategory.charAt(0).toUpperCase() + links.activeCategory.slice(1)
+	);
 </script>
 
 <header class="h-12 shrink-0 border-b bg-background">
