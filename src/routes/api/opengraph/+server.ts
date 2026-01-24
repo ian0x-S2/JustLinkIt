@@ -13,6 +13,6 @@ export const POST: RequestHandler = async ({ request }) => {
 		const ogData = await fetchOpenGraph(url);
 		return json(ogData);
 	} catch (err) {
-		return error(500, 'Failed to fetch OpenGraph data');
+		return error(500, `Failed to fetch OpenGraph data ${err}`);
 	}
 };
