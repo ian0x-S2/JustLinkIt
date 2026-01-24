@@ -58,12 +58,17 @@ export class LinkStore {
 	}
 
 	activeWorkspace = $derived.by(() => {
-		return this.workspaces.find((w) => w.id === this.activeWorkspaceId) || this.workspaces[0] || {
+		const found = this.workspaces.find((w) => w.id === this.activeWorkspaceId);
+		if (found) return found;
+		
+		if (this.workspaces.length > 0) return this.workspaces[0];
+
+		return {
 			id: 'default',
 			name: 'My Workspace',
 			slug: 'my-workspace',
 			createdAt: 0
-		};
+		} as Workspace;
 	});
 
 	filteredLinks = $derived.by(() => {
@@ -200,13 +205,25 @@ export class LinkStore {
 	}
 
 	async addWorkspace(name: string) {
-		const res = await fetch('/api/workspaces', {
-			method: 'POST',
-			body: JSON.stringify({ name })
-		});
-		const newWorkspace = await res.json();
-		this.workspaces.push(newWorkspace);
-		return newWorkspace;
+		try {
+			const res = await fetch('/api/workspaces', {
+				method: 'POST',
+				body: JSON.stringify({ name })
+			});
+			if (!res.ok) {
+				const error = await res.json();
+				throw new Error(error.error || 'Failed to create workspace');
+			}
+			const newWorkspace = await res.json();
+			if (!newWorkspace || !newWorkspace.id) {
+				throw new Error('Invalid workspace returned from API');
+			}
+			this.workspaces = [...this.workspaces, newWorkspace];
+			return newWorkspace;
+		} catch (e) {
+			console.error('Add workspace failed:', e);
+			throw e;
+		}
 	}
 
 	async removeWorkspace(id: string) {

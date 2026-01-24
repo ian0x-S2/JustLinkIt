@@ -78,11 +78,11 @@
 			</div>
 
 			<!-- Tags: Rectangular (Linear) -->
-			<div class="hidden max-w-[240px] shrink-0 items-center gap-1 overflow-hidden lg:flex">
+			<div class="hidden max-w-60 shrink-0 items-center gap-1 overflow-hidden lg:flex">
 				{#each link.tags as tag (tag)}
 					<Badge
 						variant="secondary"
-						class="h-5 rounded-[4px] border border-transparent bg-muted/40 px-1.5 text-[10px] font-medium text-muted-foreground/80 transition-all hover:border-border"
+						class="h-5 rounded-lg border border-transparent bg-muted/40 px-1.5 text-[10px] font-medium text-muted-foreground/80 transition-all hover:border-border"
 					>
 						{tag}
 					</Badge>
@@ -167,7 +167,7 @@
 								</Button>
 							{/if}
 
-							<div class="my-1 h-[1px] bg-border"></div>
+							<div class="my-1 h-px bg-border"></div>
 
 							<Button
 								variant="ghost"

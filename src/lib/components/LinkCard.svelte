@@ -59,7 +59,7 @@
 		<!-- Domain Badge Overlay -->
 		<div class="absolute bottom-2 left-2">
 			<span
-				class="rounded-[4px] border bg-background/80 px-1.5 py-0.5 text-[10px] font-medium text-foreground backdrop-blur-sm"
+				class="rounded-lg border bg-background/80 px-1.5 py-0.5 text-[10px] font-medium text-foreground backdrop-blur-sm"
 			>
 				{getDomain(link.url)}
 			</span>
@@ -101,7 +101,7 @@
 	</div>
 
 	<!-- Bottom: Actions & Meta -->
-	<div class="flex items-center justify-between border-t bg-muted/[0.02] px-3.5 py-2.5">
+	<div class="flex items-center justify-between border-t bg-muted/2 px-3.5 py-2.5">
 		<span class="text-[10px] font-medium tracking-tight text-muted-foreground/40 uppercase">
 			{formatDistanceToNow(link.createdAt, { addSuffix: true })}
 		</span>
@@ -191,7 +191,7 @@
 							</Button>
 						{/if}
 
-						<div class="my-1 h-[1px] bg-border"></div>
+						<div class="my-1 h-px bg-border"></div>
 
 						<Button
 							variant="ghost"

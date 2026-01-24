@@ -11,17 +11,31 @@ export const GET: RequestHandler = async () => {
 };
 
 export const POST: RequestHandler = async ({ request }) => {
-	const data = await request.json();
-	const id = data.id || crypto.randomUUID();
-	
-	const newWorkspace = {
-		...data,
-		id,
-		createdAt: data.createdAt || Date.now()
-	};
+	try {
+		const data = await request.json();
+		if (!data.name) {
+			return json({ error: 'Name is required' }, { status: 400 });
+		}
 
-	await db.insert(workspaces).values(newWorkspace);
-	cacheManager.clear(); // Nuclear option for simplicity on workspace changes
-	
-	return json(newWorkspace);
+		const id = data.id || crypto.randomUUID();
+		const slug = data.slug || data.name.toLowerCase().trim()
+			.replace(/[^\w\s-]/g, '')
+			.replace(/[\s_-]+/g, '-')
+			.replace(/^-+|-+$/g, '') + '-' + id.slice(0, 5);
+		
+		const newWorkspace = {
+			...data,
+			id,
+			slug,
+			createdAt: data.createdAt || Date.now()
+		};
+
+		await db.insert(workspaces).values(newWorkspace);
+		cacheManager.clear();
+		
+		return json(newWorkspace);
+	} catch (e) {
+		console.error('Failed to create workspace:', e);
+		return json({ error: 'Failed to create workspace' }, { status: 500 });
+	}
 };

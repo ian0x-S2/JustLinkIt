@@ -58,7 +58,7 @@
 		<config.icon class="h-8 w-8 text-muted-foreground/40" />
 	</div>
 	<h3 class="text-base font-semibold text-foreground">{config.title}</h3>
-	<p class="mt-1.5 text-sm text-muted-foreground max-w-[280px]">
+	<p class="mt-1.5 text-sm text-muted-foreground max-w-70">
 		{config.description}
 	</p>
 	

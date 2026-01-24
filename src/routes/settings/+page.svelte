@@ -23,7 +23,7 @@
 			</div>
 			<Badge
 				variant="outline"
-				class="h-4.5 rounded-[4px] px-1.5 text-[9px] font-bold tracking-tighter uppercase"
+				class="h-4.5 rounded-lg px-1.5 text-[9px] font-bold tracking-tighter uppercase"
 				>Healthy</Badge
 			>
 		</div>

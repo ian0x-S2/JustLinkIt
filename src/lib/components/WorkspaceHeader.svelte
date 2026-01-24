@@ -27,16 +27,16 @@
 <header class="h-12 shrink-0 border-b bg-background">
 	<div class="flex h-full items-center justify-between gap-4 px-3">
 		<!-- Left Section: Breadcrumbs -->
-		<div class="flex min-w-[180px] items-center gap-1.5">
+		<div class="flex min-w-45 items-center gap-1.5">
 			<Sidebar.Trigger
 				class="h-7 w-7 shrink-0 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
 			/>
-			<div class="mx-0.5 h-3 w-[1px] shrink-0 bg-border"></div>
+			<div class="mx-0.5 h-3 w-px shrink-0 bg-border"></div>
 
 			<nav class="flex min-w-0 items-center gap-1.5 text-[13px] font-medium">
 				<span
 					class="cursor-pointer truncate text-muted-foreground transition-colors hover:text-foreground"
-					>{store.activeWorkspace.name}</span
+					>{store.activeWorkspace?.name || 'Workspace'}</span
 				>
 				<ChevronRight class="h-3.5 w-3.5 shrink-0 text-muted-foreground/30" />
 				<span class="truncate text-foreground">{title}</span>
@@ -73,12 +73,12 @@
 		</div>
 
 		<!-- Right Section: Actions -->
-		<div class="flex min-w-[180px] items-center justify-end gap-1">
+		<div class="flex min-w-45 items-center justify-end gap-1">
 			<div class="flex items-center gap-0.5 rounded-md border bg-muted/20 p-0.5">
 				<Tooltip.Provider delayDuration={0}>
 					<Tooltip.Root>
 						<Tooltip.Trigger
-							class="flex h-6.5 w-6.5 items-center justify-center rounded-[4px] transition-all {viewMode ===
+							class="flex h-6.5 w-6.5 items-center justify-center rounded-lg transition-all {viewMode ===
 							'list'
 								? 'border bg-background text-foreground shadow-sm'
 								: 'text-muted-foreground hover:bg-muted/50'}"
@@ -91,7 +91,7 @@
 
 					<Tooltip.Root>
 						<Tooltip.Trigger
-							class="flex h-6.5 w-6.5 items-center justify-center rounded-[4px] transition-all {viewMode ===
+							class="flex h-6.5 w-6.5 items-center justify-center rounded-lg transition-all {viewMode ===
 							'grid'
 								? 'border bg-background text-foreground shadow-sm'
 								: 'text-muted-foreground hover:bg-muted/50'}"
@@ -104,7 +104,7 @@
 				</Tooltip.Provider>
 			</div>
 
-			<div class="mx-1 h-4 w-[1px] bg-border"></div>
+			<div class="mx-1 h-4 w-px bg-border"></div>
 
 			<Button
 				variant="ghost"

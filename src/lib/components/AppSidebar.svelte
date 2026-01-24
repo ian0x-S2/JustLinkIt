@@ -42,11 +42,19 @@
 
 	async function handleCreateWorkspace(e?: Event) {
 		e?.preventDefault();
-		if (newWorkspaceName.trim()) {
-			const newWs = await store.addWorkspace(newWorkspaceName.trim());
-			await store.setActiveWorkspace(newWs.id);
-			newWorkspaceName = '';
-			isCreateWorkspaceOpen = false;
+		const name = newWorkspaceName.trim();
+		if (name) {
+			try {
+				const newWs = await store.addWorkspace(name);
+				if (newWs && newWs.id) {
+					await store.setActiveWorkspace(newWs.id);
+					newWorkspaceName = '';
+					isCreateWorkspaceOpen = false;
+				}
+			} catch (err) {
+				console.error('Failed to create workspace:', err);
+				// You could add a toast or error message here
+			}
 		}
 	}
 </script>
@@ -66,7 +74,7 @@
 					class="flex min-w-0 flex-1 flex-col items-start group-data-[collapsible=icon]:hidden"
 				>
 					<span class="truncate text-[13px] leading-none font-bold tracking-tight">
-						{store.activeWorkspace.name}
+						{store.activeWorkspace?.name || 'Workspace'}
 					</span>
 					<span class="mt-0.5 text-[10px] leading-none text-muted-foreground">Free Plan</span>
 				</div>
@@ -92,9 +100,9 @@
 								<div
 									class="flex h-5 w-5 items-center justify-center rounded border bg-muted/30 text-[10px] font-bold"
 								>
-									{ws.name.charAt(0)}
+									{ws.name?.[0] || '?'}
 								</div>
-								<span class={ws.id === store.activeWorkspace.id ? 'font-semibold' : ''}>{ws.name}</span>
+								<span class={ws.id === store.activeWorkspace?.id ? 'font-semibold' : ''}>{ws.name || 'Untitled'}</span>
 							</div>
 							{#if ws.id === store.activeWorkspace.id}
 								<Check class="h-3.5 w-3.5 text-primary" />
