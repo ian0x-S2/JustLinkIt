@@ -4,11 +4,23 @@
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import AppSidebar from "$lib/components/AppSidebar.svelte";
 
+	import { hydrateStore, maybeMigrate } from '$lib/store.svelte';
+
 	interface Props {
 		children?: import('svelte').Snippet;
+		data: any;
 	}
 
-	let { children }: Props = $props();
+	let { children, data }: Props = $props();
+
+	// Immediate hydration
+	$effect.pre(() => {
+		hydrateStore(data);
+	});
+
+	$effect(() => {
+		maybeMigrate();
+	});
 
 	let open = $state(true);
 	let headerElement = $state<HTMLElement | null>(null);

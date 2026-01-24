@@ -37,11 +37,11 @@
 		setMode(isDark ? 'light' : 'dark');
 	}
 
-	function handleCreateWorkspace(e?: Event) {
+	async function handleCreateWorkspace(e?: Event) {
 		e?.preventDefault();
 		if (newWorkspaceName.trim()) {
-			const newWs = addWorkspace(newWorkspaceName.trim());
-			setActiveWorkspace(newWs.id);
+			const newWs = await addWorkspace(newWorkspaceName.trim());
+			await setActiveWorkspace(newWs.id);
 			newWorkspaceName = '';
 			isCreateWorkspaceOpen = false;
 		}

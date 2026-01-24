@@ -18,24 +18,8 @@ export interface Link {
 	createdAt: number;
 	updatedAt: number;
 	tags: string[];
-	aiSummary?: string;
 	workspaceId: string;
 	isFavorite?: boolean;
 	isArchived?: boolean;
 	isDeleted?: boolean;
-}
-
-export interface AIConfig {
-	enabled: boolean;
-	baseUrl: string;
-	apiKey: string;
-	model: string;
-}
-
-export interface AISuggestion {
-	type: 'summary' | 'tags' | 'insight';
-	linkId: string;
-	content: string | string[];
-	estimatedCost: number;
-	pending: boolean;
 }

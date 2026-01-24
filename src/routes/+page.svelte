@@ -71,39 +71,38 @@
 		type="hover"
 		class="my-2 flex min-h-[calc(100%-1rem)] w-[98%] flex-col rounded-md border bg-muted/4 shadow-[0_1px_3px_rgba(0,0,0,0.02)]"
 	>
-		<div
-			class="flex w-full flex-1 flex-col {search.filteredLinks.length === 0
-				? 'justify-center'
-				: 'justify-start'}"
-		>
-			<div class="w-full {viewMode === 'list' ? 'px-0 pt-0 pb-6' : 'px-3 py-6 md:px-6 lg:px-8'}">
-				{#if (search.filteredLinks || []).length === 0}
-					<EmptyState onAdd={handleAddLink} />
-				{:else if viewMode === 'list'}
-					<div class="flex flex-col border-b bg-background">
-						{#each search.filteredLinks as link (link.id)}
-							<LinkItem {link} onedit={handleEditLink} ondelete={handleDeleteLink} />
-						{/each}
-					</div>
-				{:else}
-					<!-- Card Mode -->
-					<div
-						class="3xl:grid-cols-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-					>
-						{#each search.filteredLinks as link (link.id)}
-							<LinkCard {link} onedit={handleEditLink} ondelete={handleDeleteLink} />
-						{/each}
-					</div>
-				{/if}
+			<div
+				class="flex w-full flex-1 flex-col {search.filteredLinks.length === 0
+					? 'justify-center'
+					: 'justify-start'}"
+			>
+				<div class="w-full {viewMode === 'list' ? 'px-0 pt-0 pb-6' : 'px-3 py-6 md:px-6 lg:px-8'}">
+					{#if (search.filteredLinks || []).length === 0}
+						<EmptyState onAdd={handleAddLink} />
+					{:else if viewMode === 'list'}
+						<div class="flex flex-col border-b bg-background">
+							{#each search.filteredLinks as link (link.id)}
+								<LinkItem {link} onedit={handleEditLink} ondelete={handleDeleteLink} />
+							{/each}
+						</div>
+					{:else}
+						<!-- Card Mode -->
+						<div
+							class="3xl:grid-cols-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+						>
+							{#each search.filteredLinks as link (link.id)}
+								<LinkCard {link} onedit={handleEditLink} ondelete={handleDeleteLink} />
+							{/each}
+						</div>
+					{/if}
+				</div>
 			</div>
-		</div>
 
-		<!-- Safety bottom inset -->
-		<div class="h-12 w-full shrink-0"></div>
-	</ScrollArea>
-</div>
-
-<Dialog.Root bind:open={isAddDialogOpen}>
+					<!-- Safety bottom inset -->
+					<div class="h-12 w-full shrink-0"></div>
+				</ScrollArea>
+			</div>
+			<Dialog.Root bind:open={isAddDialogOpen}>
 	<Dialog.Content class="overflow-hidden rounded-lg border-none p-0 shadow-2xl sm:max-w-[640px]">
 		<LinkForm
 			link={editingLink}

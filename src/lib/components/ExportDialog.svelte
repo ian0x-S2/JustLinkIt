@@ -28,9 +28,6 @@
 			if (link.tags.length > 0) {
 				markdown += `Tags: ${link.tags.join(', ')}\n\n`;
 			}
-			if (link.aiSummary) {
-				markdown += `**AI Summary:** ${link.aiSummary}\n\n`;
-			}
 			markdown += '---\n\n';
 		});
 		const blob = new Blob([markdown], { type: 'text/markdown' });

@@ -1,110 +1,72 @@
-import type { Link, AIConfig, Workspace } from './types';
+import type { Link, Workspace } from './types';
 import { browser } from '$app/environment';
 import { SvelteSet } from 'svelte/reactivity';
 
-const LINKS_STORAGE_KEY = 'links_data';
-const AI_CONFIG_STORAGE_KEY = 'ai_config';
-const WORKSPACES_STORAGE_KEY = 'workspaces_data';
 const ACTIVE_WORKSPACE_KEY = 'active_workspace_id';
-
-function loadLinks(): Link[] {
-	if (!browser) return [];
-	try {
-		const stored = localStorage.getItem(LINKS_STORAGE_KEY);
-		return stored ? JSON.parse(stored) : [];
-	} catch {
-		return [];
-	}
-}
-
-function saveLinks(links: Link[]) {
-	if (!browser) return;
-	localStorage.setItem(LINKS_STORAGE_KEY, JSON.stringify(links));
-}
-
-function loadAIConfig(): AIConfig {
-	const defaultConfig: AIConfig = {
-		enabled: false,
-		baseUrl: 'https://api.openai.com/v1',
-		apiKey: '',
-		model: 'gpt-4o-mini'
-	};
-	if (!browser) return defaultConfig;
-	try {
-		const stored = localStorage.getItem(AI_CONFIG_STORAGE_KEY);
-		return stored ? JSON.parse(stored) : defaultConfig;
-	} catch {
-		return defaultConfig;
-	}
-}
-
-function saveAIConfig(config: AIConfig) {
-	if (!browser) return;
-	localStorage.setItem(AI_CONFIG_STORAGE_KEY, JSON.stringify(config));
-}
-
-function loadWorkspaces(): Workspace[] {
-	const defaultWorkspace: Workspace = {
-		id: 'default',
-		name: 'My Workspace',
-		slug: 'my-workspace',
-		createdAt: Date.now()
-	};
-	if (!browser) return [defaultWorkspace];
-	try {
-		const stored = localStorage.getItem(WORKSPACES_STORAGE_KEY);
-		return stored ? JSON.parse(stored) : [defaultWorkspace];
-	} catch {
-		return [defaultWorkspace];
-	}
-}
-
-function saveWorkspaces(workspaces: Workspace[]) {
-	if (!browser) return;
-	localStorage.setItem(WORKSPACES_STORAGE_KEY, JSON.stringify(workspaces));
-}
-
-function loadActiveWorkspaceId(): string {
-	if (!browser) return 'default';
-	return localStorage.getItem(ACTIVE_WORKSPACE_KEY) || 'default';
-}
-
-function saveActiveWorkspaceId(id: string) {
-	if (!browser) return;
-	localStorage.setItem(ACTIVE_WORKSPACE_KEY, id);
-}
+const MIGRATED_KEY = 'sqlite_migrated';
 
 class LinkStore {
-	links = $state<Link[]>(loadLinks());
-	aiConfig = $state<AIConfig>(loadAIConfig());
-	workspaces = $state<Workspace[]>(loadWorkspaces());
-	activeWorkspaceId = $state<string>(loadActiveWorkspaceId());
+	links = $state<Link[]>([]);
+	workspaces = $state<Workspace[]>([]);
+	activeWorkspaceId = $state<string>('default');
 	activeCategory = $state<'inbox' | 'favorites' | 'archive' | 'trash'>('inbox');
 	searchQuery = $state('');
 	selectedTags = $state<string[]>([]);
 
-	activeWorkspace = $derived.by(() => {
-		return this.workspaces.find((w) => w.id === this.activeWorkspaceId) || this.workspaces[0];
-	});
+	// Hydrate the store with server-side data
+	hydrate(data: { workspaces: Workspace[], links: Link[], activeWorkspaceId: string }) {
+		this.workspaces = data.workspaces;
+		this.links = data.links;
+		this.activeWorkspaceId = data.activeWorkspaceId;
+	}
 
-	workspaceLinks = $derived.by(() => {
-		return this.links.filter((l) => l.workspaceId === this.activeWorkspaceId);
+	async maybeMigrate() {
+		if (!browser || localStorage.getItem(MIGRATED_KEY)) return;
+
+		const localLinks = localStorage.getItem('links_data');
+		const localWorkspaces = localStorage.getItem('workspaces_data');
+
+		if (localLinks || localWorkspaces) {
+			try {
+				const response = await fetch('/api/migrate', {
+					method: 'POST',
+					body: JSON.stringify({
+						links: localLinks ? JSON.parse(localLinks) : [],
+						workspaces: localWorkspaces ? JSON.parse(localWorkspaces) : []
+					})
+				});
+				if (response.ok) {
+					localStorage.setItem(MIGRATED_KEY, 'true');
+					window.location.reload(); // Reload once to get server-side data from SQLite
+				}
+			} catch (e) {
+				console.error('Migration failed', e);
+			}
+		} else {
+			localStorage.setItem(MIGRATED_KEY, 'true');
+		}
+	}
+
+	async loadLinks() {
+		const params = new URLSearchParams({
+			workspaceId: this.activeWorkspaceId,
+			category: this.activeCategory
+		});
+		const res = await fetch(`/api/links?${params}`);
+		this.links = await res.json();
+	}
+
+	activeWorkspace = $derived.by(() => {
+		return this.workspaces.find((w) => w.id === this.activeWorkspaceId) || this.workspaces[0] || {
+			id: 'default',
+			name: 'My Workspace',
+			slug: 'my-workspace',
+			createdAt: Date.now()
+		};
 	});
 
 	filteredLinks = $derived.by(() => {
-		let result = this.workspaceLinks;
-
-		// Filter by category
-		if (this.activeCategory === 'inbox') {
-			result = result.filter((l) => !l.isArchived && !l.isDeleted);
-		} else if (this.activeCategory === 'favorites') {
-			result = result.filter((l) => l.isFavorite && !l.isDeleted);
-		} else if (this.activeCategory === 'archive') {
-			result = result.filter((l) => l.isArchived && !l.isDeleted);
-		} else if (this.activeCategory === 'trash') {
-			result = result.filter((l) => l.isDeleted);
-		}
-
+		let result = this.links;
 		const query = (this.searchQuery || '').toLowerCase();
 
 		if (query) {
@@ -126,184 +88,173 @@ class LinkStore {
 
 	allTags = $derived.by(() => {
 		const tagSet = new SvelteSet<string>();
-		this.workspaceLinks.forEach((link) => {
+		this.links.forEach((link) => {
 			link.tags.forEach((tag) => tagSet.add(tag));
 		});
 		return Array.from(tagSet).sort();
 	});
 
-	add(link: Omit<Link, 'id' | 'createdAt' | 'updatedAt' | 'workspaceId'>) {
+	async add(link: Omit<Link, 'id' | 'createdAt' | 'updatedAt' | 'workspaceId'>) {
+		const id = crypto.randomUUID();
+		const now = Date.now();
 		const newLink: Link = {
 			...link,
-			id: crypto.randomUUID(),
+			id,
 			workspaceId: this.activeWorkspaceId,
-			createdAt: Date.now(),
-			updatedAt: Date.now()
+			createdAt: now,
+			updatedAt: now,
+			isFavorite: false,
+			isArchived: false,
+			isDeleted: false,
+			tags: (link as any).tags || []
 		};
-		this.links.push(newLink);
-		saveLinks(this.links);
-	}
 
-	update(id: string, updates: Partial<Link>) {
-		const index = this.links.findIndex((l) => l.id === id);
-		if (index !== -1) {
-			this.links[index] = { ...this.links[index], ...updates, updatedAt: Date.now() };
-			saveLinks(this.links);
+		// Optimistic update
+		this.links = [newLink, ...this.links];
+
+		try {
+			const res = await fetch('/api/links', {
+				method: 'POST',
+				body: JSON.stringify({ ...link, workspaceId: this.activeWorkspaceId })
+			});
+			if (!res.ok) throw new Error('Failed to save');
+			const saved = await res.json();
+			// Replace optimistic with real data
+			const idx = this.links.findIndex(l => l.id === id);
+			if (idx !== -1) this.links[idx] = saved;
+		} catch (e) {
+			this.links = this.links.filter(l => l.id !== id);
+			console.error('Add failed', e);
 		}
 	}
 
-	toggleFavorite(id: string) {
+	async update(id: string, updates: Partial<Link>) {
 		const index = this.links.findIndex((l) => l.id === id);
-		if (index !== -1) {
-			this.links[index].isFavorite = !this.links[index].isFavorite;
-			saveLinks(this.links);
+		if (index === -1) return;
+
+		const original = { ...this.links[index] };
+		this.links[index] = { ...this.links[index], ...updates, updatedAt: Date.now() };
+
+		try {
+			const res = await fetch(`/api/links/${id}`, {
+				method: 'PATCH',
+				body: JSON.stringify(updates)
+			});
+			if (!res.ok) throw new Error();
+		} catch (e) {
+			this.links[index] = original;
 		}
 	}
 
-	toggleArchived(id: string) {
-		const index = this.links.findIndex((l) => l.id === id);
-		if (index !== -1) {
-			this.links[index].isArchived = !this.links[index].isArchived;
-			saveLinks(this.links);
+	async toggleFavorite(id: string) {
+		const link = this.links.find(l => l.id === id);
+		if (link) await this.update(id, { isFavorite: !link.isFavorite });
+	}
+
+	async toggleArchived(id: string) {
+		const link = this.links.find(l => l.id === id);
+		if (link) {
+			const original = this.links;
+			this.links = this.links.filter(l => l.id !== id); // Instant UI feedback
+			try {
+				await this.update(id, { isArchived: !link.isArchived });
+			} catch (e) {
+				this.links = original;
+			}
 		}
 	}
 
-	toggleDeleted(id: string) {
-		const index = this.links.findIndex((l) => l.id === id);
-		if (index !== -1) {
-			this.links[index].isDeleted = !this.links[index].isDeleted;
-			saveLinks(this.links);
+	async toggleDeleted(id: string) {
+		const link = this.links.find(l => l.id === id);
+		if (link) {
+			const original = this.links;
+			this.links = this.links.filter(l => l.id !== id);
+			try {
+				await this.update(id, { isDeleted: !link.isDeleted });
+			} catch (e) {
+				this.links = original;
+			}
 		}
 	}
 
-	remove(id: string) {
+	async remove(id: string) {
+		const original = this.links;
 		this.links = this.links.filter((l) => l.id !== id);
-		saveLinks(this.links);
+		try {
+			await fetch(`/api/links/${id}`, { method: 'DELETE' });
+		} catch (e) {
+			this.links = original;
+		}
 	}
 
-	updateConfig(config: AIConfig) {
-		this.aiConfig = { ...this.aiConfig, ...config };
-		saveAIConfig(this.aiConfig);
+	async setActiveWorkspace(id: string) {
+		this.activeWorkspaceId = id;
+		this.selectedTags = [];
+		this.activeCategory = 'inbox';
+		if (browser) {
+			document.cookie = `${ACTIVE_WORKSPACE_KEY}=${id}; path=/; max-age=31536000`;
+		}
+		await this.loadLinks();
+	}
+
+	async setCategory(category: 'inbox' | 'favorites' | 'archive' | 'trash') {
+		this.activeCategory = category;
+		await this.loadLinks();
+	}
+
+	async addWorkspace(name: string) {
+		const res = await fetch('/api/workspaces', {
+			method: 'POST',
+			body: JSON.stringify({ name })
+		});
+		const newWorkspace = await res.json();
+		this.workspaces.push(newWorkspace);
+		return newWorkspace;
+	}
+
+	async removeWorkspace(id: string) {
+		if (this.workspaces.length <= 1) return;
+		this.workspaces = this.workspaces.filter((w) => w.id !== id);
+		await fetch(`/api/workspaces/${id}`, { method: 'DELETE' });
 	}
 
 	toggleTag(tag: string) {
 		if (this.selectedTags.includes(tag)) {
 			this.selectedTags = this.selectedTags.filter((t) => t !== tag);
 		} else {
-			this.selectedTags.push(tag);
+			this.selectedTags = [...this.selectedTags, tag];
 		}
-	}
-
-	// Workspace methods
-	setActiveWorkspace(id: string) {
-		this.activeWorkspaceId = id;
-		this.selectedTags = []; // Reset filters when changing workspace
-		this.activeCategory = 'inbox'; // Reset category when changing workspace
-		saveActiveWorkspaceId(id);
-	}
-
-	addWorkspace(name: string) {
-		const id = crypto.randomUUID();
-		const slug = name
-			.toLowerCase()
-			.replace(/\s+/g, '-')
-			.replace(/[^a-z0-9-]/g, '');
-		const newWorkspace: Workspace = {
-			id,
-			name,
-			slug,
-			createdAt: Date.now()
-		};
-		this.workspaces.push(newWorkspace);
-		saveWorkspaces(this.workspaces);
-		return newWorkspace;
-	}
-
-	removeWorkspace(id: string) {
-		if (this.workspaces.length <= 1) return; // Prevent deleting last workspace
-		this.workspaces = this.workspaces.filter((w) => w.id !== id);
-		this.links = this.links.filter((l) => l.workspaceId !== id);
-		if (this.activeWorkspaceId === id) {
-			this.setActiveWorkspace(this.workspaces[0].id);
-		}
-		saveWorkspaces(this.workspaces);
-		saveLinks(this.links);
 	}
 }
 
 export const linkStore = new LinkStore();
 
 export const links = {
-	get all() {
-		return linkStore.workspaceLinks;
-	},
-	get length() {
-		return linkStore.workspaceLinks.length;
-	},
-	get activeCategory() {
-		return linkStore.activeCategory;
-	},
-	set activeCategory(v: 'inbox' | 'favorites' | 'archive' | 'trash') {
-		linkStore.activeCategory = v;
-	}
+	get all() { return linkStore.links; },
+	get activeCategory() { return linkStore.activeCategory; },
+	set activeCategory(v) { linkStore.setCategory(v); }
 };
 
 export const workspaces = {
-	get all() {
-		return linkStore.workspaces;
-	},
-	get active() {
-		return linkStore.activeWorkspace;
-	},
-	set activeId(id: string) {
-		linkStore.setActiveWorkspace(id);
-	},
+	get all() { return linkStore.workspaces; },
+	get active() { return linkStore.activeWorkspace; },
+	set activeId(id: string) { linkStore.setActiveWorkspace(id); },
 	add: (name: string) => linkStore.addWorkspace(name),
 	remove: (id: string) => linkStore.removeWorkspace(id)
 };
 
-export const aiConfig = {
-	get enabled() {
-		return linkStore.aiConfig.enabled;
-	},
-	get baseUrl() {
-		return linkStore.aiConfig.baseUrl;
-	},
-	get apiKey() {
-		return linkStore.aiConfig.apiKey;
-	},
-	get model() {
-		return linkStore.aiConfig.model;
-	}
-};
-
 export const search = {
-	get query() {
-		return linkStore.searchQuery;
-	},
-	set query(v: string) {
-		linkStore.searchQuery = v;
-	},
-	get filteredLinks() {
-		return linkStore.filteredLinks || [];
-	}
+	get query() { return linkStore.searchQuery; },
+	set query(v: string) { linkStore.searchQuery = v; },
+	get filteredLinks() { return linkStore.filteredLinks; }
 };
 
 export const selectedTags = {
-	get all() {
-		return linkStore.selectedTags;
-	},
-	get length() {
-		return linkStore.selectedTags.length;
-	},
+	get all() { return linkStore.selectedTags; },
 	includes: (tag: string) => linkStore.selectedTags.includes(tag)
 };
 
-export const allTags = {
-	get all() {
-		return linkStore.allTags;
-	}
-};
+export const allTags = { get all() { return linkStore.allTags; } };
 
 export const addLink = (link: any) => linkStore.add(link);
 export const updateLink = (id: string, updates: any) => linkStore.update(id, updates);
@@ -311,8 +262,8 @@ export const deleteLink = (id: string) => linkStore.remove(id);
 export const toggleFavorite = (id: string) => linkStore.toggleFavorite(id);
 export const toggleArchived = (id: string) => linkStore.toggleArchived(id);
 export const toggleDeleted = (id: string) => linkStore.toggleDeleted(id);
-export const updateAIConfig = (config: AIConfig) => linkStore.updateConfig(config);
 export const toggleSelectedTag = (tag: string) => linkStore.toggleTag(tag);
 export const setActiveWorkspace = (id: string) => linkStore.setActiveWorkspace(id);
 export const addWorkspace = (name: string) => linkStore.addWorkspace(name);
-export const removeWorkspace = (id: string) => linkStore.removeWorkspace(id);
+export const hydrateStore = (data: any) => linkStore.hydrate(data);
+export const maybeMigrate = () => linkStore.maybeMigrate();
