@@ -116,7 +116,7 @@
 </div>
 
 <Dialog.Root bind:open={isDeleteDialogOpen}>
-	<Dialog.Content class="max-w-[400px]">
+	<Dialog.Content class="max-w-100">
 		<Dialog.Header>
 			<Dialog.Title>Delete Workspace</Dialog.Title>
 			<Dialog.Description class="text-[13px]">

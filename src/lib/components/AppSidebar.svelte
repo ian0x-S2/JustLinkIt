@@ -21,6 +21,9 @@
 	import { setMode } from 'mode-watcher';
 	import { Button } from '$lib/components/ui/button';
 	import { getContext } from 'svelte';
+	import { cn } from '$lib/utils.js';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import type { LinkStore } from '$lib/store.svelte';
 
 	const store = getContext<LinkStore>('store');
@@ -40,6 +43,20 @@
 		setMode(isDark ? 'light' : 'dark');
 	}
 
+	async function handleWorkspaceSwitch(id: string) {
+		await store.setActiveWorkspace(id);
+		if (page.url.pathname !== '/') {
+			await goto('/');
+		}
+	}
+
+	async function handleCategorySwitch(category: typeof navMain[number]['id']) {
+		store.activeCategory = category;
+		if (page.url.pathname !== '/') {
+			await goto('/');
+		}
+	}
+
 	async function handleCreateWorkspace(e?: Event) {
 		e?.preventDefault();
 		const name = newWorkspaceName.trim();
@@ -50,10 +67,12 @@
 					await store.setActiveWorkspace(newWs.id);
 					newWorkspaceName = '';
 					isCreateWorkspaceOpen = false;
+					if (page.url.pathname !== '/') {
+						await goto('/');
+					}
 				}
 			} catch (err) {
 				console.error('Failed to create workspace:', err);
-				// You could add a toast or error message here
 			}
 		}
 	}
@@ -93,7 +112,7 @@
 				<DropdownMenu.Group>
 					{#each store.workspaces as ws (ws.id)}
 						<DropdownMenu.Item
-							onclick={() => store.setActiveWorkspace(ws.id)}
+							onclick={() => handleWorkspaceSwitch(ws.id)}
 							class="flex cursor-pointer items-center justify-between rounded-md px-2 py-1.5 text-[13px]"
 						>
 							<div class="flex items-center gap-2">
@@ -134,8 +153,8 @@
 					{#each navMain as item (item.id)}
 						<Sidebar.MenuItem>
 							<Sidebar.MenuButton
-								isActive={store.activeCategory === item.id}
-								onclick={() => (store.activeCategory = item.id)}
+								isActive={page.url.pathname === '/' && store.activeCategory === item.id}
+								onclick={() => handleCategorySwitch(item.id)}
 								class="h-8 rounded-md px-3 text-[13px] transition-colors hover:bg-muted/50 data-[active=true]:bg-muted data-[active=true]:font-medium"
 							>
 								{#snippet tooltipContent()}
@@ -188,7 +207,10 @@
 				variant="ghost"
 				size="sm"
 				href="/settings"
-				class="h-8 w-full justify-start gap-2 rounded-md px-2 text-[12px] font-medium text-muted-foreground group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:text-foreground"
+				class={cn(
+					"h-8 w-full justify-start gap-2 rounded-md px-2 text-[12px] font-medium text-muted-foreground group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:text-foreground",
+					page.url.pathname === '/settings' && "bg-muted text-foreground"
+				)}
 			>
 				<Settings class="h-3.5 w-3.5" />
 				<span class="group-data-[collapsible=icon]:hidden">Settings</span>
