@@ -26,7 +26,6 @@
 	$effect(() => {
 		if (!open) {
 			value = '';
-			if (inputRef) inputRef.value = '';
 		}
 	});
 
@@ -39,7 +38,6 @@
 			}
 			selectedValue = undefined;
 			value = ''; // Limpa a busca após selecionar
-			if (inputRef) inputRef.value = '';
 		}
 	});
 
@@ -79,7 +77,6 @@
 
 		onchange([...selected, trimmed]);
 		value = '';
-		if (inputRef) inputRef.value = '';
 	}
 
 	function removeTag(tag: string) {
@@ -140,6 +137,7 @@
 			<Combobox.Root
 				type="single"
 				bind:value={selectedValue}
+				inputValue={value}
 				items={store.allTags.map((t: any) => ({ value: t, label: t }))}
 				bind:open
 			>
@@ -149,7 +147,6 @@
 						placeholder={hasReachedLimit ? 'Maximum 10 tags reached' : 'Search or create tags...'}
 						disabled={hasReachedLimit}
 						class="h-10 w-full bg-transparent text-[13px] outline-none placeholder:text-muted-foreground/50 disabled:cursor-not-allowed disabled:opacity-50"
-						{value}
 						oninput={(e) => (value = e.currentTarget.value)}
 						onkeydown={(e) => {
 							if (e.key === 'Enter') {
