@@ -27,7 +27,11 @@
 		store.maybeMigrate();
 	});
 
-	let open = $state(true);
+	let open = $state(untrack(() => data.isSidebarOpen));
+
+	$effect(() => {
+		open = data.isSidebarOpen;
+	});
 </script>
 
 <ModeWatcher />

@@ -2,6 +2,7 @@ import { db } from '$lib/server/db';
 import { workspaces, links, linkTags, tags } from '$lib/server/db/schema';
 import { eq, desc,  sql } from 'drizzle-orm';
 import type { LayoutServerLoad } from './$types';
+import { SIDEBAR_COOKIE_NAME } from '$lib/components/ui/sidebar/constants';
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
 	// 1. Get workspaces with link counts
@@ -32,6 +33,9 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 
 	const activeWorkspaceId = cookies.get('active_workspace_id') || allWorkspaces[0].id;
 
+	const sidebarState = cookies.get(SIDEBAR_COOKIE_NAME);
+	const isSidebarOpen = sidebarState ? sidebarState === 'true' : true;
+
 	// 2. Get ALL links for the active workspace (to allow SPA-like instant filtering)
 	const dbLinks = db.select().from(links).where(
 		eq(links.workspaceId, activeWorkspaceId)
@@ -56,6 +60,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 	return {
 		workspaces: allWorkspaces,
 		links: linksWithTags,
-		activeWorkspaceId
+		activeWorkspaceId,
+		isSidebarOpen
 	};
 };
