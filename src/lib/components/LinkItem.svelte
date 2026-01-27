@@ -2,7 +2,7 @@
 	import type { Link } from '$lib/types';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
-	import { Trash2, FileText, Star, Archive, RotateCcw, Pencil, Ellipsis } from '@lucide/svelte';
+	import { Trash2, FileText, Star, Archive, RotateCcw, Pencil, Ellipsis, ExternalLink } from '@lucide/svelte';
 	import { formatDistanceToNow } from 'date-fns';
 	import * as Popover from '$lib/components/ui/popover';
 	import { getContext } from 'svelte';
@@ -97,7 +97,16 @@
 			</div>
 
 			<!-- Actions -->
-			<div class="flex shrink-0 items-center gap-1">
+			<div class="flex shrink-0 items-center gap-0.5">
+				<Button
+					variant="ghost"
+					size="icon"
+					class="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground"
+					onclick={() => window.open(link.url, '_blank')}
+				>
+					<ExternalLink class="h-3.5 w-3.5" />
+				</Button>
+
 				<Popover.Root bind:open={actionsOpen}>
 					<Popover.Trigger
 						class={cn(

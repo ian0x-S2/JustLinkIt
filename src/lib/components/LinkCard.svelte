@@ -107,29 +107,6 @@
 		</span>
 
 		<div class="flex items-center gap-0.5">
-			{#if !link.isDeleted}
-				<Button
-					variant="ghost"
-					size="icon"
-					class="h-7 w-7 rounded-md {link.isFavorite
-						? 'text-yellow-500 hover:text-yellow-600'
-						: 'text-muted-foreground hover:bg-muted hover:text-foreground'}"
-					onclick={() => store.toggleFavorite(link.id)}
-				>
-					<Star class="h-3.5 w-3.5 {link.isFavorite ? 'fill-current' : ''}" />
-				</Button>
-				<Button
-					variant="ghost"
-					size="icon"
-					class="h-7 w-7 rounded-md {link.isArchived
-						? 'text-primary hover:bg-primary/10'
-						: 'text-muted-foreground hover:bg-muted hover:text-foreground'}"
-					onclick={() => store.toggleArchived(link.id)}
-				>
-					<Archive class="h-3.5 w-3.5 {link.isArchived ? 'fill-current' : ''}" />
-				</Button>
-			{/if}
-
 			<Button
 				variant="ghost"
 				size="icon"
@@ -148,7 +125,7 @@
 				>
 					<Ellipsis class="h-3.5 w-3.5" />
 				</Popover.Trigger>
-				<Popover.Content align="end" class="w-40 rounded-md border p-1 shadow-lg">
+				<Popover.Content align="end" class="w-44 rounded-md border p-1 shadow-lg">
 					<div class="flex flex-col gap-0.5">
 						<Button
 							variant="ghost"
@@ -163,6 +140,36 @@
 							<span>Edit</span>
 						</Button>
 
+						{#if !link.isDeleted}
+							<Button
+								variant="ghost"
+								size="sm"
+								class="h-8 justify-start rounded-md px-2 text-[12px] font-medium {link.isFavorite
+									? 'text-yellow-500'
+									: ''}"
+								onclick={() => {
+									store.toggleFavorite(link.id);
+									actionsOpen = false;
+								}}
+							>
+								<Star class="mr-2 h-3 w-3 {link.isFavorite ? 'fill-current' : ''}" />
+								<span>{link.isFavorite ? 'Remove Favorite' : 'Mark Favorite'}</span>
+							</Button>
+
+							<Button
+								variant="ghost"
+								size="sm"
+								class="h-8 justify-start rounded-md px-2 text-[12px] font-medium"
+								onclick={() => {
+									store.toggleArchived(link.id);
+									actionsOpen = false;
+								}}
+							>
+								<Archive class="mr-2 h-3 w-3" />
+								<span>{link.isArchived ? 'Unarchive' : 'Archive'}</span>
+							</Button>
+						{/if}
+
 						{#if link.isDeleted}
 							<Button
 								variant="ghost"
@@ -175,19 +182,6 @@
 							>
 								<RotateCcw class="mr-2 h-3 w-3" />
 								<span>Restore</span>
-							</Button>
-						{:else}
-							<Button
-								variant="ghost"
-								size="sm"
-								class="h-8 justify-start rounded-md px-2 text-[12px] font-medium"
-								onclick={() => {
-									store.toggleArchived(link.id);
-									actionsOpen = false;
-								}}
-							>
-								<Archive class="mr-2 h-3 w-3" />
-								<span>{link.isArchived ? 'Unarchive' : 'Archive'}</span>
 							</Button>
 						{/if}
 
