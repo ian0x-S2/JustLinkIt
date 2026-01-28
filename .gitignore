@@ -8,6 +8,9 @@ node_modules
 /.svelte-kit
 /build
 /dist
+sqlite.db
+sqlite.db-shm
+sqlite.db-wal
 
 # OS
 .DS_Store
