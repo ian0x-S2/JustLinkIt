@@ -3,7 +3,7 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import AppSidebar from '$lib/components/AppSidebar.svelte';
-	import { setContext } from 'svelte';
+	import { setContext, untrack } from 'svelte';
 	import { createAppStore, type AppStore } from '$lib/stores';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
@@ -16,11 +16,11 @@
 
 	// 2. Initialize store with server data immediately to prevent empty state flicker
 	const store = createAppStore({
-		initialData: {
+		initialData: untrack(() => ({
 			workspaces: data.workspaces,
 			links: data.links,
 			activeWorkspaceId: data.activeWorkspaceId
-		}
+		}))
 	});
 	setContext<AppStore>('store', store);
 
@@ -37,7 +37,7 @@
 		store.migrateFromLocalStorageIfNeeded();
 	});
 
-	let open = $state(data.isSidebarOpen);
+	let open = $state(untrack(() => data.isSidebarOpen));
 
 	$effect(() => {
 		open = data.isSidebarOpen;
