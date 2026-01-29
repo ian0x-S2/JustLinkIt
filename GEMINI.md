@@ -29,3 +29,62 @@ Analyzes Svelte code and returns issues and suggestions. MUST be used before fin
 
 ### 4. playground-link
 Generates a Svelte Playground link. Ask user before use.
+
+
+## Coding Standards
+
+Follow these principles for maintainable, simple code:
+
+### 1. No Magic Values
+
+- All constants in `$lib/constants.ts` with descriptive names
+- Use `as const` for type safety
+- Config values (retries, delays) in `APP_CONFIG`
+
+### 2. Clean Architecture
+
+```
+stores/
+  domain/     # Business logic (links, workspaces)
+  infra/      # I/O (repository, logger, services)
+  ui/         # UI state (filters, settings)
+```
+
+- Domain depends only on types and infra interfaces
+- Infra has no dependencies
+- UI depends on domain
+
+### 3. Type Safety
+
+- Branded types for IDs: `type LinkId = string & { readonly __brand: 'LinkId' }`
+- Result type for fallible operations: `Result<T, Error>`
+- Explicit return types on public functions
+
+### 4. SOLID (Pragmatic)
+
+- **SRP**: Functions do one thing (fetch, transform, render)
+- **DIP**: Inject dependencies via options objects
+- **OCP**: Extend via composition, not inheritance
+- Skip Liskov/Interface Segregation unless needed
+
+### 5. Clean Code
+
+- Descriptive names: `fetchForWorkspace` not `load`
+- Early returns over nested ifs
+- Guard clauses for preconditions
+- Maximum 20 lines per function (soft limit)
+
+### 6. State Management
+
+- Use Svelte 5 Runes: `$state`, `$derived`, `$effect`
+- Encapsulate state in factory functions
+- Return readonly getters, not raw state
+- Optimistic updates with rollback on error
+
+### 7. Error Handling
+
+- Use Result type, not exceptions
+- Log at boundary layers (repository, store actions)
+- Rollback optimistic updates on failure
+
+ 
