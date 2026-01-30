@@ -90,11 +90,10 @@
 				>
 					<Command class="h-3.5 w-3.5" />
 				</div>
-				<div class="flex min-w-0 flex-1 flex-col items-start group-data-[collapsible=icon]:hidden">
-					<span class="truncate text-[13px] leading-none font-bold tracking-tight">
+				<div class="flex min-w-0 flex-1 items-center group-data-[collapsible=icon]:hidden">
+					<span class="truncate text-[13px] font-bold tracking-tight">
 						{store.workspaces.active?.name || 'Workspace'}
 					</span>
-					<span class="mt-0.5 text-[10px] leading-none text-muted-foreground">Free Plan</span>
 				</div>
 				<ChevronsUpDown
 					class="h-3.5 w-3.5 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden"
