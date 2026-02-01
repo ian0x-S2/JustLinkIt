@@ -71,7 +71,7 @@
 	<!-- 98% Width Container with Scroll Area -->
 	<ScrollArea
 		type="hover"
-		class="my-2 flex min-h-[calc(100%-1rem)] w-[98%] flex-col rounded-md border bg-muted/4 shadow-[0_1px_3px_rgba(0,0,0,0.02)]"
+		class="my-2 flex min-h-[calc(100%-1rem)] w-[99%] flex-col rounded-md border bg-muted/4 shadow-[0_1px_3px_rgba(0,0,0,0.02)]"
 	>
 		<div
 			class="flex w-full flex-1 flex-col {store.filters.filteredLinks.length === 0
