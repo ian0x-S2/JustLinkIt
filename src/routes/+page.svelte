@@ -110,7 +110,7 @@
 </div>
 
 <Dialog.Root bind:open={isAddDialogOpen}>
-	<Dialog.Content class="overflow-hidden rounded-lg border-none p-0 shadow-2xl sm:max-w-160">
+	<Dialog.Content class="overflow-hidden rounded-md border p-0 shadow-2xl sm:max-w-160">
 		<LinkForm
 			link={editingLink}
 			onsave={() => (isAddDialogOpen = false)}

@@ -92,7 +92,7 @@
 	}
 </script>
 
-<div class="flex h-full flex-col bg-background text-foreground antialiased">
+<div class="flex h-full flex-col bg-background text-foreground">
 	<!-- Header: Linear Style -->
 	<div class="flex items-center justify-between border-b bg-muted/5 px-6 py-4">
 		<div class="flex items-center gap-2.5">
