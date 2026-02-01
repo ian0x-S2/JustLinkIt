@@ -68,7 +68,6 @@
 	class="flex flex-1 flex-col items-center overflow-hidden bg-background"
 	style="height: calc(100vh - {headerHeight}px);"
 >
-	<!-- 98% Width Container with Scroll Area -->
 	<ScrollArea
 		type="hover"
 		class="my-2 flex min-h-[calc(100%-1rem)] w-[99%] flex-col rounded-md border bg-card/40 shadow-[0_1px_3px_rgba(0,0,0,0.02)]"
@@ -81,7 +80,7 @@
 			<div
 				class="w-full {store.settings.viewMode === 'list'
 					? 'px-0 pt-0 pb-6'
-					: 'px-3 py-6 md:px-6 lg:px-8'}"
+					: 'px-3 py-6 md:px-6 lg:px-5'}"
 			>
 				{#if store.filters.filteredLinks.length === 0}
 					<EmptyState onAdd={handleAddLink} />
@@ -94,7 +93,7 @@
 				{:else}
 					<!-- Card Mode -->
 					<div
-						class="3xl:grid-cols-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+						class="3xl:grid-cols-6 gap- grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
 					>
 						{#each store.filters.filteredLinks as link (link.id)}
 							<LinkCard {link} onedit={handleEditLink} ondelete={handleDeleteLink} />
