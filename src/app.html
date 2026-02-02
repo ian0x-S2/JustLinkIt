@@ -2,7 +2,34 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script>
+			(function () {
+				const mode = localStorage.getItem('mode-watcher-mode') || 'system';
+				const isDark =
+					mode === 'dark' ||
+					(mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+				
+				const color = isDark ? '#09090b' : '#ffffff';
+				const scheme = isDark ? 'dark' : 'light';
+
+				// Inject meta tags immediately to prevent white title bar flash
+				const head = document.head;
+				const tcMeta = document.createElement('meta');
+				tcMeta.name = 'theme-color';
+				tcMeta.content = color;
+				head.appendChild(tcMeta);
+
+				const csMeta = document.createElement('meta');
+				csMeta.name = 'color-scheme';
+				csMeta.content = scheme;
+				head.appendChild(csMeta);
+				
+				if (isDark) document.documentElement.classList.add('dark');
+			})();
+		</script>
+		<link rel="apple-touch-icon" href="%sveltekit.assets%/favicon.svg" />
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

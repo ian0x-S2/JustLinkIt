@@ -118,3 +118,49 @@
     color: var(--foreground);
   }
 }
+
+@layer utilities {
+  .pwa-drag {
+    -webkit-app-region: drag;
+    app-region: drag;
+  }
+
+  .pwa-no-drag {
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+  }
+}
+
+@media (display-mode: window-controls-overlay) {
+  header, .sidebar-header {
+    padding-top: env(titlebar-area-inset-top, 0px);
+    height: calc(3rem + env(titlebar-area-inset-top, 0px)) !important;
+    background-color: var(--background);
+    border-top: none !important; /* Removemos a borda do topo absoluto da janela */
+  }
+  
+  /* Adicionamos a borda no topo do conteúdo, criando o separador abaixo dos botões do sistema */
+  header > div, .sidebar-header > div {
+    border-top: 1px solid var(--border);
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Draggable areas for WCO */
+  header, .sidebar-header {
+    -webkit-app-region: drag;
+    app-region: drag;
+  }
+  
+  header > div, .sidebar-header > div {
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+}

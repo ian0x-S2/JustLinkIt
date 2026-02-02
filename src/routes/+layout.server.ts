@@ -31,7 +31,13 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 		allWorkspaces.push({ ...newWsData, linkCount: 0 });
 	}
 
-	const activeWorkspaceId = cookies.get('active_workspace_id') || allWorkspaces[0].id;
+	let activeWorkspaceId = cookies.get('active_workspace_id');
+	
+	// Validate that the active workspace still exists
+	if (!activeWorkspaceId || !allWorkspaces.find(w => w.id === activeWorkspaceId)) {
+		activeWorkspaceId = allWorkspaces[0].id;
+	}
+
 	const viewMode = (cookies.get('view_mode') as 'list' | 'grid') || 'list';
 
 	const sidebarState = cookies.get(SIDEBAR_COOKIE_NAME);

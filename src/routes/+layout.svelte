@@ -1,11 +1,12 @@
 <script lang="ts">
 	import './layout.css';
-	import { ModeWatcher } from 'mode-watcher';
+	import { ModeWatcher, mode } from 'mode-watcher';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import AppSidebar from '$lib/components/AppSidebar.svelte';
-	import { setContext, untrack, type Snippet } from 'svelte';
+	import { setContext, untrack, type Snippet, onMount } from 'svelte';
 	import { createAppStore, type AppStore } from '$lib/stores';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { pwaInfo } from 'virtual:pwa-info';
 
 	interface Props {
 		children?: Snippet;
@@ -13,6 +14,41 @@
 	}
 
 	let { children, data }: Props = $props();
+
+	const themeColor = $derived(mode.current === 'dark' ? '#09090b' : '#ffffff');
+	const colorScheme = $derived(mode.current === 'dark' ? 'dark' : 'light');
+
+	$effect(() => {
+		if (typeof document !== 'undefined') {
+			// Update meta tags for PWA title bar
+			const updateMeta = (name, value) => {
+				let meta = document.querySelector(`meta[name="${name}"]`);
+				if (!meta) {
+					meta = document.createElement('meta');
+					meta.name = name;
+					document.head.appendChild(meta);
+				}
+				meta.setAttribute('content', value);
+			};
+			updateMeta('theme-color', themeColor);
+			updateMeta('color-scheme', colorScheme);
+		}
+	});
+
+	onMount(async () => {
+		if (pwaInfo) {
+			const { registerSW } = await import('virtual:pwa-register');
+			registerSW({
+				immediate: true,
+				onRegistered(r) {
+					console.log('SW Registered');
+				},
+				onRegisterError(error) {
+					console.error('SW registration error', error);
+				}
+			});
+		}
+	});
 
 	// 2. Initialize store with server data immediately to prevent empty state flicker
 	const store = createAppStore({
@@ -45,6 +81,12 @@
 		open = data.isSidebarOpen;
 	});
 </script>
+
+<svelte:head>
+	{#if pwaInfo}
+		{@html pwaInfo.webManifest.linkTag}
+	{/if}
+</svelte:head>
 
 <ModeWatcher />
 

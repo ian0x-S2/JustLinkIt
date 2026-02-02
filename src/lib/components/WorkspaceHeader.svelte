@@ -24,7 +24,7 @@
 	);
 </script>
 
-<header class="h-12 shrink-0 border-b bg-card/40">
+<header class="h-12 shrink-0 border-t border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
 	<div class="flex h-full items-center justify-between gap-4 px-3">
 		<!-- Left Section: Breadcrumbs -->
 		<div class="flex w-64 shrink-0 items-center gap-1.5">

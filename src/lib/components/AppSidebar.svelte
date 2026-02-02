@@ -80,65 +80,67 @@
 </script>
 
 <Sidebar.Root collapsible="icon" class="border-r  ">
-	<Sidebar.Header class="flex h-12 flex-col justify-center border-b p-0 px-2">
-		<DropdownMenu.Root>
-			<DropdownMenu.Trigger
-				class="flex w-full items-center justify-start gap-2 overflow-hidden rounded-md py-1.5 pr-2 pl-1.5 transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:bg-muted/50"
-			>
-				<div
-					class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm"
+	<Sidebar.Header class="sidebar-header flex h-12 flex-col justify-center border-t border-b p-0 px-2">
+		<div class="w-full">
+			<DropdownMenu.Root>
+				<DropdownMenu.Trigger
+					class="flex w-full items-center justify-start gap-2 overflow-hidden rounded-md py-1.5 pr-2 pl-1.5 transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:bg-muted/50"
 				>
-					<Command class="h-3.5 w-3.5" />
-				</div>
-				<div class="flex min-w-0 flex-1 items-center group-data-[collapsible=icon]:hidden">
-					<span class="truncate text-[13px] font-bold tracking-tight">
-						{store.workspaces.active?.name || 'Workspace'}
-					</span>
-				</div>
-				<ChevronsUpDown
-					class="h-3.5 w-3.5 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden"
-				/>
-			</DropdownMenu.Trigger>
-			<DropdownMenu.Content
-				class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-md border p-1 shadow-lg"
-			>
-				<DropdownMenu.Label
-					class="w-full px-2 py-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase"
+					<div
+						class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm"
+					>
+						<Command class="h-3.5 w-3.5" />
+					</div>
+					<div class="flex min-w-0 flex-1 items-center group-data-[collapsible=icon]:hidden">
+						<span class="truncate text-[13px] font-bold tracking-tight">
+							{store.workspaces.active?.name || 'Workspace'}
+						</span>
+					</div>
+					<ChevronsUpDown
+						class="h-3.5 w-3.5 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden"
+					/>
+				</DropdownMenu.Trigger>
+				<DropdownMenu.Content
+					class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-md border p-1 shadow-lg"
 				>
-					Workspaces
-				</DropdownMenu.Label>
-				<DropdownMenu.Group>
-					{#each store.workspaces.workspaces as ws (ws.id)}
-						<DropdownMenu.Item
-							onclick={() => handleWorkspaceSwitch(ws.id)}
-							class="flex cursor-pointer items-center justify-between rounded-md px-2 py-1.5 text-[13px]"
-						>
-							<div class="flex items-center gap-2">
-								<div
-									class="flex h-5 w-5 items-center justify-center rounded border bg-muted/30 text-[10px] font-bold"
-								>
-									{ws.name?.[0] || '?'}
+					<DropdownMenu.Label
+						class="w-full px-2 py-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase"
+					>
+						Workspaces
+					</DropdownMenu.Label>
+					<DropdownMenu.Group>
+						{#each store.workspaces.workspaces as ws (ws.id)}
+							<DropdownMenu.Item
+								onclick={() => handleWorkspaceSwitch(ws.id)}
+								class="flex cursor-pointer items-center justify-between rounded-md px-2 py-1.5 text-[13px]"
+							>
+								<div class="flex items-center gap-2">
+									<div
+										class="flex h-5 w-5 items-center justify-center rounded border bg-muted/30 text-[10px] font-bold"
+									>
+										{ws.name?.[0] || '?'}
+									</div>
+									<span class={ws.id === store.workspaces.active?.id ? 'font-semibold' : ''}
+										>{ws.name || 'Untitled'}</span
+									>
 								</div>
-								<span class={ws.id === store.workspaces.active?.id ? 'font-semibold' : ''}
-									>{ws.name || 'Untitled'}</span
-								>
-							</div>
-							{#if ws.id === store.workspaces.activeId}
-								<Check class="h-3.5 w-3.5 text-primary" />
-							{/if}
-						</DropdownMenu.Item>
-					{/each}
-				</DropdownMenu.Group>
-				<DropdownMenu.Separator class="my-1" />
-				<DropdownMenu.Item
-					onclick={() => (isCreateWorkspaceOpen = true)}
-					class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] text-muted-foreground hover:text-foreground"
-				>
-					<Plus class="h-3.5 w-3.5" />
-					<span>Create Workspace</span>
-				</DropdownMenu.Item>
-			</DropdownMenu.Content>
-		</DropdownMenu.Root>
+								{#if ws.id === store.workspaces.activeId}
+									<Check class="h-3.5 w-3.5 text-primary" />
+								{/if}
+							</DropdownMenu.Item>
+						{/each}
+					</DropdownMenu.Group>
+					<DropdownMenu.Separator class="my-1" />
+					<DropdownMenu.Item
+						onclick={() => (isCreateWorkspaceOpen = true)}
+						class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] text-muted-foreground hover:text-foreground"
+					>
+						<Plus class="h-3.5 w-3.5" />
+						<span>Create Workspace</span>
+					</DropdownMenu.Item>
+				</DropdownMenu.Content>
+			</DropdownMenu.Root>
+		</div>
 	</Sidebar.Header>
 
 	<Sidebar.Content>

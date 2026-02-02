@@ -39,18 +39,29 @@ export function createWorkspaceStore(options: CreateWorkspaceStoreOptions): Work
 
     // Estado derivado público
     const workspaces = $derived(_workspaces);
-    const activeId = $derived(_activeId);
-    const active = $derived.by(() => {
+    const activeId = $derived.by(() => {
         const found = _workspaces.find((w) => w.id === _activeId);
+        if (found) return _activeId;
+        if (_workspaces.length > 0) return _workspaces[0].id;
+        return APP_CONFIG.DEFAULT_WORKSPACE_ID as WorkspaceId;
+    });
+    const active = $derived.by(() => {
+        const found = _workspaces.find((w) => w.id === activeId);
         if (found) return found;
-        if (_workspaces.length > 0) return _workspaces[0];
         return DEFAULT_WORKSPACE;
     });
     const count = $derived(_workspaces.length);
 
     function hydrate(workspaces: Workspace[], activeId: WorkspaceId): void {
         _workspaces = workspaces;
-        _activeId = activeId;
+        // Verify if activeId exists in the hydrated list, otherwise fallback
+        if (workspaces.find(w => w.id === activeId)) {
+            _activeId = activeId;
+        } else if (workspaces.length > 0) {
+            _activeId = workspaces[0].id;
+        } else {
+            _activeId = APP_CONFIG.DEFAULT_WORKSPACE_ID as WorkspaceId;
+        }
     }
 
     function setActive(id: WorkspaceId): void {
