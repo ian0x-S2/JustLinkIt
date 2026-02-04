@@ -84,54 +84,48 @@
 	}
 </script>
 
-<div class="flex w-full flex-col gap-2">
-	<!-- Selected Tags Display (Linear Style) -->
-	{#if selected.length > 0}
-		<div class="flex flex-wrap gap-1.5">
-			{#each selected as tag (tag)}
-				<Badge
-					variant="secondary"
-					class="h-5 gap-1 rounded-md border-primary/20 bg-primary/10 px-1.5 py-0 text-[10px] font-bold text-primary transition-colors duration-200 animate-in fade-in slide-in-from-left-2 hover:bg-primary/20"
-				>
-					{tag}
-					<button
-						type="button"
-						class="ml-0.5 transition-colors outline-none hover:text-destructive"
-						onclick={(e) => {
-							e.stopPropagation();
-							removeTag(tag);
-						}}
-						aria-label="Remove {tag}"
-					>
-						<X class="h-2.5 w-2.5" />
-					</button>
-				</Badge>
-			{/each}
-		</div>
-	{/if}
+<div class="flex flex-wrap items-center gap-1.5">
+	<!-- Selected Tags Display -->
+	{#each selected as tag (tag)}
+		<Badge
+			variant="secondary"
+			class="h-5 gap-1 rounded-md border-primary/20 bg-primary/10 px-1.5 py-0 text-[10px] font-bold text-primary transition-colors duration-200 animate-in fade-in slide-in-from-left-2 hover:bg-primary/20"
+		>
+			{tag}
+			<button
+				type="button"
+				class="ml-0.5 transition-colors outline-none hover:text-destructive"
+				onclick={(e) => {
+					e.stopPropagation();
+					removeTag(tag);
+				}}
+				aria-label="Remove {tag}"
+			>
+				<X class="h-2.5 w-2.5" />
+			</button>
+		</Badge>
+	{/each}
 
 	<Popover.Root bind:open>
 		<Popover.Trigger
 			bind:ref={triggerRef}
 			class={cn(
-				buttonVariants({ variant: 'outline' }),
-				'h-8 w-full justify-between border-muted-foreground/10 bg-muted/20 text-[12px] font-normal text-muted-foreground transition-all duration-200 hover:bg-muted/30'
+				'flex h-6 items-center gap-1.5 rounded-md border-none bg-transparent px-2 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground',
+				open && 'bg-muted/50 text-foreground'
 			)}
 			role="combobox"
 			aria-expanded={open}
 		>
-			<div class="flex items-center gap-2">
-				<span>{selected.length > 0 ? 'Add more tags...' : 'Add tags...'}</span>
-			</div>
 			<Plus
-				class={cn('h-3 w-3 opacity-50 transition-transform duration-200', open && 'rotate-45')}
+				class={cn('h-3 w-3 transition-transform duration-200', open && 'rotate-45')}
 			/>
+			<span>{selected.length > 0 ? 'Add' : 'Add tags'}</span>
 		</Popover.Trigger>
 
 		<Popover.Content
-			class="w-(--bits-popover-anchor-width) overflow-hidden rounded-md border border-muted-foreground/10 bg-popover p-0 shadow-xl"
+			class="w-56 overflow-hidden rounded-md border border-muted-foreground/10 bg-popover p-0 shadow-xl"
 			align="start"
-			sideOffset={6}
+			sideOffset={4}
 		>
 			<Combobox.Root
 				type="single"
@@ -157,12 +151,6 @@
 					/>
 				</div>
 				<Combobox.ContentStatic class="relative flex w-full flex-col bg-popover">
-					<Combobox.ScrollUpButton
-						class="absolute top-0 right-0 left-0 z-20 flex w-full items-center justify-center bg-linear-to-b from-popover via-popover/90 to-transparent py-1.5 text-muted-foreground/60 transition-colors hover:text-primary"
-					>
-						<ChevronUp class="size-2.5" />
-					</Combobox.ScrollUpButton>
-
 					<Combobox.Viewport
 						class="max-h-40 w-full overflow-y-auto p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
 					>
@@ -201,8 +189,7 @@
 							<Combobox.Item
 								value={tag}
 								label={tag}
-								class="group flex h-8 cursor-pointer items-center justify-between rounded-md
-														px-2 text-[12px] transition-colors 	outline-none data-highlighted:bg-muted/50"
+								class="group flex h-8 cursor-pointer items-center justify-between rounded-md px-2 text-[12px] transition-colors outline-none data-highlighted:bg-muted/50"
 							>
 								<div class="flex items-center gap-2">
 									<TagIcon class="h-3 w-3 opacity-40" />
@@ -222,12 +209,6 @@
 							{/if}
 						{/each}
 					</Combobox.Viewport>
-
-					<Combobox.ScrollDownButton
-						class="absolute right-0 bottom-0 left-0 z-20 flex w-full items-center justify-center bg-linear-to-t from-popover via-popover/90 to-transparent py-1.5 text-muted-foreground/60 transition-colors hover:text-primary"
-					>
-						<ChevronDown class="size-2.5" />
-					</Combobox.ScrollDownButton>
 				</Combobox.ContentStatic>
 			</Combobox.Root>
 		</Popover.Content>

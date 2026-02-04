@@ -265,10 +265,10 @@
 										{inlinePreview.description}
 									</p>
 								{/if}
+								<div class="mt-2.5 border-t border-border/40 pt-2">
+									<TagInput selected={previewTags} onchange={(tags) => (previewTags = tags)} />
+								</div>
 							</div>
-						</div>
-						<div class="mt-2 w-80">
-							<TagInput selected={previewTags} onchange={(tags) => (previewTags = tags)} />
 						</div>
 					</div>
 				{/if}
