@@ -117,7 +117,10 @@
 
 <!-- Dialogs -->
 <Dialog.Root bind:open={isAddDialogOpen}>
-	<Dialog.Content class="overflow-hidden rounded-md border p-0 shadow-2xl sm:max-w-2xl">
+	<Dialog.Content
+		showCloseButton={false}
+		class="overflow-hidden rounded-md border p-0 shadow-2xl sm:max-w-2xl"
+	>
 		<LinkForm
 			link={editingLink}
 			{previewData}

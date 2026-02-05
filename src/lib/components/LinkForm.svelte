@@ -107,10 +107,18 @@
 
 <div class="flex h-full flex-col bg-background text-foreground">
 	<!-- Header -->
-	<div class="flex h-11 items-center border-b border-border/40 px-4">
+	<div class="flex h-11 items-center justify-between border-b border-border px-4">
 		<h2 class="text-[13px] font-semibold tracking-tight text-foreground/90">
 			{link ? 'Edit link' : 'Add new link'}
 		</h2>
+		<Button
+			variant="ghost"
+			size="icon"
+			onclick={oncancel}
+			class="h-7 w-7 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+		>
+			<X class="h-3.5 w-3.5" />
+		</Button>
 	</div>
 
 	<!-- Body -->
@@ -202,7 +210,7 @@
 	</div>
 
 	<!-- Footer -->
-	<div class="mt-auto flex items-center justify-end gap-2 border-t border-border/40 px-4 py-2.5">
+	<div class="mt-auto flex items-center justify-end gap-2 border-t border-border px-4 py-2.5">
 		<Button
 			variant="ghost"
 			onclick={oncancel}
