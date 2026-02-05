@@ -83,7 +83,7 @@
 					<Ellipsis class="ml-auto hidden h-4 w-4 text-muted-foreground xl:block" />
 				</div>
 			</DropdownMenu.Trigger>
-			<DropdownMenu.Content class="w-56 rounded-sm  shadow-xl" align="start" side="bottom">
+			<DropdownMenu.Content class="w-full rounded-sm  shadow-xl" align="start" side="bottom">
 				<DropdownMenu.Label
 					class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase"
 					>Switch Workspace</DropdownMenu.Label
