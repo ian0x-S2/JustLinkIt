@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
-	import { Search, Link2, Loader2, Globe, X } from '@lucide/svelte';
+	import { Search, Link2, Loader2, Ellipsis, X, Globe } from '@lucide/svelte';
 	import { getContext, onMount } from 'svelte';
 	import type { AppStore } from '$lib/stores';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
@@ -137,7 +137,7 @@
 
 <div class="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-md">
 	<!-- Top Bar -->
-	<div class="flex h-12 items-center px-4">
+	<div class="flex h-12 items-center border-b px-4">
 		<h1 class="text-[15px] font-bold tracking-tight">
 			{displayTitle}
 		</h1>
@@ -147,7 +147,7 @@
 					<DropdownMenu.Trigger
 						class="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
 					>
-						<Globe class="h-4 w-4" />
+						<Ellipsis class="h-4 w-4" />
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content class="w-56 rounded-md shadow-xl" align="end">
 						<DropdownMenu.Label
@@ -209,7 +209,7 @@
 	</div>
 
 	<!-- Tweet Composer Style Input -->
-	<div class="border-b border-border/40 px-4 py-3">
+	<div class="border-b border-border px-4 py-3">
 		<div class="flex items-start gap-3">
 			<div
 				class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary"
@@ -218,10 +218,10 @@
 			</div>
 			<div class="flex min-w-0 flex-1 flex-col gap-2">
 				<div class="flex items-start justify-between gap-2">
-					<textarea
+					<Input
 						bind:value={urlInput}
 						onkeydown={(e) => {
-							if (e.key === 'Enter' && !e.shiftKey) {
+							if (e.key === 'Enter') {
 								e.preventDefault();
 								handleSubmit(e);
 							}
@@ -238,8 +238,8 @@
 							}
 						}}
 						placeholder="What's the link today?"
-						class="min-h-[40px] w-full resize-none border-0 bg-transparent py-1 text-[15px] leading-relaxed placeholder:text-muted-foreground/60 focus:ring-0 focus:outline-none"
-					></textarea>
+						class="h-9 border-0 bg-transparent px-0 text-[15px] placeholder:text-muted-foreground/60 focus-visible:ring-0 focus-visible:ring-offset-0"
+					/>
 					<div class="mt-1.5 flex h-5 w-5 shrink-0 items-center justify-center text-primary/60">
 						{#if isLoading}
 							<Loader2 class="h-4 w-4 animate-spin" />
@@ -273,7 +273,7 @@
 						</button>
 						<div class="w-full overflow-hidden rounded-md border border-border/60 bg-muted/20">
 							{#if inlinePreview.image}
-								<div class="aspect-video w-full border-b border-border/40 bg-muted/40">
+								<div class="aspect-video w-full border-b border-border bg-muted/40">
 									<img src={inlinePreview.image} alt="" class="h-full w-full object-cover" />
 								</div>
 							{/if}
@@ -286,7 +286,7 @@
 										{inlinePreview.description}
 									</p>
 								{/if}
-								<div class="mt-2.5 border-t border-border/40 pt-2">
+								<div class="mt-2.5 border-t border-border pt-2">
 									<TagInput selected={previewTags} onchange={(tags) => (previewTags = tags)} />
 								</div>
 							</div>

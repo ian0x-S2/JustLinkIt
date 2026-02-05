@@ -59,39 +59,37 @@
 	const activeCategory = $derived(store.filters.activeCategory);
 </script>
 
-<aside
-	class="sticky top-0 flex h-screen w-[68px] shrink-0 flex-col border-r bg-background xl:w-[275px]"
->
+<aside class="w-[17 sticky top-0 flex h-screen shrink-0 flex-col bg-background xl:w-68.75">
 	<!-- Workspace Switcher (Replaces Logo) -->
 	<div class="flex h-14 items-center px-2 xl:px-3">
 		<DropdownMenu.Root>
-			<DropdownMenu.Trigger class="w-full">
+			<DropdownMenu.Trigger class="w-full     ">
 				<div
 					class="flex w-full items-center justify-center gap-2.5 rounded-md p-2 transition-colors hover:bg-muted/80 xl:justify-start"
 				>
 					<div
-						class="flex h-7 w-7 shrink-0 items-center justify-center rounded-[4px] bg-primary text-[11px] font-bold text-primary-foreground"
+						class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary text-[11px] font-bold text-primary-foreground"
 					>
 						{store.workspaces.active?.name?.[0] || '?'}
 					</div>
 					<div class="hidden min-w-0 flex-1 text-left xl:block">
-						<p class="truncate text-[13px] font-bold leading-none">
+						<p class="truncate text-[13px] leading-none font-bold">
 							{store.workspaces.active?.name || 'Workspace'}
 						</p>
-						<p class="truncate text-[11px] text-muted-foreground leading-normal">
+						<p class="truncate text-[11px] leading-normal text-muted-foreground">
 							@{store.workspaces.active?.slug || 'workspace'}
 						</p>
 					</div>
 					<Ellipsis class="ml-auto hidden h-4 w-4 text-muted-foreground xl:block" />
 				</div>
 			</DropdownMenu.Trigger>
-			<DropdownMenu.Content class="w-56 rounded-md shadow-xl" align="start" side="bottom">
+			<DropdownMenu.Content class="w-56 rounded-sm  shadow-xl" align="start" side="bottom">
 				<DropdownMenu.Label
 					class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase"
 					>Switch Workspace</DropdownMenu.Label
 				>
 				<DropdownMenu.Separator />
-				<div class="max-h-[300px] overflow-y-auto p-1">
+				<div class="max-h-75 overflow-y-auto p-1">
 					{#each store.workspaces.workspaces as ws (ws.id)}
 						<DropdownMenu.Item
 							onclick={() => handleWorkspaceSelect(ws.id)}
@@ -100,12 +98,12 @@
 								: ''}"
 						>
 							<div
-								class="flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] bg-primary/10 text-[10px] font-bold text-primary"
+								class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-[10px] font-bold text-primary"
 							>
 								{ws.name[0]}
 							</div>
 							<div class="flex flex-1 flex-col">
-								<span class="text-[13px] font-bold leading-none">{ws.name}</span>
+								<span class="text-[13px] leading-none font-bold">{ws.name}</span>
 								<span class="text-[11px] text-muted-foreground">@{ws.slug}</span>
 							</div>
 						</DropdownMenu.Item>
@@ -137,7 +135,7 @@
 					{@const count = store.links.links.filter((l) => !l.isArchived && !l.isDeleted).length}
 					{#if count > 0}
 						<span
-							class="ml-auto hidden h-4.5 min-w-4.5 items-center justify-center rounded-[4px] bg-primary/10 px-1 text-[10px] font-bold text-primary xl:flex"
+							class="ml-auto hidden h-4.5 min-w-4.5 items-center justify-center rounded-md bg-primary/10 px-1 text-[10px] font-bold text-primary xl:flex"
 						>
 							{count > 99 ? '99+' : count}
 						</span>

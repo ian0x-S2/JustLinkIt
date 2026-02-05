@@ -80,11 +80,11 @@
 </script>
 
 <Sidebar.Root collapsible="icon" class="border-r  ">
-	<Sidebar.Header class="sidebar-header flex h-12 flex-col justify-center border-t border-b p-0 px-2">
+	<Sidebar.Header class=" flex h-12 flex-col justify-center border-t border-b p-0 px-2">
 		<div class="w-full">
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger
-					class="flex w-full items-center justify-start gap-2 overflow-hidden rounded-md py-1.5 pr-2 pl-1.5 transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:bg-muted/50"
+					class="flex w-full items-center justify-start gap-2 overflow-hidden rounded-md bg-red-300 py-1.5 pr-2 pl-1.5 transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:bg-muted/50"
 				>
 					<div
 						class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary text-[11px] font-bold text-primary-foreground shadow-sm"
@@ -162,7 +162,7 @@
 								{#snippet tooltipContent()}
 									{item.title}
 								{/snippet}
-								<item.icon class="h-4 w-4 group-data-[collapsible=icon]:mr-0 mr-2" />
+								<item.icon class="mr-2 h-4 w-4 group-data-[collapsible=icon]:mr-0" />
 								<span class="group-data-[collapsible=icon]:hidden">{item.title}</span>
 							</Sidebar.MenuButton>
 						</Sidebar.MenuItem>
