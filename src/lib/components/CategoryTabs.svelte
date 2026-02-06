@@ -30,7 +30,7 @@
 	class="sticky top-14 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
 >
 	<Tabs.Root value={activeTab} onValueChange={handleTabChange} class="w-full">
-		<Tabs.List class="flex h-12 w-full justify-start gap-0 rounded-none bg-transparent p-0">
+		<Tabs.List class="flex h-12 w-full justify-start gap-0 rounded-sm bg-transparent p-0">
 			{#each tabs as tab (tab.id)}
 				<Tabs.Trigger
 					value={tab.id}
@@ -42,7 +42,7 @@
 						{@const count = store.links.links.filter((l) => !l.isArchived && !l.isDeleted).length}
 						{#if count > 0}
 							<span
-								class="ml-1 flex h-4 min-w-4 items-center justify-center rounded-[4px] bg-muted px-1 text-[10px] font-medium text-muted-foreground"
+								class="ml-1 flex h-4 min-w-4 items-center justify-center rounded-sm bg-muted px-1 text-[10px] font-medium text-muted-foreground"
 							>
 								{count > 99 ? '99+' : count}
 							</span>

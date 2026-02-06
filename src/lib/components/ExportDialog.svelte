@@ -51,12 +51,12 @@
 
 	<div class="grid gap-3">
 		<button
-			class="group flex items-center justify-between rounded-md border bg-muted/20 p-3 transition-all hover:border-primary/20 hover:bg-muted/40"
+			class="group flex items-center justify-between rounded-sm border bg-muted/20 p-3 transition-all hover:border-primary/20 hover:bg-muted/40"
 			onclick={exportToJSON}
 		>
 			<div class="flex items-center gap-3">
 				<div
-					class="flex h-8 w-8 items-center justify-center rounded-md border bg-background shadow-sm transition-colors group-hover:border-primary/20"
+					class="flex h-8 w-8 items-center justify-center rounded-sm border bg-background shadow-sm transition-colors group-hover:border-primary/20"
 				>
 					<FileBraces
 						class="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary"
@@ -72,12 +72,12 @@
 		</button>
 
 		<button
-			class="group flex items-center justify-between rounded-md border bg-muted/20 p-3 transition-all hover:border-primary/20 hover:bg-muted/40"
+			class="group flex items-center justify-between rounded-sm border bg-muted/20 p-3 transition-all hover:border-primary/20 hover:bg-muted/40"
 			onclick={exportToMarkdown}
 		>
 			<div class="flex items-center gap-3">
 				<div
-					class="flex h-8 w-8 items-center justify-center rounded-md border bg-background shadow-sm transition-colors group-hover:border-primary/20"
+					class="flex h-8 w-8 items-center justify-center rounded-sm border bg-background shadow-sm transition-colors group-hover:border-primary/20"
 				>
 					<FileText
 						class="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary"
@@ -96,7 +96,7 @@
 	<div class="flex justify-end gap-2 pt-2">
 		<Button
 			variant="ghost"
-			class="h-8 rounded-md px-4 text-[12.5px]"
+			class="h-8 rounded-sm px-4 text-[12.5px]"
 			onclick={() => (open = false)}
 		>
 			Cancel

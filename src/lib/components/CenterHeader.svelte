@@ -148,11 +148,11 @@
 			{#if mounted}
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger
-						class="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+						class="flex h-8 w-8 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
 					>
 						<Ellipsis class="h-4 w-4" />
 					</DropdownMenu.Trigger>
-					<DropdownMenu.Content class="w-56 rounded-md shadow-xl" align="end">
+					<DropdownMenu.Content class="w-56 rounded-sm shadow-xl" align="end">
 						<DropdownMenu.Label
 							class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase"
 							>Filter View</DropdownMenu.Label
@@ -215,7 +215,7 @@
 	<div class="border-b border-border px-4 py-3">
 		<div class="flex items-start gap-3">
 			<div
-				class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary"
+				class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary"
 			>
 				<Link2 class="h-4 w-4" />
 			</div>
@@ -254,7 +254,7 @@
 									urlInput = '';
 									inlinePreview = null;
 								}}
-								class="flex h-5 w-5 items-center justify-center rounded-md transition-colors hover:bg-muted hover:text-foreground"
+								class="flex h-5 w-5 items-center justify-center rounded-sm transition-colors hover:bg-muted hover:text-foreground"
 								title="Clear input"
 							>
 								<X class="h-3.5 w-3.5" />
@@ -270,11 +270,11 @@
 								inlinePreview = null;
 								urlInput = '';
 							}}
-							class="absolute top-2 right-2 z-10 flex h-6 w-6 items-center justify-center rounded-md border bg-background/80 shadow-sm backdrop-blur-sm transition-colors hover:bg-muted"
+							class="absolute top-2 right-2 z-10 flex h-6 w-6 items-center justify-center rounded-sm border bg-background/80 shadow-sm backdrop-blur-sm transition-colors hover:bg-muted"
 						>
 							<X class="h-3 w-3" />
 						</button>
-						<div class="w-full overflow-hidden rounded-md border border-border/60 bg-muted/20">
+						<div class="w-full overflow-hidden rounded-sm border border-border/60 bg-muted/20">
 							{#if inlinePreview.image}
 								<div class="aspect-video w-full border-b border-border bg-muted/40">
 									<img src={inlinePreview.image} alt="" class="h-full w-full object-cover" />
@@ -307,7 +307,7 @@
 							type="button"
 							size="sm"
 							onclick={handleSave}
-							class="flex items-center gap-1.5 rounded-md bg-primary/5 px-2 py-1 text-[11px] font-bold text-primary transition-colors animate-in fade-in slide-in-from-right-1 hover:bg-primary/10 active:scale-95"
+							class="flex items-center gap-1.5 rounded-sm bg-primary/5 px-2 py-1 text-[11px] font-bold text-primary transition-colors animate-in fade-in slide-in-from-right-1 hover:bg-primary/10 active:scale-95"
 						>
 							<span>Press Enter or click to save</span>
 							<span class="text-[10px] opacity-50">↵</span>

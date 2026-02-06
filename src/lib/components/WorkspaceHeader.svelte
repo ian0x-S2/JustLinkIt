@@ -29,7 +29,7 @@
 		<!-- Left Section: Breadcrumbs -->
 		<div class="flex w-64 shrink-0 items-center gap-1.5">
 			<Sidebar.Trigger
-				class="h-7 w-7 shrink-0 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+				class="h-7 w-7 shrink-0 rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground"
 			/>
 			<div class="mx-0.5 h-3 w-px shrink-0 bg-border"></div>
 
@@ -59,7 +59,7 @@
 						}
 					}}
 					placeholder="Search or jump to..."
-					class="h-8 w-full rounded-md border border-border bg-muted/20 pl-8.5 text-[13px] shadow-none transition-all hover:bg-muted/40 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-ring"
+					class="h-8 w-full rounded-sm border border-border bg-muted/20 pl-8.5 text-[13px] shadow-none transition-all hover:bg-muted/40 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-ring"
 				/>
 				<div
 					class="absolute top-1/2 right-2 flex -translate-y-1/2 items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100"
@@ -75,10 +75,10 @@
 
 		<!-- Right Section: Actions -->
 		<div class="flex w-64 shrink-0 items-center justify-end gap-1">
-			<div class="flex items-center gap-0.5 rounded-md border bg-muted/20 p-0.5">
+			<div class="flex items-center gap-0.5 rounded-sm border bg-muted/20 p-0.5">
 				<Tooltip.Root ignoreNonKeyboardFocus delayDuration={900}>
 					<Tooltip.Trigger
-						class="flex h-6.5 w-6.5 items-center justify-center rounded-lg transition-all {viewMode ===
+						class="flex h-6.5 w-6.5 items-center justify-center rounded-sm transition-all {viewMode ===
 						'list'
 							? 'border bg-background text-foreground shadow-sm'
 							: 'text-muted-foreground hover:bg-muted/50'}"
@@ -91,7 +91,7 @@
 
 				<Tooltip.Root ignoreNonKeyboardFocus delayDuration={900}>
 					<Tooltip.Trigger
-						class="flex h-6.5 w-6.5 items-center justify-center rounded-lg transition-all {viewMode ===
+						class="flex h-6.5 w-6.5 items-center justify-center rounded-sm transition-all {viewMode ===
 						'grid'
 							? 'border bg-background text-foreground shadow-sm'
 							: 'text-muted-foreground hover:bg-muted/50'}"
@@ -108,7 +108,7 @@
 			<Button
 				variant="ghost"
 				size="icon"
-				class="h-7 w-7 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+				class="h-7 w-7 rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground"
 				onclick={onExport}
 			>
 				<FileBraces class="h-3.5 w-3.5" />
@@ -116,7 +116,7 @@
 
 			<Button
 				size="sm"
-				class="ml-1 h-7 gap-1.5 rounded-md px-2.5 text-[12px] font-medium shadow-sm"
+				class="ml-1 h-7 gap-1.5 rounded-sm px-2.5 text-[12px] font-medium shadow-sm"
 				onclick={onAddLink}
 			>
 				<Plus class="h-3.5 w-3.5" />

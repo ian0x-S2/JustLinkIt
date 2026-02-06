@@ -44,7 +44,7 @@
 		<!-- Preview: More Geometric -->
 		<div class="shrink-0">
 			<div
-				class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border bg-muted/20 text-muted-foreground transition-colors group-hover:border-border"
+				class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-sm border bg-muted/20 text-muted-foreground transition-colors group-hover:border-border"
 			>
 				{#if link.logo && !logoError}
 					<img
@@ -91,7 +91,7 @@
 				{#each link.tags as tag (tag)}
 					<Badge
 						variant="secondary"
-						class="h-5 rounded-lg border border-transparent bg-muted/40 px-1.5 text-[10px] font-medium text-muted-foreground/80 transition-all hover:border-border"
+						class="h-5 rounded-sm border border-transparent bg-muted/40 px-1.5 text-[10px] font-medium text-muted-foreground/80 transition-all hover:border-border"
 					>
 						{tag}
 					</Badge>
@@ -110,7 +110,7 @@
 				<Button
 					variant="ghost"
 					size="icon"
-					class="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground"
+					class="h-7 w-7 rounded-sm text-muted-foreground hover:text-foreground"
 					onclick={() => window.open(link.url, '_blank')}
 				>
 					<ExternalLink class="h-3.5 w-3.5" />
@@ -120,17 +120,17 @@
 					<Popover.Trigger
 						class={cn(
 							buttonVariants({ variant: 'ghost', size: 'icon' }),
-							'h-7 w-7 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground'
+							'h-7 w-7 rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground'
 						)}
 					>
 						<Ellipsis class="h-3.5 w-3.5" />
 					</Popover.Trigger>
-					<Popover.Content align="end" class="w-44 rounded-lg p-1 shadow-md">
+					<Popover.Content align="end" class="w-44 rounded-sm p-1 shadow-md">
 						<div class="flex flex-col gap-0.5">
 							<Button
 								variant="ghost"
 								size="sm"
-								class="h-8 justify-start rounded-md px-2 text-[12px] font-medium"
+								class="h-8 justify-start rounded-sm px-2 text-[12px] font-medium"
 								onclick={() => {
 									onedit(link);
 									actionsOpen = false;
@@ -144,7 +144,7 @@
 								<Button
 									variant="ghost"
 									size="sm"
-									class="h-8 justify-start rounded-md px-2 text-[12px] font-medium {link.isFavorite
+									class="h-8 justify-start rounded-sm px-2 text-[12px] font-medium {link.isFavorite
 										? 'text-yellow-500'
 										: ''}"
 									onclick={() => {
@@ -159,7 +159,7 @@
 								<Button
 									variant="ghost"
 									size="sm"
-									class="h-8 justify-start rounded-md px-2 text-[12px] font-medium"
+									class="h-8 justify-start rounded-sm px-2 text-[12px] font-medium"
 									onclick={() => {
 										store.links.toggleArchived(link.id);
 										actionsOpen = false;
@@ -174,7 +174,7 @@
 								<Button
 									variant="ghost"
 									size="sm"
-									class="h-8 justify-start rounded-md px-2 text-[12px] font-medium"
+									class="h-8 justify-start rounded-sm px-2 text-[12px] font-medium"
 									onclick={() => {
 										store.links.toggleDeleted(link.id);
 										actionsOpen = false;

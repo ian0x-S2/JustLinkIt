@@ -61,19 +61,19 @@
 		<!-- Left: Logo + Workspace Selector -->
 		<div class="flex items-center gap-3">
 			<div
-				class="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm"
+				class="flex h-8 w-8 items-center justify-center rounded-sm bg-primary text-primary-foreground shadow-sm"
 			>
 				<Command class="h-4 w-4" />
 			</div>
 
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger
-					class="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[14px] font-semibold transition-colors hover:bg-muted"
+					class="flex items-center gap-1.5 rounded-sm px-2 py-1.5 text-[14px] font-semibold transition-colors hover:bg-muted"
 				>
 					<span class="max-w-[120px] truncate">{store.workspaces.active?.name || 'Workspace'}</span>
 					<ChevronsUpDown class="h-3.5 w-3.5 text-muted-foreground" />
 				</DropdownMenu.Trigger>
-				<DropdownMenu.Content class="w-56 rounded-md border p-1 shadow-lg" align="start">
+				<DropdownMenu.Content class="w-56 rounded-sm border p-1 shadow-lg" align="start">
 					<DropdownMenu.Label
 						class="px-2 py-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase"
 					>
@@ -83,7 +83,7 @@
 						{#each store.workspaces.workspaces as ws (ws.id)}
 							<DropdownMenu.Item
 								onclick={() => handleWorkspaceSwitch(ws.id)}
-								class="flex cursor-pointer items-center justify-between rounded-md px-2 py-1.5 text-[13px]"
+								class="flex cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-[13px]"
 							>
 								<div class="flex items-center gap-2">
 									<div
@@ -104,7 +104,7 @@
 					<DropdownMenu.Separator class="my-1" />
 					<DropdownMenu.Item
 						onclick={handleCreateWorkspace}
-						class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] text-muted-foreground hover:text-foreground"
+						class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-[13px] text-muted-foreground hover:text-foreground"
 					>
 						<Plus class="h-3.5 w-3.5" />
 						<span>Create Workspace</span>
@@ -129,7 +129,7 @@
 						}
 					}}
 					placeholder="Search links..."
-					class="h-9 w-full rounded-md border bg-muted/20 pl-9 text-[13px] shadow-none transition-all hover:bg-muted/40 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-ring"
+					class="h-9 w-full rounded-sm border bg-muted/20 pl-9 text-[13px] shadow-none transition-all hover:bg-muted/40 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-ring"
 				/>
 			</div>
 		</div>
@@ -143,7 +143,7 @@
 							{...props}
 							variant="ghost"
 							size="icon"
-							class="h-8 w-8 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+							class="h-8 w-8 rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground"
 							onclick={toggleMode}
 						>
 							<div class="relative flex h-4 w-4 items-center justify-center">
@@ -165,7 +165,7 @@
 							{...props}
 							variant="ghost"
 							size="icon"
-							class="h-8 w-8 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+							class="h-8 w-8 rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground"
 							onclick={onExport}
 						>
 							<FileBraces class="h-4 w-4" />
@@ -182,7 +182,7 @@
 							{...props}
 							variant="ghost"
 							size="icon"
-							class="h-8 w-8 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+							class="h-8 w-8 rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground"
 							href="/settings"
 						>
 							<Settings class="h-4 w-4" />
@@ -196,7 +196,7 @@
 
 			<Button
 				size="sm"
-				class="h-8 gap-1.5 rounded-md px-3 text-[12px] font-medium shadow-sm"
+				class="h-8 gap-1.5 rounded-sm px-3 text-[12px] font-medium shadow-sm"
 				onclick={onAddLink}
 			>
 				<Plus class="h-3.5 w-3.5" />

@@ -31,7 +31,7 @@
 		<!-- Left: Icon/Avatar -->
 		<div class="flex shrink-0 flex-col items-center">
 			<div
-				class="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary transition-colors group-hover:bg-primary/20"
+				class="flex h-9 w-9 items-center justify-center rounded-sm bg-primary/10 text-primary transition-colors group-hover:bg-primary/20"
 			>
 				{#if link.logo && !logoError}
 					<img
@@ -82,7 +82,7 @@
 					href={link.url}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="mt-2 block overflow-hidden rounded-md border border-border transition-colors hover:bg-muted/10"
+					class="mt-2 block overflow-hidden rounded-sm border border-border transition-colors hover:bg-muted/10"
 				>
 					<div class="aspect-[2/1] w-full bg-muted/20">
 						<img
@@ -124,7 +124,7 @@
 				<Button
 					variant="ghost"
 					size="icon"
-					class="h-8 w-8 rounded-md {link.isFavorite
+					class="h-8 w-8 rounded-sm {link.isFavorite
 						? 'text-yellow-500'
 						: 'text-muted-foreground'} transition-colors hover:bg-yellow-500/10 hover:text-yellow-500"
 					onclick={(e) => {
@@ -138,7 +138,7 @@
 				<Button
 					variant="ghost"
 					size="icon"
-					class="h-8 w-8 rounded-md text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+					class="h-8 w-8 rounded-sm text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
 					onclick={(e) => {
 						e.preventDefault();
 						onedit(link);
@@ -150,7 +150,7 @@
 				<Button
 					variant="ghost"
 					size="icon"
-					class="h-8 w-8 rounded-md {link.isArchived
+					class="h-8 w-8 rounded-sm {link.isArchived
 						? 'text-primary'
 						: 'text-muted-foreground'} transition-colors hover:bg-primary/10 hover:text-primary"
 					onclick={(e) => {
@@ -164,7 +164,7 @@
 				<Button
 					variant="ghost"
 					size="icon"
-					class="h-8 w-8 rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+					class="h-8 w-8 rounded-sm text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
 					onclick={(e) => {
 						e.preventDefault();
 						store.links.toggleDeleted(link.id);

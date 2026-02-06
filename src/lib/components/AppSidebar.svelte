@@ -84,10 +84,10 @@
 		<div class="w-full">
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger
-					class="flex w-full items-center justify-start gap-2 overflow-hidden rounded-md bg-red-300 py-1.5 pr-2 pl-1.5 transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:bg-muted/50"
+					class="flex w-full items-center justify-start gap-2 overflow-hidden rounded-sm bg-red-300 py-1.5 pr-2 pl-1.5 transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:bg-muted/50"
 				>
 					<div
-						class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary text-[11px] font-bold text-primary-foreground shadow-sm"
+						class="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm bg-primary text-[11px] font-bold text-primary-foreground shadow-sm"
 					>
 						{store.workspaces.active?.name?.[0] || '?'}
 					</div>
@@ -101,7 +101,7 @@
 					/>
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content
-					class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-md border p-1 shadow-lg"
+					class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-sm border p-1 shadow-lg"
 				>
 					<DropdownMenu.Label
 						class="w-full px-2 py-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase"
@@ -112,7 +112,7 @@
 						{#each store.workspaces.workspaces as ws (ws.id)}
 							<DropdownMenu.Item
 								onclick={() => handleWorkspaceSwitch(ws.id)}
-								class="flex cursor-pointer items-center justify-between rounded-md px-2 py-1.5 text-[13px]"
+								class="flex cursor-pointer items-center justify-between rounded-sm px-2 py-1.5 text-[13px]"
 							>
 								<div class="flex items-center gap-2">
 									<div
@@ -133,7 +133,7 @@
 					<DropdownMenu.Separator class="my-1" />
 					<DropdownMenu.Item
 						onclick={() => (isCreateWorkspaceOpen = true)}
-						class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] text-muted-foreground hover:text-foreground"
+						class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-[13px] text-muted-foreground hover:text-foreground"
 					>
 						<Plus class="h-3.5 w-3.5" />
 						<span>Create Workspace</span>
@@ -157,7 +157,7 @@
 							<Sidebar.MenuButton
 								isActive={page.url.pathname === '/' && store.filters.activeCategory === item.id}
 								onclick={() => handleCategorySwitch(item.id)}
-								class="h-8 rounded-md px-3 text-[13px] transition-colors hover:bg-sidebar-accent/50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium"
+								class="h-8 rounded-sm px-3 text-[13px] transition-colors hover:bg-sidebar-accent/50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium"
 							>
 								{#snippet tooltipContent()}
 									{item.title}
@@ -178,7 +178,7 @@
 			<Button
 				variant="ghost"
 				size="sm"
-				class="h-8 w-full justify-start gap-2 rounded-md px-2 text-[12px] font-medium text-muted-foreground group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:text-foreground"
+				class="h-8 w-full justify-start gap-2 rounded-sm px-2 text-[12px] font-medium text-muted-foreground group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:text-foreground"
 				onclick={toggleMode}
 			>
 				<div class="relative flex h-4 w-4 items-center justify-center">
@@ -196,7 +196,7 @@
 				size="sm"
 				href="/settings"
 				class={cn(
-					'h-8 w-full justify-start gap-2 rounded-md px-2 text-[12px] font-medium text-muted-foreground group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:text-foreground',
+					'h-8 w-full justify-start gap-2 rounded-sm px-2 text-[12px] font-medium text-muted-foreground group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 hover:text-foreground',
 					page.url.pathname === '/settings' && 'bg-muted text-foreground'
 				)}
 			>
@@ -208,7 +208,7 @@
 </Sidebar.Root>
 
 <Dialog.Root bind:open={isCreateWorkspaceOpen}>
-	<Dialog.Content class="max-w-[320px] rounded-lg">
+	<Dialog.Content class="max-w-[320px] rounded-sm">
 		<Dialog.Header>
 			<Dialog.Title class="text-[15px] font-semibold">Create Workspace</Dialog.Title>
 			<Dialog.Description class="text-[12px] text-muted-foreground">

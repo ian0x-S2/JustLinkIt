@@ -47,24 +47,24 @@
 				value={store.filters.searchQuery}
 				oninput={(e) => store.filters.setSearchQuery(e.currentTarget.value)}
 				placeholder="Search Feed"
-				class="h-9 w-full rounded-md border-transparent bg-muted/60 pl-10 text-[13px] shadow-none transition-all hover:bg-muted/80 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary"
+				class="h-9 w-full rounded-sm border-transparent bg-muted/60 pl-10 text-[13px] shadow-none transition-all hover:bg-muted/80 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary"
 			/>
 		</div>
 	</div>
 
 	<!-- Stats Card -->
-	<div class="rounded-md bg-muted/20 border border-border/10">
+	<div class="rounded-sm bg-muted/20 border border-border/10">
 		<h2 class="px-3.5 py-2.5 text-[14px] font-bold tracking-tight">Workspace Stats</h2>
 		<div class="grid grid-cols-3 gap-0.5 px-1.5 pb-2.5">
-			<div class="flex flex-col items-center p-1.5 rounded-md hover:bg-muted/40 transition-colors">
+			<div class="flex flex-col items-center p-1.5 rounded-sm hover:bg-muted/40 transition-colors">
 				<p class="text-[14px] font-bold">{stats.total}</p>
 				<p class="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Links</p>
 			</div>
-			<div class="flex flex-col items-center p-1.5 rounded-md hover:bg-muted/40 transition-colors">
+			<div class="flex flex-col items-center p-1.5 rounded-sm hover:bg-muted/40 transition-colors">
 				<p class="text-[14px] font-bold">{stats.favorites}</p>
 				<p class="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Likes</p>
 			</div>
-			<div class="flex flex-col items-center p-1.5 rounded-md hover:bg-muted/40 transition-colors">
+			<div class="flex flex-col items-center p-1.5 rounded-sm hover:bg-muted/40 transition-colors">
 				<p class="text-[14px] font-bold">{stats.archived}</p>
 				<p class="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Saved</p>
 			</div>
@@ -73,7 +73,7 @@
 
 	<!-- Trending Tags -->
 	{#if trendingTags.length > 0}
-		<div class="rounded-md bg-muted/20 border border-border/10 overflow-hidden">
+		<div class="rounded-sm bg-muted/20 border border-border/10 overflow-hidden">
 			<h2 class="px-3.5 py-2.5 text-[14px] font-bold tracking-tight">Trends for you</h2>
 			<div class="flex flex-col">
 				{#each trendingTags as [tag, count] (tag)}
@@ -95,7 +95,7 @@
 
 	<!-- Recent Links -->
 	{#if recentLinks.length > 0}
-		<div class="rounded-md bg-muted/20 border border-border/10 overflow-hidden">
+		<div class="rounded-sm bg-muted/20 border border-border/10 overflow-hidden">
 			<h2 class="px-3.5 py-2.5 text-[14px] font-bold tracking-tight">Recent activity</h2>
 			<div class="flex flex-col">
 				{#each recentLinks as link (link.id)}

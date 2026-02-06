@@ -54,7 +54,7 @@
 </script>
 
 <div in:fade={{ duration: 300 }} class="flex flex-col items-center justify-center py-24 px-8 text-center">
-	<div class="mb-5 flex h-16 w-16 items-center justify-center rounded-md bg-primary/5">
+	<div class="mb-5 flex h-16 w-16 items-center justify-center rounded-sm bg-primary/5">
 		<config.icon class="h-8 w-8 text-primary/40" />
 	</div>
 	<h3 class="text-[20px] font-bold tracking-tight text-foreground">{config.title}</h3>
@@ -65,7 +65,7 @@
 	{#if config.showAdd}
 		<button
 			onclick={onAdd}
-			class="mt-6 h-9 rounded-md bg-primary px-6 text-[13px] font-bold text-primary-foreground shadow-sm transition-opacity hover:opacity-90 active:opacity-80"
+			class="mt-6 h-9 rounded-sm bg-primary px-6 text-[13px] font-bold text-primary-foreground shadow-sm transition-opacity hover:opacity-90 active:opacity-80"
 		>
 			Add your first link
 		</button>

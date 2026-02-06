@@ -89,7 +89,7 @@
 	{#each selected as tag (tag)}
 		<Badge
 			variant="secondary"
-			class="h-6 gap-1 rounded-[4px] border-primary/20 bg-primary/10 px-2 py-0 text-[11px] font-medium text-primary transition-colors duration-200 animate-in fade-in slide-in-from-left-2 hover:bg-primary/20"
+			class="h-6 gap-1 rounded-sm border-primary/20 bg-primary/10 px-2 py-0 text-[11px] font-medium text-primary transition-colors duration-200 animate-in fade-in slide-in-from-left-2 hover:bg-primary/20"
 		>
 			{tag}
 			<button
@@ -110,7 +110,7 @@
 		<Popover.Trigger
 			bind:ref={triggerRef}
 			class={cn(
-				'flex h-7 items-center gap-1.5 rounded-md border border-dashed border-border/60 bg-transparent px-2 text-[11px] font-medium text-muted-foreground transition-all hover:border-border hover:bg-muted/30 hover:text-foreground',
+				'flex h-7 items-center gap-1.5 rounded-sm border border-dashed border-border/60 bg-transparent px-2 text-[11px] font-medium text-muted-foreground transition-all hover:border-border hover:bg-muted/30 hover:text-foreground',
 				open && 'border-primary/30 bg-muted/50 text-foreground'
 			)}
 			role="combobox"
@@ -123,7 +123,7 @@
 		</Popover.Trigger>
 
 		<Popover.Content
-			class="w-56 overflow-hidden rounded-md border border-muted-foreground/10 bg-popover p-0 shadow-xl"
+			class="w-56 overflow-hidden rounded-sm border border-muted-foreground/10 bg-popover p-0 shadow-xl"
 			align="start"
 			sideOffset={4}
 		>
@@ -157,7 +157,7 @@
 						{#if showCreateOption}
 							<div class="mb-1 border-b border-muted-foreground/5 p-1">
 								<button
-									class="group flex h-8 w-full items-center justify-between rounded-md border border-muted-foreground/10 bg-muted/40 px-2 text-left text-[12px] transition-all hover:bg-muted/60 active:scale-[0.98]"
+									class="group flex h-8 w-full items-center justify-between rounded-sm border border-muted-foreground/10 bg-muted/40 px-2 text-left text-[12px] transition-all hover:bg-muted/60 active:scale-[0.98]"
 									onclick={() => {
 										addTag(value);
 										value = '';
@@ -178,7 +178,7 @@
 
 						{#if isSearchingSelectedTag}
 							<div
-								class="flex items-center gap-2 rounded-md bg-muted/20 px-2.5 py-2 text-[11px] text-muted-foreground"
+								class="flex items-center gap-2 rounded-sm bg-muted/20 px-2.5 py-2 text-[11px] text-muted-foreground"
 							>
 								<Check class="h-3 w-3 text-primary" />
 								<span>Already selected</span>
@@ -189,7 +189,7 @@
 							<Combobox.Item
 								value={tag}
 								label={tag}
-								class="group flex h-8 cursor-pointer items-center justify-between rounded-md px-2 text-[12px] transition-colors outline-none data-highlighted:bg-muted/50"
+								class="group flex h-8 cursor-pointer items-center justify-between rounded-sm px-2 text-[12px] transition-colors outline-none data-highlighted:bg-muted/50"
 							>
 								<div class="flex items-center gap-2">
 									<TagIcon class="h-3 w-3 opacity-40" />
