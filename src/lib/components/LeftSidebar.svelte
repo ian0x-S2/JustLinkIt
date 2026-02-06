@@ -94,10 +94,10 @@
 	<div class="flex h-14 items-center px-2 xl:px-3">
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger
-				class="flex w-full items-center justify-center gap-2.5 rounded-md p-2 transition-colors hover:bg-muted/80 xl:justify-start"
+				class="flex w-full items-center justify-center gap-2.5 rounded-sm p-2 transition-colors hover:bg-muted/80 xl:justify-start"
 			>
 				<div
-					class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary text-[11px] font-bold text-primary-foreground"
+					class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-primary text-[11px] font-bold text-primary-foreground"
 				>
 					{store.workspaces.active?.name?.[0] || '?'}
 				</div>
@@ -112,7 +112,7 @@
 				<Ellipsis class="ml-auto hidden h-4 w-4 text-muted-foreground xl:block" />
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content
-				class="z-50 w-63.75 rounded-xl border bg-popover p-1 shadow-2xl outline-none"
+				class="z-50 w-63.75 rounded-sm border bg-popover p-1 shadow-2xl outline-none"
 				align="start"
 				side={isWide ? 'bottom' : 'right'}
 				sideOffset={isWide ? 4 : 16}
@@ -126,13 +126,13 @@
 					{#each store.workspaces.workspaces as ws (ws.id)}
 						<DropdownMenu.Item
 							onclick={() => handleWorkspaceSelect(ws.id)}
-							class="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2.5 transition-colors outline-none hover:bg-muted focus:bg-muted {ws.id ===
+							class="my-1 flex cursor-pointer items-center gap-2.5 rounded-sm px-2 py-2.5 transition-colors outline-none hover:bg-muted focus:bg-muted {ws.id ===
 							store.workspaces.activeId
 								? 'bg-muted/60'
 								: ''}"
 						>
 							<div
-								class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-[11px] font-bold text-primary"
+								class="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-[11px] font-bold text-primary"
 							>
 								{ws.name[0]}
 							</div>
@@ -141,7 +141,7 @@
 								<span class="truncate text-[11px] text-muted-foreground">@{ws.slug}</span>
 							</div>
 							{#if ws.id === store.workspaces.activeId}
-								<div class="h-1.5 w-1.5 rounded-full bg-primary"></div>
+								<div class="h-1.5 w-1.5 rounded-sm bg-primary"></div>
 							{/if}
 						</DropdownMenu.Item>
 					{/each}
@@ -149,10 +149,10 @@
 				<DropdownMenu.Separator class="-mx-1 my-1 h-px bg-muted" />
 				<DropdownMenu.Item
 					onclick={() => (isCreateWorkspaceOpen = true)}
-					class="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2.5 transition-colors outline-none hover:bg-muted focus:bg-muted"
+					class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-2.5 transition-colors outline-none hover:bg-muted focus:bg-muted"
 				>
 					<div
-						class="flex h-8 w-8 items-center justify-center rounded-lg border border-dashed border-border text-muted-foreground"
+						class="flex h-8 w-8 items-center justify-center rounded-sm border border-dashed border-border text-muted-foreground"
 					>
 						<Plus class="h-4 w-4" />
 					</div>
@@ -164,7 +164,7 @@
 
 	<!-- Create Workspace Dialog -->
 	<Dialog.Root bind:open={isCreateWorkspaceOpen}>
-		<Dialog.Content class="max-w-[400px] rounded-2xl border-none p-6 shadow-2xl">
+		<Dialog.Content class="max-w-[400px] rounded-sm border-none p-6 shadow-2xl">
 			<Dialog.Header>
 				<Dialog.Title class="text-lg font-bold">New Workspace</Dialog.Title>
 				<Dialog.Description class="pt-1 text-[14px]">
@@ -175,13 +175,13 @@
 				<Input
 					bind:value={newWorkspaceName}
 					placeholder="Workspace name..."
-					class="h-11 rounded-xl border-none bg-muted/20 transition-all focus-visible:ring-2 focus-visible:ring-primary"
+					class="h-11 rounded-sm border-none bg-muted/20 transition-all focus-visible:ring-2 focus-visible:ring-primary"
 					onkeydown={(e) => e.key === 'Enter' && handleCreateWorkspace()}
 				/>
 			</div>
 			<Dialog.Footer class="flex flex-col gap-2 sm:flex-col">
 				<Button
-					class="h-11 w-full rounded-full font-bold"
+					class="h-11 w-full rounded-sm font-bold"
 					onclick={handleCreateWorkspace}
 					disabled={!newWorkspaceName.trim() || isCreating}
 				>
@@ -189,7 +189,7 @@
 				</Button>
 				<Button
 					variant="ghost"
-					class="h-11 w-full rounded-full font-bold"
+					class="h-11 w-full rounded-sm font-bold"
 					onclick={() => (isCreateWorkspaceOpen = false)}
 				>
 					Cancel
@@ -204,7 +204,7 @@
 			{@const isActive = page.url.pathname === '/' && activeCategory === item.id}
 			<Button
 				variant="ghost"
-				class="flex h-9 w-full items-center justify-center gap-0 rounded-md px-0 text-[14px] transition-colors hover:bg-muted/80 xl:justify-start xl:gap-3 xl:px-3 {isActive
+				class="flex h-9 w-full items-center justify-center gap-0 rounded-sm px-0 text-[14px] transition-colors hover:bg-muted/80 xl:justify-start xl:gap-3 xl:px-3 {isActive
 					? 'bg-muted/40 font-bold text-foreground'
 					: 'font-medium text-muted-foreground hover:text-foreground'}"
 				onclick={() => handleNavClick(item.id)}
@@ -215,7 +215,7 @@
 					{@const count = store.links.links.filter((l) => !l.isArchived && !l.isDeleted).length}
 					{#if count > 0}
 						<span
-							class="ml-auto hidden h-4.5 min-w-4.5 items-center justify-center rounded-md bg-primary/10 px-1 text-[10px] font-bold text-primary xl:flex"
+							class="ml-auto hidden h-4.5 min-w-4.5 items-center justify-center rounded-sm bg-primary/10 px-1 text-[10px] font-bold text-primary xl:flex"
 						>
 							{count > 99 ? '99+' : count}
 						</span>
@@ -230,7 +230,7 @@
 		<!-- Quick Actions -->
 		<Button
 			variant="ghost"
-			class="flex h-9 w-full items-center justify-center gap-0 rounded-md px-0 text-[14px] font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground xl:justify-start xl:gap-3 xl:px-3"
+			class="flex h-9 w-full items-center justify-center gap-0 rounded-sm px-0 text-[14px] font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground xl:justify-start xl:gap-3 xl:px-3"
 			onclick={toggleMode}
 		>
 			<div class="relative flex h-4.5 w-4.5 items-center justify-center">
@@ -244,7 +244,7 @@
 
 		<Button
 			variant="ghost"
-			class="flex h-9 w-full items-center justify-center gap-0 rounded-md px-0 text-[14px] font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground xl:justify-start xl:gap-3 xl:px-3"
+			class="flex h-9 w-full items-center justify-center gap-0 rounded-sm px-0 text-[14px] font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground xl:justify-start xl:gap-3 xl:px-3"
 			onclick={onExport}
 		>
 			<FileBraces class="h-4.5 w-4.5" />
@@ -253,7 +253,7 @@
 
 		<Button
 			variant="ghost"
-			class="flex h-9 w-full items-center justify-center gap-0 rounded-md px-0 text-[14px] transition-colors hover:bg-muted/80 xl:justify-start xl:gap-3 xl:px-3 {page
+			class="flex h-9 w-full items-center justify-center gap-0 rounded-sm px-0 text-[14px] transition-colors hover:bg-muted/80 xl:justify-start xl:gap-3 xl:px-3 {page
 				.url.pathname === '/settings'
 				? 'bg-muted/40 font-bold text-foreground'
 				: 'font-medium text-muted-foreground hover:text-foreground'}"

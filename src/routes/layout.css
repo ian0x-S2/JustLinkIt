@@ -40,7 +40,7 @@
 	--font-sans: Open Sans, sans-serif;
 	--font-serif: Georgia, serif;
 	--font-mono: Menlo, monospace;
-	--radius: 1.3rem;
+	--radius: 1rem;
 	--shadow-x: 0px;
 	--shadow-y: 2px;
 	--shadow-blur: 0px;
@@ -105,7 +105,7 @@
 	--font-sans: Open Sans, sans-serif;
 	--font-serif: Georgia, serif;
 	--font-mono: Menlo, monospace;
-	--radius: 1.3rem;
+	--radius: 1rem;
 	--shadow-x: 0px;
 	--shadow-y: 2px;
 	--shadow-blur: 0px;
@@ -250,4 +250,3 @@
 		border-color: var(--border);
 	}
 }
-
