@@ -5,16 +5,13 @@
 		Archive,
 		Trash2,
 		Settings,
-		Command,
 		Plus,
 		Moon,
 		Sun,
-		LogOut,
 		FileBraces,
 		Ellipsis
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
-	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { getContext } from 'svelte';
 	import type { AppStore } from '$lib/stores';
@@ -22,6 +19,9 @@
 	import { goto } from '$app/navigation';
 	import type { Category } from '$lib/constants';
 	import { setMode } from 'mode-watcher';
+
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import { Input } from '$lib/components/ui/input';
 
 	const store = getContext<AppStore>('store');
 
@@ -32,6 +32,10 @@
 		onAddLink: () => void;
 		onExport: () => void;
 	} = $props();
+
+	let isCreateWorkspaceOpen = $state(false);
+	let newWorkspaceName = $state('');
+	let isCreating = $state(false);
 
 	const navItems = [
 		{ id: 'inbox' as Category, label: 'Inbox', icon: Inbox },
@@ -47,8 +51,25 @@
 		}
 	}
 
-	function handleWorkspaceSelect(id: string) {
-		store.workspaces.setActive(id as any);
+	async function handleWorkspaceSelect(id: string) {
+		await store.setActiveWorkspace(id as any);
+	}
+
+	async function handleCreateWorkspace() {
+		const name = newWorkspaceName.trim();
+		if (!name) return;
+
+		isCreating = true;
+		try {
+			const result = await store.workspaces.add(name);
+			if (result.ok) {
+				newWorkspaceName = '';
+				isCreateWorkspaceOpen = false;
+				await store.setActiveWorkspace(result.value.id);
+			}
+		} finally {
+			isCreating = false;
+		}
 	}
 
 	function toggleMode() {
@@ -113,7 +134,10 @@
 					{/each}
 				</div>
 				<DropdownMenu.Separator />
-				<DropdownMenu.Item class="px-2 py-2">
+				<DropdownMenu.Item
+					onclick={() => (isCreateWorkspaceOpen = true)}
+					class="cursor-pointer px-2 py-2"
+				>
 					<Plus class="mr-2 h-3.5 w-3.5" />
 					<span class="text-[13px] font-medium">Create New Workspace</span>
 				</DropdownMenu.Item>
@@ -121,10 +145,46 @@
 		</DropdownMenu.Root>
 	</div>
 
+	<!-- Create Workspace Dialog -->
+	<Dialog.Root bind:open={isCreateWorkspaceOpen}>
+		<Dialog.Content class="max-w-[400px] rounded-2xl border-none p-6 shadow-2xl">
+			<Dialog.Header>
+				<Dialog.Title class="text-lg font-bold">New Workspace</Dialog.Title>
+				<Dialog.Description class="pt-1 text-[14px]">
+					Create a new space to organize your links.
+				</Dialog.Description>
+			</Dialog.Header>
+			<div class="py-4">
+				<Input
+					bind:value={newWorkspaceName}
+					placeholder="Workspace name..."
+					class="h-11 rounded-xl border-none bg-muted/20 transition-all focus-visible:ring-2 focus-visible:ring-primary"
+					onkeydown={(e) => e.key === 'Enter' && handleCreateWorkspace()}
+				/>
+			</div>
+			<Dialog.Footer class="flex flex-col gap-2 sm:flex-col">
+				<Button
+					class="h-11 w-full rounded-full font-bold"
+					onclick={handleCreateWorkspace}
+					disabled={!newWorkspaceName.trim() || isCreating}
+				>
+					{isCreating ? 'Creating...' : 'Create Workspace'}
+				</Button>
+				<Button
+					variant="ghost"
+					class="h-11 w-full rounded-full font-bold"
+					onclick={() => (isCreateWorkspaceOpen = false)}
+				>
+					Cancel
+				</Button>
+			</Dialog.Footer>
+		</Dialog.Content>
+	</Dialog.Root>
+
 	<!-- Navigation -->
 	<nav class="flex flex-1 flex-col gap-0.5 px-2 py-2 xl:px-3">
 		{#each navItems as item (item.id)}
-			{@const isActive = activeCategory === item.id}
+			{@const isActive = page.url.pathname === '/' && activeCategory === item.id}
 			<Button
 				variant="ghost"
 				class="flex h-9 w-full items-center justify-center gap-0 rounded-md px-0 text-[14px] transition-colors hover:bg-muted/80 xl:justify-start xl:gap-3 xl:px-3 {isActive
@@ -176,10 +236,15 @@
 
 		<Button
 			variant="ghost"
-			class="flex h-9 w-full items-center justify-center gap-0 rounded-md px-0 text-[14px] font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground xl:justify-start xl:gap-3 xl:px-3"
+			class="flex h-9 w-full items-center justify-center gap-0 rounded-md px-0 text-[14px] transition-colors hover:bg-muted/80 xl:justify-start xl:gap-3 xl:px-3 {page
+				.url.pathname === '/settings'
+				? 'bg-muted/40 font-bold text-foreground'
+				: 'font-medium text-muted-foreground hover:text-foreground'}"
 			href="/settings"
 		>
-			<Settings class="h-4.5 w-4.5" />
+			<Settings
+				class="h-4.5 w-4.5 {page.url.pathname === '/settings' ? 'stroke-[2.5px]' : 'stroke-[2px]'}"
+			/>
 			<span class="hidden xl:inline">Settings</span>
 		</Button>
 	</div>
