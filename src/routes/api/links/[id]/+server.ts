@@ -43,7 +43,7 @@ export const DELETE: RequestHandler = async ({ params }) => {
 	const { id } = params;
 	if (!id) return json({ error: 'id required' }, { status: 400 });
 
-	await db.delete(links).where(eq(links.id, id));
+	db.delete(links).where(eq(links.id, id)).run();
 	cacheManager.invalidateLink(id);
 	
 	return json({ success: true });

@@ -1,10 +1,11 @@
 <script lang="ts">
 	import type { Link } from '$lib/types';
 	import { Button } from '$lib/components/ui/button';
-	import { Trash2, FileText, ExternalLink, Star, Archive, Pencil } from '@lucide/svelte';
+	import { Trash2, FileText, ExternalLink, Star, Archive, Pencil, RotateCcw } from '@lucide/svelte';
 	import { formatDistanceToNow } from 'date-fns';
 	import { getContext } from 'svelte';
 	import type { AppStore } from '$lib/stores';
+	import * as Dialog from '$lib/components/ui/dialog';
 
 	interface Props {
 		link: Link;
@@ -16,6 +17,7 @@
 	const store = getContext<AppStore>('store');
 	let logoError = $state(false);
 	let imageError = $state(false);
+	let isDeleteDialogOpen = $state(false);
 
 	function getDomain(url: string) {
 		try {
@@ -23,6 +25,11 @@
 		} catch {
 			return url;
 		}
+	}
+
+	async function handlePermanentDelete() {
+		await store.links.removePermanently(link.id);
+		isDeleteDialogOpen = false;
 	}
 </script>
 
@@ -121,45 +128,60 @@
 
 			<!-- Actions: Bottom Row -->
 			<div class="mt-2 -ml-1.5 flex max-w-sm items-center justify-between">
-				<Button
-					variant="ghost"
-					size="icon"
-					class="h-8 w-8 rounded-sm {link.isFavorite
-						? 'text-yellow-500'
-						: 'text-muted-foreground'} transition-colors hover:bg-yellow-500/10 hover:text-yellow-500"
-					onclick={(e) => {
-						e.preventDefault();
-						store.links.toggleFavorite(link.id);
-					}}
-				>
-					<Star class="h-4 w-4 {link.isFavorite ? 'fill-current' : ''}" />
-				</Button>
+				{#if link.isDeleted}
+					<Button
+						variant="ghost"
+						size="icon"
+						class="h-8 w-8 rounded-sm text-primary transition-colors hover:bg-primary/10"
+						onclick={(e) => {
+							e.preventDefault();
+							store.links.toggleDeleted(link.id);
+						}}
+						title="Restore link"
+					>
+						<RotateCcw class="h-4 w-4" />
+					</Button>
+				{:else}
+					<Button
+						variant="ghost"
+						size="icon"
+						class="h-8 w-8 rounded-sm {link.isFavorite
+							? 'text-yellow-500'
+							: 'text-muted-foreground'} transition-colors hover:bg-yellow-500/10 hover:text-yellow-500"
+						onclick={(e) => {
+							e.preventDefault();
+							store.links.toggleFavorite(link.id);
+						}}
+					>
+						<Star class="h-4 w-4 {link.isFavorite ? 'fill-current' : ''}" />
+					</Button>
 
-				<Button
-					variant="ghost"
-					size="icon"
-					class="h-8 w-8 rounded-sm text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-					onclick={(e) => {
-						e.preventDefault();
-						onedit(link);
-					}}
-				>
-					<Pencil class="h-4 w-4" />
-				</Button>
+					<Button
+						variant="ghost"
+						size="icon"
+						class="h-8 w-8 rounded-sm text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+						onclick={(e) => {
+							e.preventDefault();
+							onedit(link);
+						}}
+					>
+						<Pencil class="h-4 w-4" />
+					</Button>
 
-				<Button
-					variant="ghost"
-					size="icon"
-					class="h-8 w-8 rounded-sm {link.isArchived
-						? 'text-primary'
-						: 'text-muted-foreground'} transition-colors hover:bg-primary/10 hover:text-primary"
-					onclick={(e) => {
-						e.preventDefault();
-						store.links.toggleArchived(link.id);
-					}}
-				>
-					<Archive class="h-4 w-4" />
-				</Button>
+					<Button
+						variant="ghost"
+						size="icon"
+						class="h-8 w-8 rounded-sm {link.isArchived
+							? 'text-primary'
+							: 'text-muted-foreground'} transition-colors hover:bg-primary/10 hover:text-primary"
+						onclick={(e) => {
+							e.preventDefault();
+							store.links.toggleArchived(link.id);
+						}}
+					>
+						<Archive class="h-4 w-4" />
+					</Button>
+				{/if}
 
 				<Button
 					variant="ghost"
@@ -167,8 +189,13 @@
 					class="h-8 w-8 rounded-sm text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
 					onclick={(e) => {
 						e.preventDefault();
-						store.links.toggleDeleted(link.id);
+						if (link.isDeleted) {
+							isDeleteDialogOpen = true;
+						} else {
+							store.links.toggleDeleted(link.id);
+						}
 					}}
+					title={link.isDeleted ? 'Delete permanently' : 'Move to trash'}
 				>
 					<Trash2 class="h-4 w-4" />
 				</Button>
@@ -176,3 +203,19 @@
 		</div>
 	</div>
 </div>
+
+<Dialog.Root bind:open={isDeleteDialogOpen}>
+	<Dialog.Content class="sm:max-w-[425px]">
+		<Dialog.Header>
+			<Dialog.Title>Delete permanently?</Dialog.Title>
+			<Dialog.Description>
+				This action cannot be undone. This will permanently delete the link
+				<span class="font-bold text-foreground">"{link.title || link.url}"</span>.
+			</Dialog.Description>
+		</Dialog.Header>
+		<Dialog.Footer class="mt-4">
+			<Button variant="outline" onclick={() => (isDeleteDialogOpen = false)}>Cancel</Button>
+			<Button variant="destructive" onclick={handlePermanentDelete}>Delete Permanently</Button>
+		</Dialog.Footer>
+	</Dialog.Content>
+</Dialog.Root>
