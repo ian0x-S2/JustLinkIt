@@ -7,6 +7,7 @@
 	import { buttonVariants } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
 	import { Combobox } from 'bits-ui';
+	import { TUI } from '$lib/tui';
 
 	interface Props {
 		selected: string[];
@@ -84,46 +85,47 @@
 	}
 </script>
 
-<div class="flex flex-wrap items-center gap-1.5">
-	<!-- Selected Tags Display -->
+<div class="flex flex-wrap items-center gap-1">
+	<!-- Selected Tags Display - Lazygit style -->
 	{#each selected as tag (tag)}
-		<Badge
-			variant="secondary"
-			class="h-6 gap-1 rounded-sm border-primary/20 bg-primary/10 px-2 py-0 text-[11px] font-medium text-primary transition-colors duration-200 animate-in fade-in slide-in-from-left-2 hover:bg-primary/20"
+		<div
+			class={cn(
+				'flex h-5 items-center gap-1 border border-primary/30 bg-primary/10 px-1.5 text-[10px] font-medium text-primary',
+				'hover:bg-primary/20'
+			)}
 		>
-			{tag}
+			<span>{TUI.bullet}{tag}</span>
 			<button
 				type="button"
-				class="ml-0.5 opacity-60 transition-colors outline-none hover:opacity-100 hover:text-destructive"
+				class="opacity-60 hover:text-destructive hover:opacity-100"
 				onclick={(e) => {
 					e.stopPropagation();
 					removeTag(tag);
 				}}
 				aria-label="Remove {tag}"
 			>
-				<X class="h-3 w-3" />
+				<X class="h-2.5 w-2.5" />
 			</button>
-		</Badge>
+		</div>
 	{/each}
 
 	<Popover.Root bind:open>
 		<Popover.Trigger
 			bind:ref={triggerRef}
 			class={cn(
-				'flex h-7 items-center gap-1.5 rounded-sm border border-dashed border-border/60 bg-transparent px-2 text-[11px] font-medium text-muted-foreground transition-all hover:border-border hover:bg-muted/30 hover:text-foreground',
+				'flex h-5 items-center gap-1 border border-dashed border-border/60 bg-transparent px-1.5 text-[10px] font-medium text-muted-foreground',
+				'hover:border-border hover:bg-muted/30 hover:text-foreground',
 				open && 'border-primary/30 bg-muted/50 text-foreground'
 			)}
 			role="combobox"
 			aria-expanded={open}
 		>
-			<Plus
-				class={cn('h-3.5 w-3.5 transition-transform duration-200', open && 'rotate-45')}
-			/>
-			<span>{selected.length > 0 ? 'Add' : 'Add tags'}</span>
+			<Plus class={cn('h-3 w-3', open && 'rotate-45')} />
+			<span>{selected.length > 0 ? 'add' : 'add tags'}</span>
 		</Popover.Trigger>
 
 		<Popover.Content
-			class="w-56 overflow-hidden rounded-sm border border-muted-foreground/10 bg-popover p-0 shadow-xl"
+			class="w-56 overflow-hidden border-2 border-border bg-popover p-0"
 			align="start"
 			sideOffset={4}
 		>
@@ -203,9 +205,7 @@
 							</Combobox.Item>
 						{:else}
 							{#if !showCreateOption && !isSearchingSelectedTag}
-								<div class="py-4 text-center text-[11px] text-muted-foreground/50">
-									No results.
-								</div>
+								<div class="py-4 text-center text-[11px] text-muted-foreground/50">No results.</div>
 							{/if}
 						{/each}
 					</Combobox.Viewport>

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { Link } from '$lib/types';
 	import { Button } from '$lib/components/ui/button';
-	import { Trash2, FileText, ExternalLink, Star, Archive, Pencil, RotateCcw, X } from '@lucide/svelte';
-	import { formatDistanceToNow } from 'date-fns';
 	import { getContext } from 'svelte';
 	import type { AppStore } from '$lib/stores';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import { cn } from '$lib/utils.js';
+	import { TUI, formatRelativeTime } from '$lib/tui';
 
 	interface Props {
 		link: Link;
@@ -15,8 +15,6 @@
 
 	let { link, onedit, ondelete }: Props = $props();
 	const store = getContext<AppStore>('store');
-	let logoError = $state(false);
-	let imageError = $state(false);
 	let isDeleteDialogOpen = $state(false);
 
 	function getDomain(url: string) {
@@ -33,222 +31,133 @@
 	}
 </script>
 
-<div class="group flex flex-col px-4 py-3 transition-colors hover:bg-muted/30">
-	<div class="flex gap-3">
-		<!-- Left: Icon/Avatar -->
-		<div class="flex shrink-0 flex-col items-center">
-			<div
-				class="flex h-9 w-9 items-center justify-center rounded-sm bg-primary/10 text-primary transition-colors group-hover:bg-primary/20"
+<div
+	class={cn(
+		'group flex flex-col border-b border-border/30',
+		'hover:bg-muted/30 transition-colors'
+	)}
+>
+	<div class="flex gap-2 px-2 py-0.5 items-center min-h-[28px]">
+		<!-- Selection indicator -->
+		<span class="w-3 shrink-0 text-[10px] text-primary opacity-0 group-hover:opacity-100">
+			{TUI.arrowRight}
+		</span>
+
+		<!-- Compact Line: Favorite? | Title | Domain | Time (Grid for alignment) -->
+		<div class="grid grid-cols-[20px_1fr_200px_150px_40px] gap-2 flex-1 min-w-0 font-mono text-[12px] items-center">
+			<button
+				onclick={(e) => {
+					e.preventDefault();
+					store.links.toggleFavorite(link.id);
+				}}
+				class={cn(
+					'shrink-0 flex justify-center hover:scale-125 transition-transform',
+					link.isFavorite ? 'text-chart-3' : 'text-muted-foreground/30 hover:text-chart-3'
+				)}
 			>
-				{#if link.logo && !logoError}
-					<img
-						src={link.logo}
-						alt=""
-						class="h-7 w-7 rounded-sm object-contain"
-						onerror={() => (logoError = true)}
-					/>
-				{:else}
-					<FileText class="h-4.5 w-4.5" />
-				{/if}
-			</div>
-		</div>
+				{TUI.bullet}
+			</button>
 
-		<!-- Right: Content -->
-		<div class="flex min-w-0 flex-1 flex-col gap-0.5">
-			<!-- Header: Title & Meta -->
-			<div class="flex items-center justify-between gap-2">
-				<div class="flex min-w-0 items-center gap-1.5">
-					<span class="truncate text-[14px] leading-tight font-bold text-foreground">
-						{getDomain(link.url)}
-					</span>
-					<span class="shrink-0 text-[14px] text-muted-foreground">·</span>
-					<span class="shrink-0 text-[13px] text-muted-foreground">
-						{formatDistanceToNow(link.createdAt, { addSuffix: false })}
-					</span>
-				</div>
-			</div>
-
-			<!-- Main Text -->
 			<a
 				href={link.url}
 				target="_blank"
 				rel="noopener noreferrer"
-				class="text-[14px] leading-snug text-foreground decoration-foreground/20 group-hover:underline"
+				class="truncate font-bold text-foreground hover:text-primary pr-4"
 			>
-				<span class="mb-0.5 block font-bold">{link.title || link.url}</span>
-				{#if link.description}
-					<p class="line-clamp-2 text-[14px] leading-snug text-muted-foreground">
-						{link.description}
-					</p>
-				{/if}
+				{link.title || link.url}
 			</a>
 
-			<!-- Attachment: Image Preview -->
-			{#if link.image && !imageError}
-				<a
-					href={link.url}
-					target="_blank"
-					rel="noopener noreferrer"
-					class="mt-2 block overflow-hidden rounded-sm border border-border transition-colors hover:bg-muted/10"
-				>
-					<div class="aspect-[2/1] w-full bg-muted/20">
-						<img
-							src={link.image}
-							alt=""
-							class="h-full w-full object-cover"
-							onerror={() => (imageError = true)}
-						/>
-					</div>
-					<div class="border-t border-border/40 p-2">
-						<div class="flex items-center gap-1.5 text-[12px] text-muted-foreground">
-							<ExternalLink class="h-3 w-3" />
-							<span class="truncate">{getDomain(link.url)}</span>
-						</div>
-					</div>
-				</a>
-			{/if}
+			<span class="text-primary truncate text-[11px]">
+				{getDomain(link.url)}
+			</span>
 
-			<!-- Tags -->
-			{#if link.tags.length > 0}
-				<div class="mt-1.5 flex flex-wrap gap-1.5">
-					{#each link.tags as tag (tag)}
-						<button
-							onclick={(e) => {
-								e.preventDefault();
-								e.stopPropagation();
-								store.filters.toggleTag(tag);
-							}}
-							class="text-[13px] font-medium text-primary hover:underline"
-						>
-							#{tag}
-						</button>
-					{/each}
-				</div>
-			{/if}
-
-			<!-- Actions: Bottom Row -->
-			<div class="mt-2 -ml-1.5 flex max-w-sm items-center justify-between">
-				{#if link.isDeleted}
-					<Button
-						variant="ghost"
-						size="icon"
-						class="h-8 w-8 rounded-sm text-primary transition-colors hover:bg-primary/10"
-						onclick={(e) => {
-							e.preventDefault();
-							store.links.toggleDeleted(link.id);
-						}}
-						title="Restore link"
-					>
-						<RotateCcw class="h-4 w-4" />
-					</Button>
-				{:else}
-					<Button
-						variant="ghost"
-						size="icon"
-						class="h-8 w-8 rounded-sm {link.isFavorite
-							? 'text-yellow-500'
-							: 'text-muted-foreground'} transition-colors hover:bg-yellow-500/10 hover:text-yellow-500"
-						onclick={(e) => {
-							e.preventDefault();
-							store.links.toggleFavorite(link.id);
-						}}
-					>
-						<Star class="h-4 w-4 {link.isFavorite ? 'fill-current' : ''}" />
-					</Button>
-
-					<Button
-						variant="ghost"
-						size="icon"
-						class="h-8 w-8 rounded-sm text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-						onclick={(e) => {
-							e.preventDefault();
-							onedit(link);
-						}}
-					>
-						<Pencil class="h-4 w-4" />
-					</Button>
-
-					<Button
-						variant="ghost"
-						size="icon"
-						class="h-8 w-8 rounded-sm {link.isArchived
-							? 'text-primary'
-							: 'text-muted-foreground'} transition-colors hover:bg-primary/10 hover:text-primary"
-						onclick={(e) => {
-							e.preventDefault();
-							store.links.toggleArchived(link.id);
-						}}
-					>
-						<Archive class="h-4 w-4" />
-					</Button>
+			<div class="hidden sm:flex gap-2 text-[10px] text-chart-3 truncate">
+				{#each link.tags.slice(0, 2) as tag}
+					<span>#{tag}</span>
+				{/each}
+				{#if link.tags.length > 2}
+					<span class="text-muted-foreground">+{link.tags.length - 2}</span>
 				{/if}
-
-				<Button
-					variant="ghost"
-					size="icon"
-					class="h-8 w-8 rounded-sm text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-					onclick={(e) => {
-						e.preventDefault();
-						if (link.isDeleted) {
-							isDeleteDialogOpen = true;
-						} else {
-							store.links.toggleDeleted(link.id);
-						}
-					}}
-					title={link.isDeleted ? 'Delete permanently' : 'Move to trash'}
-				>
-					<Trash2 class="h-4 w-4" />
-				</Button>
 			</div>
+
+			<span class="text-muted-foreground text-[10px] text-right">
+				{formatRelativeTime(link.createdAt)}
+			</span>
+		</div>
+
+		<!-- Actions (Hidden by default, shown on hover in TUI style) -->
+		<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity ml-2 shrink-0">
+			<button
+				class={cn(
+					'text-[10px] hover:underline',
+					link.isFavorite ? 'text-chart-3' : 'text-primary'
+				)}
+				onclick={(e) => {
+					e.preventDefault();
+					store.links.toggleFavorite(link.id);
+				}}
+			>
+				[f]av
+			</button>
+			<button
+				class="text-[10px] text-primary hover:underline"
+				onclick={(e) => {
+					e.preventDefault();
+					onedit(link);
+				}}
+			>
+				[e]dit
+			</button>
+			<button
+				class="text-[10px] text-destructive hover:underline"
+				onclick={(e) => {
+					e.preventDefault();
+					if (link.isDeleted) {
+						isDeleteDialogOpen = true;
+					} else {
+						store.links.toggleDeleted(link.id);
+					}
+				}}
+			>
+				[d]el
+			</button>
 		</div>
 	</div>
 </div>
 
 <Dialog.Root bind:open={isDeleteDialogOpen}>
-	<Dialog.Content showCloseButton={false} class="overflow-hidden p-0 max-w-[400px] rounded-sm">
-		<div class="flex flex-col bg-background text-foreground">
-			<!-- Header -->
+	<Dialog.Content showCloseButton={false} class="max-w-[400px] overflow-hidden border-2 border-foreground bg-background p-0 rounded-none">
+		<div class="flex flex-col text-foreground font-mono">
 			<div class="flex h-11 items-center justify-between border-b border-border px-4">
-				<h2 class="text-[13px] font-semibold tracking-tight text-foreground/90">
-					Delete Permanently
+				<h2 class="text-[13px] font-bold uppercase tracking-tight text-destructive">
+					Confirm Delete
 				</h2>
-				<Button
-					variant="ghost"
-					size="icon"
-					onclick={() => (isDeleteDialogOpen = false)}
-					class="h-7 w-7 rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground"
-				>
-					<X class="h-3.5 w-3.5" />
-				</Button>
 			</div>
 
-			<!-- Body -->
 			<div class="space-y-3 px-4 py-4">
-				<p class="text-[13px] leading-relaxed text-muted-foreground">
-					This action cannot be undone. This will permanently delete the link:
+				<p class="text-[12px] leading-relaxed text-muted-foreground">
+					Permanently remove this link from local database?
 				</p>
-				<div class="rounded-sm border border-border/50 bg-muted/20 px-3 py-2">
-					<span class="text-[13px] font-medium text-foreground">
+				<div class="border border-border bg-muted/20 px-3 py-2">
+					<span class="text-[12px] font-bold text-foreground">
 						{link.title || link.url}
 					</span>
 				</div>
 			</div>
 
-			<!-- Footer -->
 			<div class="flex items-center justify-end gap-2 border-t border-border px-4 py-2.5">
 				<Button
 					variant="ghost"
 					onclick={() => (isDeleteDialogOpen = false)}
-					class="h-8 rounded-sm px-3 text-[12px] font-medium text-muted-foreground hover:text-foreground"
+					class="h-8 px-3 text-[12px] hover:bg-muted/50"
 				>
 					Cancel
 				</Button>
 				<Button
-					variant="destructive"
 					onclick={handlePermanentDelete}
-					class="h-8 rounded-sm px-4 text-[12px] font-medium shadow-sm"
+					class="h-8 px-4 text-[12px] bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-none"
 				>
-					Delete Permanently
+					Delete
 				</Button>
 			</div>
 		</div>

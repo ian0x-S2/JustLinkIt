@@ -9,6 +9,8 @@
 	import TagInput from '$lib/components/TagInput.svelte';
 	import { X, Globe, Tag, Type, Loader, TextAlignStart } from '@lucide/svelte';
 	import { browser } from '$app/environment';
+	import { cn } from '$lib/utils.js';
+	import { TUI } from '$lib/tui';
 
 	interface Props {
 		link?: Link | null;
@@ -113,19 +115,27 @@
 </script>
 
 <div class="flex h-full flex-col bg-background text-foreground">
-	<!-- Header -->
-	<div class="flex h-11 items-center justify-between border-b border-border px-4">
-		<h2 class="text-[13px] font-semibold tracking-tight text-foreground/90">
-			{link ? 'Edit link' : 'Add new link'}
-		</h2>
-		<Button
-			variant="ghost"
-			size="icon"
-			onclick={oncancel}
-			class="h-7 w-7 rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+	<!-- Header - Lazygit style -->
+	<div class="flex h-8 items-center justify-between border-b border-border bg-muted px-3">
+		<span
+			class="flex items-center gap-2 text-[11px] font-bold tracking-wider text-muted-foreground uppercase"
 		>
-			<X class="h-3.5 w-3.5" />
-		</Button>
+			<span>{TUI.topLeft}</span>
+			<span>{link ? 'Edit Link' : 'Add Link'}</span>
+		</span>
+		<div class="flex items-center gap-3 text-[10px] text-muted-foreground">
+			<span>
+				<span class="rounded bg-secondary px-1 text-secondary-foreground">esc</span> cancel
+			</span>
+			<Button
+				variant="ghost"
+				size="icon"
+				onclick={oncancel}
+				class="h-6 w-6 text-muted-foreground hover:bg-muted hover:text-foreground"
+			>
+				<X class="h-3 w-3" />
+			</Button>
+		</div>
 	</div>
 
 	<!-- Body -->
@@ -141,13 +151,16 @@
 					id="url"
 					bind:value={url}
 					placeholder="https://example.com"
-					class="h-9 flex-1 rounded-sm border-border bg-muted/10 text-[13px] transition-all focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/50"
+					class={cn(
+						'h-9 flex-1 border-2 bg-muted/10 text-[13px]',
+						'focus-visible:bg-background focus-visible:ring-0 focus-visible:ring-offset-0'
+					)}
 				/>
 				<Button
 					variant="outline"
 					onclick={fetchOpenGraphPreview}
 					disabled={!url || isLoadingPreview}
-					class="h-9 rounded-sm px-3 text-[12px] font-medium"
+					class="h-9 border-2 px-3 text-[12px] font-medium"
 				>
 					{#if isLoadingPreview}
 						<Loader class="mr-1.5 h-3.5 w-3.5 animate-spin" />
@@ -167,7 +180,10 @@
 				id="title"
 				bind:value={title}
 				placeholder="Give it a name..."
-				class="h-9 rounded-sm border-border bg-muted/10 text-[13px] transition-all focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/50"
+				class={cn(
+					'h-9 border-2 bg-muted/10 text-[13px]',
+					'focus-visible:bg-background focus-visible:ring-0 focus-visible:ring-offset-0'
+				)}
 			/>
 		</div>
 
@@ -193,20 +209,21 @@
 				bind:value={description}
 				placeholder="What makes this link interesting?"
 				rows={3}
-				class="min-h-20 resize-none rounded-sm border-border bg-muted/10 px-3 py-2 text-[13px] leading-relaxed transition-all focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/50"
+				class={cn(
+					'min-h-20 resize-none border-2 bg-muted/10 px-3 py-2 text-[13px] leading-relaxed',
+					'focus-visible:bg-background focus-visible:ring-0 focus-visible:ring-offset-0'
+				)}
 			/>
 		</div>
 
 		{#if image}
-			<div class="pt-1 duration-300 animate-in fade-in slide-in-from-top-2">
-				<div
-					class="relative aspect-video overflow-hidden rounded-sm border border-border/60 shadow-sm"
-				>
+			<div class="pt-1">
+				<div class="relative aspect-video overflow-hidden border border-border">
 					<img src={image} alt="Preview" class="h-full w-full object-cover" />
 					<Button
 						variant="secondary"
 						size="icon"
-						class="absolute top-2 right-2 h-7 w-7 rounded-sm bg-background/90 shadow-sm backdrop-blur-sm hover:bg-background"
+						class="absolute top-2 right-2 h-7 w-7 border bg-background hover:bg-background"
 						onclick={() => (image = '')}
 					>
 						<X class="h-3.5 w-3.5" />
@@ -221,14 +238,14 @@
 		<Button
 			variant="ghost"
 			onclick={oncancel}
-			class="h-8 rounded-sm px-3 text-[12px] font-medium text-muted-foreground hover:text-foreground"
+			class="h-8 px-3 text-[12px] font-medium text-muted-foreground hover:text-foreground"
 		>
 			Cancel
 		</Button>
 		<Button
 			onclick={handleSubmit}
 			disabled={isSaving || !url.trim()}
-			class="h-8 rounded-sm px-4 text-[12px] font-medium shadow-sm"
+			class="h-8 px-4 text-[12px] font-medium"
 		>
 			{#if isSaving}
 				<Loader class="mr-1.5 h-3 w-3 animate-spin" />

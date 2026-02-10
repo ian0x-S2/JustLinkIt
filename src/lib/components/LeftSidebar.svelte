@@ -1,26 +1,15 @@
 <script lang="ts">
-	import {
-		Inbox,
-		Star,
-		Archive,
-		Trash2,
-		Settings,
-		Plus,
-		Moon,
-		Sun,
-		FileBraces,
-		Ellipsis,
-		X
-	} from '@lucide/svelte';
-	import { Button } from '$lib/components/ui/button';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { getContext } from 'svelte';
 	import type { AppStore } from '$lib/stores';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import type { Category } from '$lib/constants';
 	import { setMode } from 'mode-watcher';
+	import { cn } from '$lib/utils.js';
+	import { TUI, theme } from '$lib/tui';
+	import LazyPanel from './tui/LazyPanel.svelte';
 
+	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -38,21 +27,12 @@
 	let isCreateWorkspaceOpen = $state(false);
 	let newWorkspaceName = $state('');
 	let isCreating = $state(false);
-	let isWide = $state(false);
-
-	$effect(() => {
-		const mql = window.matchMedia('(min-width: 1280px)');
-		isWide = mql.matches;
-		const handler = (e: MediaQueryListEvent) => (isWide = e.matches);
-		mql.addEventListener('change', handler);
-		return () => mql.removeEventListener('change', handler);
-	});
 
 	const navItems = [
-		{ id: 'inbox' as Category, label: 'Inbox', icon: Inbox },
-		{ id: 'favorites' as Category, label: 'Favorites', icon: Star },
-		{ id: 'archive' as Category, label: 'Archive', icon: Archive },
-		{ id: 'trash' as Category, label: 'Trash', icon: Trash2 }
+		{ id: 'inbox' as Category, label: 'Inbox', key: '1' },
+		{ id: 'favorites' as Category, label: 'Favorites', key: '2' },
+		{ id: 'archive' as Category, label: 'Archive', key: '3' },
+		{ id: 'trash' as Category, label: 'Trash', key: '4' }
 	] as const;
 
 	function handleNavClick(category: Category) {
@@ -91,205 +71,150 @@
 	const activeCategory = $derived(store.filters.activeCategory);
 </script>
 
-<aside class="sticky top-0 flex h-screen w-17 shrink-0 flex-col bg-background xl:w-68.75">
-	<!-- Workspace Switcher (Replaces Logo) -->
-	<div class="flex h-14 items-center px-2 xl:px-3">
-		<DropdownMenu.Root>
-			<DropdownMenu.Trigger
-				class="flex w-full items-center justify-center gap-2.5 rounded-sm p-2 transition-colors hover:bg-muted/80 xl:justify-start"
-			>
-				<div
-					class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-primary text-[11px] font-bold text-primary-foreground"
+<aside class={theme.sidebar}>
+	<!-- Workspace Panel -->
+	<LazyPanel title="Workspaces" titleClass={theme.titleStatus} class="flex-[0.8] min-h-[120px]">
+		<div class="flex flex-col gap-0.5">
+			{#each store.workspaces.workspaces as ws (ws.id)}
+				{@const isActive = ws.id === store.workspaces.activeId}
+				<button
+					onclick={() => handleWorkspaceSelect(ws.id)}
+					class={cn(
+						theme.item,
+						isActive ? theme.itemSelected : theme.itemDefault,
+						'px-2 py-1'
+					)}
 				>
-					{store.workspaces.active?.name?.[0] || '?'}
-				</div>
-				<div class="hidden min-w-0 flex-1 text-left xl:block">
-					<p class="truncate text-[13px] leading-none font-bold">
-						{store.workspaces.active?.name || 'Workspace'}
-					</p>
-					<p class="truncate text-[11px] leading-normal text-muted-foreground">
-						@{store.workspaces.active?.slug || 'workspace'}
-					</p>
-				</div>
-				<Ellipsis class="ml-auto hidden h-4 w-4 text-muted-foreground xl:block" />
-			</DropdownMenu.Trigger>
-			<DropdownMenu.Content
-				class="z-50 w-63.75 rounded-sm border bg-popover p-1 shadow-2xl outline-none"
-				align="start"
-				side={isWide ? 'bottom' : 'right'}
-				sideOffset={isWide ? 4 : 16}
-			>
-				<DropdownMenu.Label
-					class="px-2 py-1.5 text-[11px] font-bold tracking-wider text-muted-foreground uppercase"
-					>Switch Workspace</DropdownMenu.Label
-				>
-				<DropdownMenu.Separator class="-mx-1 my-1 h-px bg-muted" />
-				<div class="max-h-80 overflow-y-auto">
-					{#each store.workspaces.workspaces as ws (ws.id)}
-						<DropdownMenu.Item
-							onclick={() => handleWorkspaceSelect(ws.id)}
-							class="my-1 flex cursor-pointer items-center gap-2.5 rounded-sm px-2 py-2.5 transition-colors outline-none hover:bg-muted focus:bg-muted {ws.id ===
-							store.workspaces.activeId
-								? 'bg-muted/60'
-								: ''}"
-						>
-							<div
-								class="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-[11px] font-bold text-primary"
-							>
-								{ws.name[0]}
-							</div>
-							<div class="flex flex-1 flex-col overflow-hidden">
-								<span class="truncate text-[13px] leading-none font-bold">{ws.name}</span>
-								<span class="truncate text-[11px] text-muted-foreground">@{ws.slug}</span>
-							</div>
-							{#if ws.id === store.workspaces.activeId}
-								<div class="h-1.5 w-1.5 rounded-sm bg-primary"></div>
-							{/if}
-						</DropdownMenu.Item>
-					{/each}
-				</div>
-				<DropdownMenu.Separator class="-mx-1 my-1 h-px bg-muted" />
-				<DropdownMenu.Item
-					onclick={() => (isCreateWorkspaceOpen = true)}
-					class="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-2.5 transition-colors outline-none hover:bg-muted focus:bg-muted"
-				>
-					<div
-						class="flex h-8 w-8 items-center justify-center rounded-sm border border-dashed border-border text-muted-foreground"
-					>
-						<Plus class="h-4 w-4" />
-					</div>
-					<span class="text-[13px] font-bold">New Workspace</span>
-				</DropdownMenu.Item>
-			</DropdownMenu.Content>
-		</DropdownMenu.Root>
-	</div>
-
-	<!-- Create Workspace Dialog -->
-	<Dialog.Root bind:open={isCreateWorkspaceOpen}>
-		<Dialog.Content showCloseButton={false} class="overflow-hidden p-0 max-w-[320px] rounded-sm">
-			<div class="flex flex-col bg-background text-foreground">
-				<!-- Header -->
-				<div class="flex h-11 items-center justify-between border-b border-border px-4">
-					<h2 class="text-[13px] font-semibold tracking-tight text-foreground/90">
-						Create Workspace
-					</h2>
-					<Button
-						variant="ghost"
-						size="icon"
-						onclick={() => (isCreateWorkspaceOpen = false)}
-						class="h-7 w-7 rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground"
-					>
-						<X class="h-3.5 w-3.5" />
-					</Button>
-				</div>
-
-				<!-- Body -->
-				<div class="space-y-4 px-4 py-4">
-					<p class="text-[12px] text-muted-foreground leading-snug">
-						Workspaces help you organize links for different projects.
-					</p>
-					<div class="space-y-1.5">
-						<Label for="ws-name" class="text-[12px] font-medium text-muted-foreground">Name</Label>
-						<Input
-							id="ws-name"
-							bind:value={newWorkspaceName}
-							placeholder="My New Project"
-							class="h-9 rounded-sm border-border bg-muted/10 text-[13px] transition-all focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary/50"
-							onkeydown={(e) => e.key === 'Enter' && handleCreateWorkspace()}
-							autofocus
-						/>
-					</div>
-				</div>
-
-				<!-- Footer -->
-				<div class="flex items-center justify-end gap-2 border-t border-border px-4 py-2.5">
-					<Button
-						variant="ghost"
-						onclick={() => (isCreateWorkspaceOpen = false)}
-						class="h-8 rounded-sm px-3 text-[12px] font-medium text-muted-foreground hover:text-foreground"
-					>
-						Cancel
-					</Button>
-					<Button
-						onclick={handleCreateWorkspace}
-						disabled={!newWorkspaceName.trim() || isCreating}
-						class="h-8 rounded-sm px-4 text-[12px] font-medium shadow-sm"
-					>
-						{#if isCreating}
-							<div class="mr-1.5 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
-						{/if}
-						Create
-					</Button>
-				</div>
-			</div>
-		</Dialog.Content>
-	</Dialog.Root>
-
-	<!-- Navigation -->
-	<nav class="flex flex-1 flex-col gap-0.5 px-2 py-2 xl:px-3">
-		{#each navItems as item (item.id)}
-			{@const isActive = page.url.pathname === '/' && activeCategory === item.id}
-			<Button
-				variant="ghost"
-				class="flex h-9 w-full items-center justify-center gap-0 rounded-sm px-0 text-[14px] transition-colors hover:bg-muted/80 xl:justify-start xl:gap-3 xl:px-3 {isActive
-					? 'bg-muted/40 font-bold text-foreground'
-					: 'font-medium text-muted-foreground hover:text-foreground'}"
-				onclick={() => handleNavClick(item.id)}
-			>
-				<item.icon class="h-4.5 w-4.5 shrink-0 {isActive ? 'stroke-[2.5px]' : 'stroke-[2px]'}" />
-				<span class="hidden xl:inline">{item.label}</span>
-				{#if item.id === 'inbox'}
-					{@const count = store.links.links.filter((l) => !l.isArchived && !l.isDeleted).length}
-					{#if count > 0}
-						<span
-							class="ml-auto hidden h-4.5 min-w-4.5 items-center justify-center rounded-sm bg-primary/10 px-1 text-[10px] font-bold text-primary xl:flex"
-						>
-							{count > 99 ? '99+' : count}
-						</span>
+					{#if isActive}
+						<span class="text-foreground font-bold">{TUI.bullet}</span>
+					{:else}
+						<span class="w-3"></span>
 					{/if}
-				{/if}
-			</Button>
-		{/each}
-	</nav>
+					<span class="flex-1 text-left truncate">{ws.name}</span>
+					<span class="text-[10px] opacity-50">@{ws.slug}</span>
+				</button>
+			{/each}
+			<button
+				onclick={() => (isCreateWorkspaceOpen = true)}
+				class={cn(theme.item, theme.itemDefault, 'px-2 py-1 text-muted-foreground italic')}
+			>
+				<span class="w-3">{TUI.bullet}</span>
+				<span>New workspace...</span>
+			</button>
+		</div>
+	</LazyPanel>
 
-	<!-- Bottom Actions -->
-	<div class="flex flex-col gap-1 px-2 py-4 xl:px-3">
-		<!-- Quick Actions -->
-		<Button
-			variant="ghost"
-			class="flex h-9 w-full items-center justify-center gap-0 rounded-sm px-0 text-[14px] font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground xl:justify-start xl:gap-3 xl:px-3"
-			onclick={toggleMode}
-		>
-			<div class="relative flex h-4.5 w-4.5 items-center justify-center">
-				<Sun class="h-4.5 w-4.5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-				<Moon
-					class="absolute h-4.5 w-4.5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
-				/>
-			</div>
-			<span class="hidden xl:inline">Toggle Theme</span>
-		</Button>
+	<!-- Categories Panel -->
+	<LazyPanel title="Categories" titleClass={theme.titleFiles} class="flex-1">
+		<nav class="flex flex-col gap-0.5">
+			{#each navItems as item (item.id)}
+				{@const isActive = page.url.pathname === '/' && activeCategory === item.id}
+				<button
+					onclick={() => handleNavClick(item.id)}
+					class={cn(
+						theme.item,
+						isActive ? theme.itemSelected : theme.itemDefault,
+						'px-2 py-1'
+					)}
+				>
+					<span class="w-4 text-[10px] opacity-50">{item.key}</span>
+					<span class="flex-1 text-left">{item.label}</span>
+					{#if item.id === 'inbox'}
+						{@const count = store.links.links.filter((l) => !l.isArchived && !l.isDeleted).length}
+						{#if count > 0}
+							<span class="text-[10px] opacity-70">[{count}]</span>
+						{/if}
+					{/if}
+					{#if isActive}
+						<span class="text-[10px]">{TUI.arrowRight}</span>
+					{/if}
+				</button>
+			{/each}
+		</nav>
+	</LazyPanel>
 
-		<Button
-			variant="ghost"
-			class="flex h-9 w-full items-center justify-center gap-0 rounded-sm px-0 text-[14px] font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground xl:justify-start xl:gap-3 xl:px-3"
-			onclick={onExport}
-		>
-			<FileBraces class="h-4.5 w-4.5" />
-			<span class="hidden xl:inline">Export</span>
-		</Button>
-
-		<Button
-			variant="ghost"
-			class="flex h-9 w-full items-center justify-center gap-0 rounded-sm px-0 text-[14px] transition-colors hover:bg-muted/80 xl:justify-start xl:gap-3 xl:px-3 {page
-				.url.pathname === '/settings'
-				? 'bg-muted/40 font-bold text-foreground'
-				: 'font-medium text-muted-foreground hover:text-foreground'}"
-			href="/settings"
-		>
-			<Settings
-				class="h-4.5 w-4.5 {page.url.pathname === '/settings' ? 'stroke-[2.5px]' : 'stroke-[2px]'}"
-			/>
-			<span class="hidden xl:inline">Settings</span>
-		</Button>
-	</div>
+	<!-- Actions Panel -->
+	<LazyPanel title="Actions" titleClass={theme.titleBranches} class="flex-[0.6]">
+		<div class="flex flex-col gap-0.5">
+			<button
+				onclick={onAddLink}
+				class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}
+			>
+				<span class="w-4 text-[10px] opacity-50">a</span>
+				<span>Add Link</span>
+			</button>
+			<button
+				onclick={toggleMode}
+				class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}
+			>
+				<span class="w-4 text-[10px] opacity-50">t</span>
+				<span>Toggle Theme</span>
+			</button>
+			<button
+				onclick={onExport}
+				class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}
+			>
+				<span class="w-4 text-[10px] opacity-50">e</span>
+				<span>Export Links</span>
+			</button>
+			<a
+				href="/settings"
+				class={cn(
+					theme.item,
+					page.url.pathname === '/settings' ? theme.itemSelected : theme.itemDefault,
+					'px-2 py-1'
+				)}
+			>
+				<span class="w-4 text-[10px] opacity-50">,</span>
+				<span>Settings</span>
+			</a>
+		</div>
+	</LazyPanel>
 </aside>
+
+<!-- Create Workspace Dialog -->
+<Dialog.Root bind:open={isCreateWorkspaceOpen}>
+	<Dialog.Content
+		showCloseButton={false}
+		class="max-w-[320px] overflow-hidden border-2 border-foreground bg-background p-0 rounded-none"
+	>
+		<div class="flex flex-col text-foreground font-mono">
+			<div class="flex h-11 items-center justify-between border-b border-border px-4">
+				<h2 class="text-[13px] font-bold uppercase tracking-tight text-destructive">
+					Create Workspace
+				</h2>
+			</div>
+
+			<div class="space-y-4 px-4 py-4">
+				<div class="space-y-1.5">
+					<Label for="ws-name" class="text-[11px] uppercase text-muted-foreground">Name</Label>
+					<Input
+						id="ws-name"
+						bind:value={newWorkspaceName}
+						placeholder="Project Name"
+						class="h-9 border border-border bg-background text-[13px] focus-visible:border-foreground focus-visible:ring-0 rounded-none"
+						onkeydown={(e) => e.key === 'Enter' && handleCreateWorkspace()}
+						autofocus
+					/>
+				</div>
+			</div>
+
+			<div class="flex items-center justify-end gap-2 border-t border-border px-4 py-2.5">
+				<Button
+					variant="ghost"
+					onclick={() => (isCreateWorkspaceOpen = false)}
+					class="h-8 px-3 text-[12px] hover:bg-muted/50"
+				>
+					Cancel
+				</Button>
+				<Button
+					onclick={handleCreateWorkspace}
+					disabled={!newWorkspaceName.trim() || isCreating}
+					class="h-8 px-4 text-[12px] bg-foreground text-background hover:bg-foreground/90 rounded-none"
+				>
+					Create
+				</Button>
+			</div>
+		</div>
+	</Dialog.Content>
+</Dialog.Root>

@@ -2,6 +2,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import { FileBraces, FileText, X } from '@lucide/svelte';
 	import type { Link } from '$lib/types';
+	import { cn } from '$lib/utils.js';
+	import { TUI } from '$lib/tui';
 
 	let { open = $bindable(false), links }: { open: boolean; links: Link[] } = $props();
 
@@ -42,77 +44,88 @@
 </script>
 
 <div class="flex flex-col bg-background text-foreground">
-	<!-- Header -->
-	<div class="flex h-11 items-center justify-between border-b border-border px-4">
-		<h2 class="text-[13px] font-semibold tracking-tight text-foreground/90">Export Workspace</h2>
-		<Button
-			variant="ghost"
-			size="icon"
-			onclick={() => (open = false)}
-			class="h-7 w-7 rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+	<!-- Header - Lazygit style -->
+	<div class="flex h-8 items-center justify-between border-b border-border bg-muted px-3">
+		<span
+			class="flex items-center gap-2 text-[11px] font-bold tracking-wider text-muted-foreground uppercase"
 		>
-			<X class="h-3.5 w-3.5" />
-		</Button>
+			<span>{TUI.topLeft}</span>
+			<span>Export Workspace</span>
+		</span>
+		<div class="flex items-center gap-3 text-[10px] text-muted-foreground">
+			<span>
+				<span class="rounded bg-secondary px-1 text-secondary-foreground">esc</span> close
+			</span>
+			<Button
+				variant="ghost"
+				size="icon"
+				onclick={() => (open = false)}
+				class="h-6 w-6 text-muted-foreground hover:bg-muted hover:text-foreground"
+			>
+				<X class="h-3 w-3" />
+			</Button>
+		</div>
 	</div>
 
 	<!-- Body -->
-	<div class="flex-1 space-y-4 px-4 py-4">
-		<p class="text-[12px] leading-relaxed text-muted-foreground">
-			Download your collection as a portable file. Your data stays private and local.
+	<div class="flex-1 space-y-3 px-3 py-3">
+		<p class="text-[11px] leading-relaxed text-muted-foreground">
+			Export {links.length} links to a file.
 		</p>
 
-		<div class="grid gap-2.5">
+		<div class="grid gap-2">
 			<button
-				class="group flex items-center justify-between rounded-sm border border-border/60 bg-muted/10 p-3 transition-all hover:border-primary/30 hover:bg-muted/20"
+				class={cn(
+					'group flex items-center gap-2 border-2 border-border bg-muted/10 p-2',
+					'hover:border-primary/50 hover:bg-muted/20'
+				)}
 				onclick={exportToJSON}
 			>
-				<div class="flex items-center gap-3">
-					<div
-						class="flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-background shadow-sm transition-colors group-hover:border-primary/20"
-					>
-						<FileBraces
-							class="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary"
-						/>
-					</div>
-					<div class="text-left">
-						<p class="text-[13px] leading-none font-medium">JSON Data</p>
-						<p class="mt-1 text-[11px] text-muted-foreground/60">
-							Best for backups and machine reading.
-						</p>
-					</div>
+				<div
+					class="flex h-7 w-7 items-center justify-center border border-border bg-background group-hover:border-primary/30"
+				>
+					<FileBraces class="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary" />
 				</div>
+				<div class="text-left">
+					<p class="text-[12px] font-medium">JSON Data</p>
+					<p class="text-[10px] text-muted-foreground">Best for backups</p>
+				</div>
+				<span class="ml-auto text-[10px] text-muted-foreground">
+					{TUI.arrowRight}
+				</span>
 			</button>
 
 			<button
-				class="group flex items-center justify-between rounded-sm border border-border/60 bg-muted/10 p-3 transition-all hover:border-primary/30 hover:bg-muted/20"
+				class={cn(
+					'group flex items-center gap-2 border-2 border-border bg-muted/10 p-2',
+					'hover:border-primary/50 hover:bg-muted/20'
+				)}
 				onclick={exportToMarkdown}
 			>
-				<div class="flex items-center gap-3">
-					<div
-						class="flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-background shadow-sm transition-colors group-hover:border-primary/20"
-					>
-						<FileText
-							class="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary"
-						/>
-					</div>
-					<div class="text-left">
-						<p class="text-[13px] leading-none font-medium">Markdown Document</p>
-						<p class="mt-1 text-[11px] text-muted-foreground/60">
-							Best for reading and documentation.
-						</p>
-					</div>
+				<div
+					class="flex h-7 w-7 items-center justify-center border border-border bg-background group-hover:border-primary/30"
+				>
+					<FileText class="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary" />
 				</div>
+				<div class="text-left">
+					<p class="text-[12px] font-medium">Markdown Doc</p>
+					<p class="text-[10px] text-muted-foreground">Best for reading</p>
+				</div>
+				<span class="ml-auto text-[10px] text-muted-foreground">
+					{TUI.arrowRight}
+				</span>
 			</button>
 		</div>
 	</div>
 
 	<!-- Footer -->
-	<div class="flex items-center justify-end gap-2 border-t border-border px-4 py-2.5">
+	<div class="flex items-center justify-end gap-2 border-t border-border px-3 py-2">
 		<Button
 			variant="ghost"
 			onclick={() => (open = false)}
-			class="h-8 rounded-sm px-3 text-[12px] font-medium text-muted-foreground hover:text-foreground"
+			class="h-7 px-3 text-[11px] font-medium text-muted-foreground hover:text-foreground"
 		>
+			<span class="mr-1 rounded bg-secondary px-1 text-secondary-foreground">esc</span>
 			Cancel
 		</Button>
 	</div>

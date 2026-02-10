@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { AppStore } from '$lib/stores';
-	import { Input } from '$lib/components/ui/input';
-	import { Search } from '@lucide/svelte';
-	import { formatDistanceToNow } from 'date-fns';
+	import { cn } from '$lib/utils.js';
+	import { TUI, theme } from '$lib/tui';
+	import LazyPanel from './tui/LazyPanel.svelte';
 
 	const store = getContext<AppStore>('store');
 
@@ -17,14 +17,7 @@
 		});
 		return Object.entries(tagCounts)
 			.sort((a, b) => b[1] - a[1])
-			.slice(0, 5);
-	});
-
-	const recentLinks = $derived.by(() => {
-		return [...store.links.links]
-			.filter((l) => !l.isDeleted)
-			.sort((a, b) => b.createdAt - a.createdAt)
-			.slice(0, 3);
+			.slice(0, 8);
 	});
 
 	const stats = $derived.by(() => {
@@ -36,93 +29,66 @@
 	});
 </script>
 
-<aside
-	class="sticky top-0 hidden h-screen w-[320px] shrink-0 flex-col gap-3 py-3 lg:flex pl-6 pr-4"
->
-	<!-- Search -->
-	<div class="sticky top-0 z-10 -mt-1 pt-1 pb-1.5 bg-background/80 backdrop-blur-md">
-		<div class="relative group">
-			<Search class="absolute top-1/2 left-3.5 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
-			<Input
+<aside class="w-[300px] shrink-0 hidden lg:flex flex-col gap-4 border-l border-border ml-2">
+	<!-- Search Panel -->
+	<LazyPanel title="Search" titleClass={theme.titleStatus} class="flex-[0.3] min-h-[80px]">
+		<div class="relative mt-1">
+			<span class="absolute left-2 top-1/2 -translate-y-1/2 text-primary text-[13px]">/</span>
+			<input
 				value={store.filters.searchQuery}
 				oninput={(e) => store.filters.setSearchQuery(e.currentTarget.value)}
-				placeholder="Search Feed"
-				class="h-9 w-full rounded-sm border-transparent bg-muted/60 pl-10 text-[13px] shadow-none transition-all hover:bg-muted/80 focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary"
+				placeholder="type to filter..."
+				class="w-full bg-background border-none outline-none text-foreground text-[13px] pl-6 font-mono"
 			/>
 		</div>
-	</div>
+	</LazyPanel>
 
-	<!-- Stats Card -->
-	<div class="rounded-sm bg-muted/20 border border-border/10">
-		<h2 class="px-3.5 py-2.5 text-[14px] font-bold tracking-tight">Workspace Stats</h2>
-		<div class="grid grid-cols-3 gap-0.5 px-1.5 pb-2.5">
-			<div class="flex flex-col items-center p-1.5 rounded-sm hover:bg-muted/40 transition-colors">
-				<p class="text-[14px] font-bold">{stats.total}</p>
-				<p class="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Links</p>
+	<!-- Stats Panel -->
+	<LazyPanel title="Statistics" titleClass={theme.titleCommits} class="flex-[0.5]">
+		<div class="flex flex-col gap-1 font-mono text-[12px]">
+			<div class="flex justify-between items-center py-1 border-b border-border/30">
+				<span class="text-muted-foreground">Total Links</span>
+				<span class="text-primary font-bold">{stats.total}</span>
 			</div>
-			<div class="flex flex-col items-center p-1.5 rounded-sm hover:bg-muted/40 transition-colors">
-				<p class="text-[14px] font-bold">{stats.favorites}</p>
-				<p class="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Likes</p>
+			<div class="flex justify-between items-center py-1 border-b border-border/30">
+				<span class="text-muted-foreground">Favorites</span>
+				<span class="text-chart-3 font-bold">{stats.favorites}</span>
 			</div>
-			<div class="flex flex-col items-center p-1.5 rounded-sm hover:bg-muted/40 transition-colors">
-				<p class="text-[14px] font-bold">{stats.archived}</p>
-				<p class="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">Saved</p>
+			<div class="flex justify-between items-center py-1">
+				<span class="text-muted-foreground">Archived</span>
+				<span class="text-muted-foreground font-bold">{stats.archived}</span>
 			</div>
 		</div>
-	</div>
+	</LazyPanel>
 
-	<!-- Trending Tags -->
-	{#if trendingTags.length > 0}
-		<div class="rounded-sm bg-muted/20 border border-border/10 overflow-hidden">
-			<h2 class="px-3.5 py-2.5 text-[14px] font-bold tracking-tight">Trends for you</h2>
-			<div class="flex flex-col">
-				{#each trendingTags as [tag, count] (tag)}
-					<button
-						onclick={() => store.filters.toggleTag(tag)}
-						class="flex flex-col gap-0 px-3.5 py-2 text-left transition-colors hover:bg-muted/40"
-					>
-						<p class="text-[11px] text-muted-foreground">Trending</p>
-						<p class="text-[13px] font-bold">#{tag}</p>
-						<p class="text-[11px] text-muted-foreground">{count} links</p>
-					</button>
-				{/each}
-				<button class="px-3.5 py-2.5 text-[12px] font-bold text-primary hover:bg-muted/40 text-left transition-colors">
-					Show more
+	<!-- Tags Panel -->
+	<LazyPanel title="Top Tags" titleClass={theme.titleBranches} class="flex-1">
+		<div class="flex flex-col gap-0.5">
+			{#each trendingTags as [tag, count] (tag)}
+				<button
+					onclick={() => store.filters.toggleTag(tag)}
+					class={cn(theme.item, theme.itemDefault, 'px-2 py-0.5')}
+				>
+					<span class="text-primary text-[10px]">{TUI.bullet}</span>
+					<span class="flex-1 text-left truncate">{tag}</span>
+					<span class="text-muted-foreground text-[10px]">({count})</span>
 				</button>
+			{:else}
+				<div class="text-muted-foreground italic text-center py-4">No tags found</div>
+			{/each}
+		</div>
+	</LazyPanel>
+
+	<!-- App Info Panel -->
+	<LazyPanel title="LinkFeed" titleClass={theme.titleStash} class="flex-[0.4]">
+		<div class="flex flex-col gap-2 p-1">
+			<div class="text-[11px] text-muted-foreground leading-relaxed">
+				Local-first link manager inspired by Lazygit.
+			</div>
+			<div class="flex items-center gap-2 mt-2">
+				<span class="bg-accent px-1 text-accent-foreground text-[10px]">PROMPT</span>
+				<span class="text-chart-5 text-[11px]">v0.1.0-alpha</span>
 			</div>
 		</div>
-	{/if}
-
-	<!-- Recent Links -->
-	{#if recentLinks.length > 0}
-		<div class="rounded-sm bg-muted/20 border border-border/10 overflow-hidden">
-			<h2 class="px-3.5 py-2.5 text-[14px] font-bold tracking-tight">Recent activity</h2>
-			<div class="flex flex-col">
-				{#each recentLinks as link (link.id)}
-					<a
-						href={link.url}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="group flex flex-col gap-0 px-3.5 py-2 transition-colors hover:bg-muted/40"
-					>
-						<p class="line-clamp-1 text-[13px] font-bold group-hover:text-primary transition-colors">
-							{link.title || link.url}
-						</p>
-						<p class="text-[11px] text-muted-foreground">
-							{formatDistanceToNow(link.createdAt, { addSuffix: true })}
-						</p>
-					</a>
-				{/each}
-			</div>
-		</div>
-	{/if}
-
-	<!-- Footer -->
-	<div class="px-3.5 py-2 flex flex-wrap gap-x-3 gap-y-0.5 opacity-60">
-		<button class="text-[10px] text-muted-foreground hover:underline">Terms</button>
-		<button class="text-[10px] text-muted-foreground hover:underline">Privacy</button>
-		<button class="text-[10px] text-muted-foreground hover:underline">Cookies</button>
-		<button class="text-[10px] text-muted-foreground hover:underline">Ads</button>
-		<p class="text-[10px] text-muted-foreground">© 2026 LinkFeed</p>
-	</div>
+	</LazyPanel>
 </aside>
