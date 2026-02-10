@@ -150,7 +150,7 @@
 <Dialog.Root bind:open={isAddDialogOpen}>
 	<Dialog.Content
 		showCloseButton={false}
-		class="overflow-hidden rounded-none border-2 border-white bg-black p-0 shadow-2xl sm:max-w-2xl"
+		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 shadow-2xl sm:max-w-2xl"
 	>
 		<LinkForm
 			link={editingLink}
@@ -164,7 +164,7 @@
 <Dialog.Root bind:open={isExportDialogOpen}>
 	<Dialog.Content
 		showCloseButton={false}
-		class="overflow-hidden rounded-none border-2 border-white bg-black p-0 sm:max-w-md"
+		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 sm:max-w-md"
 	>
 		<ExportDialog bind:open={isExportDialogOpen} links={store.filters.filteredLinks} />
 	</Dialog.Content>

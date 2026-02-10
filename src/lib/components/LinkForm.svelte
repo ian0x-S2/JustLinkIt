@@ -114,37 +114,43 @@
 	}
 </script>
 
-<div class="flex h-full flex-col bg-background text-foreground">
+<div class="flex h-full flex-col bg-background font-mono text-foreground">
 	<!-- Header - Lazygit style -->
-	<div class="flex h-8 items-center justify-between border-b border-border bg-muted px-3">
-		<span
-			class="flex items-center gap-2 text-[11px] font-bold tracking-wider text-muted-foreground uppercase"
-		>
-			<span>{TUI.topLeft}</span>
-			<span>{link ? 'Edit Link' : 'Add Link'}</span>
-		</span>
-		<div class="flex items-center gap-3 text-[10px] text-muted-foreground">
-			<span>
-				<span class="rounded bg-secondary px-1 text-secondary-foreground">esc</span> cancel
+	<div class="flex h-9 items-center justify-between border-b border-border bg-muted/50 px-3">
+		<div class="flex items-center gap-2">
+			<span class="text-[11px] font-bold tracking-tight text-foreground uppercase">
+				{link ? 'Edit Link' : 'Add Link'}
 			</span>
+		</div>
+		<div class="flex items-center gap-4 text-[9px]">
+			<div class="flex items-center gap-1 text-muted-foreground">
+				<span
+					class="border border-border bg-muted px-1 py-0.5 text-[7px] font-bold text-foreground uppercase"
+					>esc</span
+				>
+				<span>cancel</span>
+			</div>
 			<Button
 				variant="ghost"
 				size="icon"
 				onclick={oncancel}
-				class="h-6 w-6 text-muted-foreground hover:bg-muted hover:text-foreground"
+				class="h-6 w-6 rounded-none border border-transparent hover:border-border hover:bg-muted"
 			>
-				<X class="h-3 w-3" />
+				<X class="h-3.5 w-3.5" />
 			</Button>
 		</div>
 	</div>
 
 	<!-- Body -->
-	<div class="max-h-[85vh] flex-1 space-y-4 overflow-y-auto px-4 py-4">
+	<div class="max-h-[85vh] flex-1 space-y-6 overflow-y-auto px-4 py-6">
 		<!-- URL Field -->
-		<div class="space-y-1.5">
+		<div class="space-y-2">
 			<div class="flex items-center gap-2">
-				<Globe class="h-3.5 w-3.5 text-muted-foreground" />
-				<Label for="url" class="text-[12px] font-medium text-muted-foreground">URL</Label>
+				<Globe class="h-4 w-4 text-primary" />
+				<Label
+					for="url"
+					class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">URL</Label
+				>
 			</div>
 			<div class="flex gap-2">
 				<Input
@@ -152,18 +158,18 @@
 					bind:value={url}
 					placeholder="https://example.com"
 					class={cn(
-						'h-9 flex-1 border-2 bg-muted/10 text-[13px]',
-						'focus-visible:bg-background focus-visible:ring-0 focus-visible:ring-offset-0'
+						'h-9 flex-1 rounded-none border border-border bg-muted/10 font-mono text-[13px]',
+						'focus-visible:border-primary focus-visible:bg-background focus-visible:ring-0'
 					)}
 				/>
 				<Button
 					variant="outline"
 					onclick={fetchOpenGraphPreview}
 					disabled={!url || isLoadingPreview}
-					class="h-9 border-2 px-3 text-[12px] font-medium"
+					class="h-9 rounded-none border border-border bg-background px-4 text-[12px] font-bold uppercase transition-all hover:bg-muted active:scale-95"
 				>
 					{#if isLoadingPreview}
-						<Loader class="mr-1.5 h-3.5 w-3.5 animate-spin" />
+						<Loader class="mr-2 h-3.5 w-3.5 animate-spin" />
 					{/if}
 					Fetch
 				</Button>
@@ -171,36 +177,44 @@
 		</div>
 
 		<!-- Title Field -->
-		<div class="space-y-1.5">
+		<div class="space-y-2">
 			<div class="flex items-center gap-2">
-				<Type class="h-3.5 w-3.5 text-muted-foreground" />
-				<Label for="title" class="text-[12px] font-medium text-muted-foreground">Title</Label>
+				<Type class="h-4 w-4 text-primary" />
+				<Label
+					for="title"
+					class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Title</Label
+				>
 			</div>
 			<Input
 				id="title"
 				bind:value={title}
 				placeholder="Give it a name..."
 				class={cn(
-					'h-9 border-2 bg-muted/10 text-[13px]',
-					'focus-visible:bg-background focus-visible:ring-0 focus-visible:ring-offset-0'
+					'h-9 rounded-none border border-border bg-muted/10 font-mono text-[13px]',
+					'focus-visible:border-primary focus-visible:bg-background focus-visible:ring-0'
 				)}
 			/>
 		</div>
 
 		<!-- Tags Field -->
-		<div class="space-y-1.5">
+		<div class="space-y-2">
 			<div class="flex items-center gap-2">
-				<Tag class="h-3.5 w-3.5 text-muted-foreground" />
-				<Label for="tags" class="text-[12px] font-medium text-muted-foreground">Tags</Label>
+				<Tag class="h-4 w-4 text-primary" />
+				<Label
+					for="tags"
+					class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Tags</Label
+				>
 			</div>
 			<TagInput selected={tags} onchange={(newTags) => (tags = newTags)} />
 		</div>
 
 		<!-- Description -->
-		<div class="space-y-1.5">
+		<div class="space-y-2">
 			<div class="flex items-center gap-2">
-				<TextAlignStart class="h-3.5 w-3.5 text-muted-foreground" />
-				<Label for="description" class="text-[12px] font-medium text-muted-foreground"
+				<TextAlignStart class="h-4 w-4 text-primary" />
+				<Label
+					for="description"
+					class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase"
 					>Description</Label
 				>
 			</div>
@@ -210,23 +224,23 @@
 				placeholder="What makes this link interesting?"
 				rows={3}
 				class={cn(
-					'min-h-20 resize-none border-2 bg-muted/10 px-3 py-2 text-[13px] leading-relaxed',
-					'focus-visible:bg-background focus-visible:ring-0 focus-visible:ring-offset-0'
+					'min-h-24 resize-none rounded-none border border-border bg-muted/10 px-3 py-2 font-mono text-[13px] leading-relaxed',
+					'focus-visible:border-primary focus-visible:bg-background focus-visible:ring-0'
 				)}
 			/>
 		</div>
 
 		{#if image}
-			<div class="pt-1">
-				<div class="relative aspect-video overflow-hidden border border-border">
+			<div class="pt-2">
+				<div class="relative aspect-video overflow-hidden border border-border bg-muted/20">
 					<img src={image} alt="Preview" class="h-full w-full object-cover" />
 					<Button
 						variant="secondary"
 						size="icon"
-						class="absolute top-2 right-2 h-7 w-7 border bg-background hover:bg-background"
+						class="absolute top-2 right-2 h-7 w-7 rounded-none border border-border bg-background shadow-lg hover:bg-muted"
 						onclick={() => (image = '')}
 					>
-						<X class="h-3.5 w-3.5" />
+						<X class="h-4 w-4" />
 					</Button>
 				</div>
 			</div>
@@ -234,23 +248,26 @@
 	</div>
 
 	<!-- Footer -->
-	<div class="mt-auto flex items-center justify-end gap-2 border-t border-border px-4 py-2.5">
+	<div
+		class="mt-auto flex items-center justify-end gap-3 border-t border-border bg-muted/20 px-4 py-3"
+	>
 		<Button
 			variant="ghost"
 			onclick={oncancel}
-			class="h-8 px-3 text-[12px] font-medium text-muted-foreground hover:text-foreground"
+			class="h-8 rounded-none border border-border bg-background px-4 text-[11px] font-bold uppercase transition-colors hover:bg-muted"
 		>
 			Cancel
 		</Button>
 		<Button
 			onclick={handleSubmit}
 			disabled={isSaving || !url.trim()}
-			class="h-8 px-4 text-[12px] font-medium"
+			class="h-8 rounded-none border border-primary bg-primary px-5 text-[11px] font-bold text-primary-foreground uppercase shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50"
 		>
 			{#if isSaving}
-				<Loader class="mr-1.5 h-3 w-3 animate-spin" />
+				<Loader class="mr-2 h-3.5 w-3.5 animate-spin" />
 			{/if}
 			{link ? 'Save changes' : 'Add link'}
 		</Button>
 	</div>
 </div>
+

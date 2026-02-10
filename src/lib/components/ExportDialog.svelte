@@ -45,73 +45,76 @@
 
 <div class="flex flex-col bg-background text-foreground">
 	<!-- Header - Lazygit style -->
-	<div class="flex h-8 items-center justify-between border-b border-border bg-muted px-3">
-		<span
-			class="flex items-center gap-2 text-[11px] font-bold tracking-wider text-muted-foreground uppercase"
-		>
-			<span>{TUI.topLeft}</span>
-			<span>Export Workspace</span>
-		</span>
-		<div class="flex items-center gap-3 text-[10px] text-muted-foreground">
-			<span>
-				<span class="rounded bg-secondary px-1 text-secondary-foreground">esc</span> close
+	<div class="flex h-9 items-center justify-between border-b border-border bg-muted/50 px-3">
+		<div class="flex items-center gap-2">
+			<span class="text-[11px] font-bold tracking-tight text-foreground uppercase">
+				Export Workspace
 			</span>
+		</div>
+		<div class="flex items-center gap-4 text-[9px]">
+			<div class="flex items-center gap-1 text-muted-foreground">
+				<span
+					class="border border-border bg-muted px-1 py-0.5 text-[7px] font-bold text-foreground uppercase"
+					>esc</span
+				>
+				<span>close</span>
+			</div>
 			<Button
 				variant="ghost"
 				size="icon"
 				onclick={() => (open = false)}
-				class="h-6 w-6 text-muted-foreground hover:bg-muted hover:text-foreground"
+				class="h-6 w-6 rounded-none border border-transparent hover:border-border hover:bg-muted"
 			>
-				<X class="h-3 w-3" />
+				<X class="h-3.5 w-3.5" />
 			</Button>
 		</div>
 	</div>
 
 	<!-- Body -->
-	<div class="flex-1 space-y-3 px-3 py-3">
-		<p class="text-[11px] leading-relaxed text-muted-foreground">
-			Export {links.length} links to a file.
+	<div class="flex-1 space-y-4 px-4 py-4">
+		<p class="text-[12px] leading-relaxed text-muted-foreground">
+			Export {links.length} links to a file. Choose a format below:
 		</p>
 
 		<div class="grid gap-2">
 			<button
 				class={cn(
-					'group flex items-center gap-2 border-2 border-border bg-muted/10 p-2',
-					'hover:border-primary/50 hover:bg-muted/20'
+					'group flex items-center gap-3 border border-border bg-muted/5 p-3 text-left transition-all',
+					'hover:border-primary hover:bg-primary/5'
 				)}
 				onclick={exportToJSON}
 			>
 				<div
-					class="flex h-7 w-7 items-center justify-center border border-border bg-background group-hover:border-primary/30"
+					class="flex h-8 w-8 items-center justify-center border border-border bg-background group-hover:border-primary/50"
 				>
-					<FileBraces class="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary" />
+					<FileBraces class="h-4 w-4 text-muted-foreground group-hover:text-primary" />
 				</div>
-				<div class="text-left">
-					<p class="text-[12px] font-medium">JSON Data</p>
-					<p class="text-[10px] text-muted-foreground">Best for backups</p>
+				<div class="flex-1">
+					<p class="text-[13px] font-bold">JSON Data</p>
+					<p class="text-[10px] text-muted-foreground">Best for backups and portability</p>
 				</div>
-				<span class="ml-auto text-[10px] text-muted-foreground">
+				<span class="text-primary opacity-0 transition-opacity group-hover:opacity-100">
 					{TUI.arrowRight}
 				</span>
 			</button>
 
 			<button
 				class={cn(
-					'group flex items-center gap-2 border-2 border-border bg-muted/10 p-2',
-					'hover:border-primary/50 hover:bg-muted/20'
+					'group flex items-center gap-3 border border-border bg-muted/5 p-3 text-left transition-all',
+					'hover:border-primary hover:bg-primary/5'
 				)}
 				onclick={exportToMarkdown}
 			>
 				<div
-					class="flex h-7 w-7 items-center justify-center border border-border bg-background group-hover:border-primary/30"
+					class="flex h-8 w-8 items-center justify-center border border-border bg-background group-hover:border-primary/50"
 				>
-					<FileText class="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary" />
+					<FileText class="h-4 w-4 text-muted-foreground group-hover:text-primary" />
 				</div>
-				<div class="text-left">
-					<p class="text-[12px] font-medium">Markdown Doc</p>
-					<p class="text-[10px] text-muted-foreground">Best for reading</p>
+				<div class="flex-1">
+					<p class="text-[13px] font-bold">Markdown Doc</p>
+					<p class="text-[10px] text-muted-foreground">Human-readable list of your links</p>
 				</div>
-				<span class="ml-auto text-[10px] text-muted-foreground">
+				<span class="text-primary opacity-0 transition-opacity group-hover:opacity-100">
 					{TUI.arrowRight}
 				</span>
 			</button>
@@ -119,13 +122,12 @@
 	</div>
 
 	<!-- Footer -->
-	<div class="flex items-center justify-end gap-2 border-t border-border px-3 py-2">
+	<div class="flex items-center justify-end gap-2 border-t border-border bg-muted/20 px-4 py-3">
 		<Button
 			variant="ghost"
 			onclick={() => (open = false)}
-			class="h-7 px-3 text-[11px] font-medium text-muted-foreground hover:text-foreground"
+			class="h-8 rounded-none border border-border bg-background px-4 text-[11px] font-bold uppercase transition-colors hover:bg-muted"
 		>
-			<span class="mr-1 rounded bg-secondary px-1 text-secondary-foreground">esc</span>
 			Cancel
 		</Button>
 	</div>

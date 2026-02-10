@@ -9,6 +9,7 @@
 	import { TUI, theme } from '$lib/tui';
 	import LazyPanel from './tui/LazyPanel.svelte';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
+	import { X, Loader2 } from '@lucide/svelte';
 
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
@@ -82,30 +83,26 @@
 
 <aside class={theme.sidebar}>
 	<!-- Workspace Panel -->
-	<LazyPanel title="Workspaces" titleClass={theme.titleStatus} class="flex-[0.8] min-h-[120px]">
+	<LazyPanel title="Workspaces" titleClass={theme.titleStatus} class="min-h-30 flex-[0.8]">
 		<ScrollArea type="hover" class="h-full w-full">
 			<div class="flex flex-col gap-0.5">
 				{#each sortedWorkspaces as ws, i (ws.id)}
 					{@const isActive = ws.id === store.workspaces.activeId}
 					<button
 						onclick={() => handleWorkspaceSelect(ws.id)}
-						class={cn(
-							theme.item,
-							isActive ? theme.itemSelected : theme.itemDefault,
-							'px-2 py-1'
-						)}
+						class={cn(theme.item, isActive ? theme.itemSelected : theme.itemDefault, 'px-2 py-1')}
 					>
 						{#if isActive}
-							<span class="text-foreground font-bold">{TUI.bullet}</span>
+							<span class="font-bold text-foreground">{TUI.bullet}</span>
 						{:else}
 							<span class="w-3"></span>
 						{/if}
-						<span class="flex-1 text-left truncate">{ws.name}</span>
+						<span class="flex-1 truncate text-left">{ws.name}</span>
 						<span class="text-[10px] opacity-50">@{ws.slug}</span>
 					</button>
 
 					{#if isActive && sortedWorkspaces.length > 1}
-						<div class="my-1 border-b border-border/30 border-dashed mx-2"></div>
+						<div class="mx-2 my-1 border-b border-dashed border-border/30"></div>
 					{/if}
 				{/each}
 				<button
@@ -127,11 +124,7 @@
 					{@const isActive = page.url.pathname === '/' && activeCategory === item.id}
 					<button
 						onclick={() => handleNavClick(item.id)}
-						class={cn(
-							theme.item,
-							isActive ? theme.itemSelected : theme.itemDefault,
-							'px-2 py-1'
-						)}
+						class={cn(theme.item, isActive ? theme.itemSelected : theme.itemDefault, 'px-2 py-1')}
 					>
 						<span class="w-4 text-[10px] opacity-50">{item.key}</span>
 						<span class="flex-1 text-left">{item.label}</span>
@@ -153,24 +146,15 @@
 	<!-- Actions Panel -->
 	<LazyPanel title="Actions" titleClass={theme.titleBranches} class="flex-[0.6]">
 		<div class="flex flex-col gap-0.5">
-			<button
-				onclick={onAddLink}
-				class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}
-			>
+			<button onclick={onAddLink} class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}>
 				<span class="w-4 text-[10px] opacity-50">a</span>
 				<span>Add Link</span>
 			</button>
-			<button
-				onclick={toggleMode}
-				class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}
-			>
+			<button onclick={toggleMode} class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}>
 				<span class="w-4 text-[10px] opacity-50">t</span>
 				<span>Toggle Theme</span>
 			</button>
-			<button
-				onclick={onExport}
-				class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}
-			>
+			<button onclick={onExport} class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}>
 				<span class="w-4 text-[10px] opacity-50">e</span>
 				<span>Export Links</span>
 			</button>
@@ -193,45 +177,63 @@
 <Dialog.Root bind:open={isCreateWorkspaceOpen}>
 	<Dialog.Content
 		showCloseButton={false}
-		class="max-w-[320px] overflow-hidden border-2 border-foreground bg-background p-0 rounded-none"
+		class="max-w-[320px] overflow-hidden rounded-none border-2 border-border bg-background p-0 shadow-2xl"
 	>
-		<div class="flex flex-col text-foreground font-mono">
-			<div class="flex h-11 items-center justify-between border-b border-border px-4">
-				<h2 class="text-[13px] font-bold uppercase tracking-tight text-destructive">
-					Create Workspace
-				</h2>
+		<div class="flex flex-col font-mono text-foreground">
+			<!-- Header -->
+			<div class="flex h-9 items-center justify-between border-b border-border bg-muted/50 px-3">
+				<div class="flex items-center gap-2">
+					<span class="text-[11px] font-bold tracking-tight text-foreground uppercase">
+						Create Workspace
+					</span>
+				</div>
+				<button
+					onclick={() => (isCreateWorkspaceOpen = false)}
+					class="text-muted-foreground transition-colors hover:text-foreground"
+				>
+					<X class="h-4 w-4" />
+				</button>
 			</div>
 
-			<div class="space-y-4 px-4 py-4">
-				<div class="space-y-1.5">
-					<Label for="ws-name" class="text-[11px] uppercase text-muted-foreground">Name</Label>
+			<!-- Body -->
+			<div class="space-y-4 px-4 py-6">
+				<div class="space-y-2">
+					<Label
+						for="ws-name"
+						class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Name</Label
+					>
 					<Input
 						id="ws-name"
 						bind:value={newWorkspaceName}
-						placeholder="Project Name"
-						class="h-9 border border-border bg-background text-[13px] focus-visible:border-foreground focus-visible:ring-0 rounded-none"
+						placeholder="e.g. Personal Projects"
+						class="h-9 rounded-none border border-border bg-muted/10 font-mono text-[13px] focus-visible:border-primary focus-visible:bg-background focus-visible:ring-0"
 						onkeydown={(e) => e.key === 'Enter' && handleCreateWorkspace()}
 						autofocus
 					/>
 				</div>
 			</div>
 
-			<div class="flex items-center justify-end gap-2 border-t border-border px-4 py-2.5">
+			<!-- Footer -->
+			<div class="flex items-center justify-end gap-2 border-t border-border bg-muted/20 px-4 py-3">
 				<Button
 					variant="ghost"
 					onclick={() => (isCreateWorkspaceOpen = false)}
-					class="h-8 px-3 text-[12px] hover:bg-muted/50"
+					class="h-8 rounded-none border border-border bg-background px-3 text-[11px] font-bold uppercase hover:bg-muted"
 				>
 					Cancel
 				</Button>
 				<Button
 					onclick={handleCreateWorkspace}
 					disabled={!newWorkspaceName.trim() || isCreating}
-					class="h-8 px-4 text-[12px] bg-foreground text-background hover:bg-foreground/90 rounded-none"
+					class="h-8 rounded-none border border-primary bg-primary px-4 text-[11px] font-bold text-primary-foreground uppercase shadow-sm hover:bg-primary/90 active:scale-95"
 				>
+					{#if isCreating}
+						<Loader2 class="mr-2 h-3.5 w-3.5 animate-spin" />
+					{/if}
 					Create
 				</Button>
 			</div>
 		</div>
 	</Dialog.Content>
 </Dialog.Root>
+
