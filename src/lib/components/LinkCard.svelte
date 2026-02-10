@@ -6,28 +6,23 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { cn } from '$lib/utils.js';
 	import { TUI, formatRelativeTime } from '$lib/tui';
+	import TagInput from '$lib/components/TagInput.svelte';
 
 		interface Props {
-
 			link: Link;
-
 			viewMode?: 'list' | 'grid';
-
 			onedit: (link: Link) => void;
-
 			ondelete: (id: string) => void;
-
 		}
 
-	
-
 		let { link, viewMode = 'list', onedit, ondelete }: Props = $props();
-
 		const store = getContext<AppStore>('store');
 
 		let isDeleteDialogOpen = $state(false);
 
-	
+		async function updateTags(tags: string[]) {
+			await store.links.update(link.id, { tags });
+		}
 
 		function getDomain(url: string) {
 
@@ -341,39 +336,33 @@
 
 			<div class="p-2 flex flex-col gap-1">
 
-				<a
+								<a
 
-					href={link.url}
+									href={link.url}
 
-					target="_blank"
+									target="_blank"
 
-					rel="noopener noreferrer"
+									rel="noopener noreferrer"
 
-					class="text-[12px] font-bold text-foreground line-clamp-1 hover:text-primary transition-colors"
+									class="text-[12px] font-bold text-foreground line-clamp-1 hover:text-primary transition-colors"
 
-				>
+								>
 
-					{link.title || link.url}
+									{link.title || link.url}
 
-				</a>
+								</a>
 
-				{#if link.tags.length > 0}
+								
 
-					<div class="flex flex-wrap gap-1.5 mt-0.5">
+								<div class="mt-1">
 
-						{#each link.tags.slice(0, 3) as tag}
+									<TagInput selected={link.tags} onchange={updateTags} />
 
-							<span class="text-[9px] text-chart-3">#{tag}</span>
+								</div>
 
-						{/each}
+					
 
-					</div>
-
-				{/if}
-
-	
-
-				<!-- Hover Actions for Card -->
+								<!-- Hover Actions for Card -->
 
 				<div class="mt-2 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
 
