@@ -79,11 +79,13 @@ export const theme = {
 	// Panel
 	panel: 'relative flex flex-col bg-background min-h-0',
 	panelFocus: 'z-10',
-	panelHeader: 'absolute top-0 left-2 -translate-y-1/2 bg-background px-1 flex items-center gap-1 z-20',
+	panelHeader:
+		'absolute top-0 left-2 -translate-y-1/2 bg-background px-1 flex items-center gap-1 z-20',
 	panelBorder: 'absolute inset-0 border border-border pointer-events-none',
-	panelBorderFocus: 'border-foreground border-2',
+	panelBorderFocus: 'border-border border-2',
 	panelContent: 'flex flex-col flex-1 min-h-0 overflow-hidden p-2 pt-5',
-	panelFooter: 'absolute bottom-0 right-2 translate-y-1/2 bg-background px-1 text-muted-foreground text-[10px] z-20',
+	panelFooter:
+		'absolute bottom-0 right-2 translate-y-1/2 bg-background px-1 text-muted-foreground text-[10px] z-20',
 
 	// Panel titles
 	titleStatus: 'text-destructive font-bold uppercase tracking-tight',
@@ -154,3 +156,4 @@ export function truncate(str: string, len: number): string {
 	if (str.length <= len) return str;
 	return str.slice(0, len - 1) + '…';
 }
+

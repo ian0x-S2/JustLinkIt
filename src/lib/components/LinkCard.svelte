@@ -301,19 +301,19 @@
 
 			<div class="relative aspect-video w-full overflow-hidden bg-muted/10">
 
-				{#if link.image}
+																{#if link.image}
 
-					<img
+																	<img
 
-						src={link.image}
+																		src={link.image}
 
-						alt={link.title}
+																		alt={link.title}
 
-						class="h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity grayscale-[0.5] group-hover:grayscale-0"
+																		class="h-full w-full object-cover"
 
-					/>
+																	/>
 
-				{:else}
+																{:else}
 
 					<div class="flex h-full w-full items-center justify-center text-muted-foreground/20">
 

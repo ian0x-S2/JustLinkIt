@@ -53,8 +53,8 @@
 </script>
 
 <!-- Layout Container - Lazygit Style -->
-<div class="h-screen w-screen bg-background p-2 sm:p-4 overflow-hidden">
-	<div class="{theme.app} border-2 border-border shadow-2xl relative">
+<div class="h-screen w-screen overflow-hidden bg-background p-2 sm:p-4">
+	<div class="{theme.app} relative border-2 border-border shadow-2xl">
 		<!-- Main Content Area -->
 		<div class={theme.layoutMain}>
 			<!-- Left Sidebar (Workspace/Categories) -->
@@ -70,12 +70,14 @@
 					counter="{store.filters.filteredLinks.length} items"
 				>
 					{#snippet subtitle()}
-						<div class="flex items-center gap-2 ml-2">
+						<div class="ml-2 flex items-center gap-2">
 							<button
 								onclick={() => (store.settings.viewMode = 'list')}
 								class={cn(
-									'text-[10px] uppercase font-bold px-1',
-									store.settings.viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+									'px-1 text-[10px] font-bold uppercase',
+									store.settings.viewMode === 'list'
+										? 'bg-primary text-primary-foreground'
+										: 'text-muted-foreground hover:text-foreground'
 								)}
 							>
 								[l]ist
@@ -83,8 +85,10 @@
 							<button
 								onclick={() => (store.settings.viewMode = 'grid')}
 								class={cn(
-									'text-[10px] uppercase font-bold px-1',
-									store.settings.viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+									'px-1 text-[10px] font-bold uppercase',
+									store.settings.viewMode === 'grid'
+										? 'bg-primary text-primary-foreground'
+										: 'text-muted-foreground hover:text-foreground'
 								)}
 							>
 								[g]rid
@@ -96,7 +100,7 @@
 					<CenterHeader />
 
 					<!-- Scrollable Feed Content -->
-					<div class="flex-1 min-h-0 overflow-hidden mt-1">
+					<div class="mt-1 min-h-0 flex-1 overflow-hidden">
 						<ScrollArea type="hover" class="h-full w-full">
 							<div class="flex flex-col">
 								{#if store.filters.filteredLinks.length === 0}
@@ -113,7 +117,7 @@
 										{/each}
 									</div>
 								{:else}
-									<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
+									<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 xl:grid-cols-3">
 										{#each store.filters.filteredLinks as link (link.id)}
 											<LinkCard
 												{link}
@@ -158,7 +162,10 @@
 </Dialog.Root>
 
 <Dialog.Root bind:open={isExportDialogOpen}>
-	<Dialog.Content showCloseButton={false} class="overflow-hidden rounded-none border-2 border-white bg-black p-0 sm:max-w-md">
+	<Dialog.Content
+		showCloseButton={false}
+		class="overflow-hidden rounded-none border-2 border-white bg-black p-0 sm:max-w-md"
+	>
 		<ExportDialog bind:open={isExportDialogOpen} links={store.filters.filteredLinks} />
 	</Dialog.Content>
 </Dialog.Root>
@@ -170,3 +177,4 @@
 		padding: 0;
 	}
 </style>
+

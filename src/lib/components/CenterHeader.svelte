@@ -221,7 +221,7 @@
 				<div class="flex gap-3 p-3">
 					{#if inlinePreview.image}
 						<div class="w-24 h-16 shrink-0 border border-border bg-muted/20 overflow-hidden">
-							<img src={inlinePreview.image} alt="" class="h-full w-full object-cover opacity-80" />
+							<img src={inlinePreview.image} alt="" class="h-full w-full object-cover" />
 						</div>
 					{:else}
 						<div class="w-24 h-16 shrink-0 border border-border bg-muted/10 flex items-center justify-center">
