@@ -75,7 +75,7 @@
 					store.links.toggleDeleted(link.id);
 				}
 			}}
-			class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold uppercase text-destructive hover:bg-destructive/10"
+			class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold text-destructive uppercase hover:bg-destructive/10"
 		>
 			<Trash2 class="h-3.5 w-3.5" />
 			<span>{link.isDeleted ? 'Delete Permanently' : 'Move to Trash'}</span>
@@ -88,7 +88,7 @@
 	<div
 		class={cn(
 			'group flex flex-col border-b border-border/30',
-			'hover:bg-muted/30 transition-colors'
+			'transition-colors hover:bg-muted/30'
 		)}
 	>
 		<div class="flex min-h-[28px] items-center gap-2 px-2 py-0.5">
@@ -148,9 +148,9 @@
 						<Button
 							variant="ghost"
 							size="icon"
-							class="h-7 w-7 rounded-none border border-transparent hover:border-border hover:bg-muted"
+							class="h-7 w-7 rounded-none border border-transparent hover:border-border "
 						>
-							<Ellipsis class="h-4 w-4 text-muted-foreground/70" />
+							<Ellipsis class="h-4 w-4 text-muted-foreground/60" />
 						</Button>
 					</DropdownMenu.Trigger>
 					{@render ActionMenuContent()}
@@ -163,7 +163,7 @@
 	<div
 		class={cn(
 			'group flex flex-col border border-border/50 bg-card/5',
-			'hover:border-primary/50 transition-all duration-200'
+			'transition-all duration-200 hover:border-primary/50'
 		)}
 	>
 		<!-- TUI Header for Card -->
@@ -205,22 +205,24 @@
 				href={link.url}
 				target="_blank"
 				rel="noopener noreferrer"
-				class="text-[12px] font-bold text-foreground line-clamp-1 hover:text-primary transition-colors"
+				class="line-clamp-1 text-[12px] font-bold text-foreground transition-colors hover:text-primary"
 			>
 				{link.title || link.url}
 			</a>
-			
+
 			<div class="mt-1">
 				<TagInput selected={link.tags} onchange={updateTags} />
 			</div>
 
 			<!-- Hover Actions for Card -->
-			<div class="mt-2 flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+			<div
+				class="mt-2 flex items-center gap-4 opacity-0 transition-opacity group-hover:opacity-100"
+			>
 				<Button
 					variant="ghost"
 					size="sm"
 					class={cn(
-						'h-auto p-0 text-[10px] font-bold uppercase hover:bg-transparent hover:underline transition-none',
+						'h-auto p-0 text-[10px] font-bold uppercase transition-none hover:bg-transparent hover:underline',
 						link.isFavorite ? 'text-chart-3' : 'text-primary'
 					)}
 					onclick={(e) => {
@@ -233,7 +235,7 @@
 				<Button
 					variant="ghost"
 					size="sm"
-					class="h-auto p-0 text-[10px] font-bold uppercase text-primary hover:bg-transparent hover:underline transition-none"
+					class="h-auto p-0 text-[10px] font-bold text-primary uppercase transition-none hover:bg-transparent hover:underline"
 					onclick={(e) => {
 						e.preventDefault();
 						onedit(link);
@@ -244,7 +246,7 @@
 				<Button
 					variant="ghost"
 					size="sm"
-					class="h-auto p-0 text-[10px] font-bold uppercase text-destructive hover:bg-transparent hover:underline transition-none"
+					class="h-auto p-0 text-[10px] font-bold text-destructive uppercase transition-none hover:bg-transparent hover:underline"
 					onclick={(e) => {
 						e.preventDefault();
 						store.links.toggleDeleted(link.id);
@@ -264,7 +266,7 @@
 	>
 		<div class="flex flex-col font-mono text-foreground">
 			<div class="flex h-11 items-center justify-between border-b border-border px-4">
-				<h2 class="text-[13px] font-bold uppercase tracking-tight text-destructive">
+				<h2 class="text-[13px] font-bold tracking-tight text-destructive uppercase">
 					Confirm Delete
 				</h2>
 			</div>
@@ -290,7 +292,7 @@
 				</Button>
 				<Button
 					onclick={handlePermanentDelete}
-					class="h-8 rounded-none border border-destructive bg-destructive px-4 text-[11px] font-bold uppercase text-destructive-foreground hover:bg-destructive/90 shadow-sm"
+					class="h-8 rounded-none border border-destructive bg-destructive px-4 text-[11px] font-bold text-destructive-foreground uppercase shadow-sm hover:bg-destructive/90"
 				>
 					Delete
 				</Button>
@@ -298,3 +300,4 @@
 		</div>
 	</Dialog.Content>
 </Dialog.Root>
+

@@ -101,7 +101,8 @@ export const theme = {
 	// List items
 	item: 'py-0.5 cursor-pointer truncate flex items-center gap-2',
 	itemDefault: 'hover:bg-muted/50',
-	itemSelected: 'bg-accent text-accent-foreground',
+	itemSelected: 'bg-muted text-accent border border-seccondary',
+
 	itemCurrent: 'text-primary',
 
 	// Branch item
@@ -156,4 +157,3 @@ export function truncate(str: string, len: number): string {
 	if (str.length <= len) return str;
 	return str.slice(0, len - 1) + '…';
 }
-
