@@ -8,7 +8,7 @@
 	import { cn } from '$lib/utils.js';
 	import { TUI, formatRelativeTime } from '$lib/tui';
 	import TagInput from '$lib/components/TagInput.svelte';
-	import { Ellipsis, Star, Pencil, Trash2 } from '@lucide/svelte';
+	import { Ellipsis, Star, Pencil, Trash2, RotateCcw } from '@lucide/svelte';
 
 	interface Props {
 		link: Link;
@@ -45,6 +45,16 @@
 		align="end"
 		class="min-w-[140px] rounded-none border-2 border-border bg-background p-1 font-mono"
 	>
+		{#if link.isDeleted}
+			<DropdownMenu.Item
+				onclick={() => store.links.toggleDeleted(link.id)}
+				class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold uppercase data-highlighted:bg-muted data-highlighted:text-accent"
+			>
+				<RotateCcw class="h-3.5 w-3.5 text-primary" />
+				<span>Restore</span>
+				<DropdownMenu.Shortcut class="text-[9px] opacity-50">r</DropdownMenu.Shortcut>
+			</DropdownMenu.Item>
+		{/if}
 		<DropdownMenu.Item
 			onclick={() => store.links.toggleFavorite(link.id)}
 			class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold uppercase data-highlighted:bg-muted data-highlighted:text-accent"
@@ -142,7 +152,7 @@
 			</div>
 
 			<!-- Actions Dropdown -->
-			<div class="ml-4 shrink-0">
+			<div class="ml-4 flex shrink-0 items-center gap-1">
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger>
 						{#snippet child({ props })}
@@ -150,7 +160,7 @@
 								{...props}
 								variant="ghost"
 								size="icon"
-								class="h-7 w-7 rounded-none border border-transparent hover:border-border "
+								class="h-7 w-7 rounded-none hover:bg-muted dark:hover:bg-muted "
 							>
 								<Ellipsis class="h-4 w-4 text-muted-foreground/60" />
 							</Button>
@@ -219,42 +229,67 @@
 
 			<!-- Actions for Card -->
 			<div class="mt-4 flex items-center gap-2 py-2">
-				<Button
-					variant="ghost"
-					size="sm"
-					class={cn(
-						'h-auto px-1 text-[9px] font-bold uppercase transition-none',
-						link.isFavorite ? 'text-chart-3' : 'text-primary'
-					)}
-					onclick={(e) => {
-						e.preventDefault();
-						store.links.toggleFavorite(link.id);
-					}}
-				>
-					[f]av
-				</Button>
-				<Button
-					variant="ghost"
-					size="sm"
-					class="h-auto px-1 text-[9px] font-bold text-primary uppercase transition-none"
-					onclick={(e) => {
-						e.preventDefault();
-						onedit(link);
-					}}
-				>
-					[e]dit
-				</Button>
-				<Button
-					variant="ghost"
-					size="sm"
-					class="h-auto px-1 text-[9px] font-bold text-destructive uppercase transition-none "
-					onclick={(e) => {
-						e.preventDefault();
-						store.links.toggleDeleted(link.id);
-					}}
-				>
-					[d]el
-				</Button>
+				{#if link.isDeleted}
+					<Button
+						variant="ghost"
+						size="sm"
+						class="h-auto px-1 text-[9px] font-bold text-primary uppercase transition-none"
+						onclick={(e) => {
+							e.preventDefault();
+							store.links.toggleDeleted(link.id);
+						}}
+					>
+						[r]estore
+					</Button>
+					<Button
+						variant="ghost"
+						size="sm"
+						class="h-auto px-1 text-[9px] font-bold text-destructive uppercase transition-none"
+						onclick={(e) => {
+							e.preventDefault();
+							isDeleteDialogOpen = true;
+						}}
+					>
+						[d]el perm
+					</Button>
+				{:else}
+					<Button
+						variant="ghost"
+						size="sm"
+						class={cn(
+							'h-auto px-1 text-[9px] font-bold uppercase transition-none',
+							link.isFavorite ? 'text-chart-3' : 'text-primary'
+						)}
+						onclick={(e) => {
+							e.preventDefault();
+							store.links.toggleFavorite(link.id);
+						}}
+					>
+						[f]av
+					</Button>
+					<Button
+						variant="ghost"
+						size="sm"
+						class="h-auto px-1 text-[9px] font-bold text-primary uppercase transition-none"
+						onclick={(e) => {
+							e.preventDefault();
+							onedit(link);
+						}}
+					>
+						[e]dit
+					</Button>
+					<Button
+						variant="ghost"
+						size="sm"
+						class="h-auto px-1 text-[9px] font-bold text-destructive uppercase transition-none "
+						onclick={(e) => {
+							e.preventDefault();
+							store.links.toggleDeleted(link.id);
+						}}
+					>
+						[d]el
+					</Button>
+				{/if}
 			</div>
 		</div>
 	</div>
