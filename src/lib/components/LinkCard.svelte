@@ -47,7 +47,7 @@
 	>
 		<DropdownMenu.Item
 			onclick={() => store.links.toggleFavorite(link.id)}
-			class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold uppercase hover:bg-muted"
+			class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold uppercase data-highlighted:bg-muted data-highlighted:text-accent"
 		>
 			<Star
 				class={cn(
@@ -60,7 +60,7 @@
 		</DropdownMenu.Item>
 		<DropdownMenu.Item
 			onclick={() => onedit(link)}
-			class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold uppercase hover:bg-muted"
+			class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold uppercase data-highlighted:bg-muted data-highlighted:text-accent"
 		>
 			<Pencil class="h-3.5 w-3.5 text-primary" />
 			<span>Edit Link</span>
@@ -75,7 +75,7 @@
 					store.links.toggleDeleted(link.id);
 				}
 			}}
-			class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold text-destructive uppercase hover:bg-destructive/10"
+			class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold text-destructive uppercase data-highlighted:bg-muted data-highlighted:text-destructive"
 		>
 			<Trash2 class="h-3.5 w-3.5" />
 			<span>{link.isDeleted ? 'Delete Permanently' : 'Move to Trash'}</span>
