@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Search, Star, Archive, Trash2, Inbox } from '@lucide/svelte';
+	import { Search, Star, Trash2, Inbox } from '@lucide/svelte';
 	import { getContext } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import type { AppStore } from '$lib/stores';
@@ -32,14 +32,6 @@
 					icon: Star,
 					showAdd: false,
 					hint: 'Press f on any link to favorite'
-				};
-			case 'archive':
-				return {
-					title: 'Archive is empty',
-					description: 'Move links here to keep your workspace organized.',
-					icon: Archive,
-					showAdd: false,
-					hint: 'Press a on any link to archive'
 				};
 			case 'trash':
 				return {

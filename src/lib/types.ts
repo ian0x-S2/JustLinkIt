@@ -31,7 +31,6 @@ export interface Link {
 	tags: string[];
 	workspaceId: WorkspaceId;
 	isFavorite?: boolean;
-	isArchived?: boolean;
 	isDeleted?: boolean;
 }
 

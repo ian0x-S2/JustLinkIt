@@ -71,7 +71,6 @@ export const POST: RequestHandler = async ({ request }) => {
 							createdAt: l.createdAt,
 							updatedAt: l.updatedAt,
 							isFavorite: l.isFavorite,
-							isArchived: l.isArchived,
 							isDeleted: l.isDeleted
 						})
 						.onConflictDoNothing()

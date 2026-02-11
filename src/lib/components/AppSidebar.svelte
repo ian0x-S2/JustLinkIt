@@ -2,7 +2,6 @@
 	import {
 		Inbox,
 		Star,
-		Archive,
 		Trash2,
 		Settings,
 		Moon,
@@ -33,7 +32,6 @@
 	const navMain = [
 		{ id: 'inbox', title: 'Inbox', icon: Inbox },
 		{ id: 'favorites', title: 'Favorites', icon: Star },
-		{ id: 'archive', title: 'Archive', icon: Archive },
 		{ id: 'trash', title: 'Trash', icon: Trash2 }
 	] as const;
 

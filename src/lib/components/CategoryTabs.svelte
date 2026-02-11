@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import { Inbox, Star, Archive, Trash2 } from '@lucide/svelte';
+	import { Inbox, Star, Trash2 } from '@lucide/svelte';
 	import { getContext } from 'svelte';
 	import type { AppStore } from '$lib/stores';
 	import { page } from '$app/state';
@@ -12,7 +12,6 @@
 	const tabs = [
 		{ id: 'inbox' as Category, label: 'Inbox', icon: Inbox },
 		{ id: 'favorites' as Category, label: 'Favorites', icon: Star },
-		{ id: 'archive' as Category, label: 'Archive', icon: Archive },
 		{ id: 'trash' as Category, label: 'Trash', icon: Trash2 }
 	] as const;
 
@@ -39,7 +38,7 @@
 					<tab.icon class="h-4 w-4" />
 					<span class="hidden sm:inline">{tab.label}</span>
 					{#if tab.id === 'inbox'}
-						{@const count = store.links.links.filter((l) => !l.isArchived && !l.isDeleted).length}
+						{@const count = store.links.links.filter((l) => !l.isDeleted).length}
 						{#if count > 0}
 							<span
 								class="ml-1 flex h-4 min-w-4 items-center justify-center rounded-sm bg-muted px-1 text-[10px] font-medium text-muted-foreground"

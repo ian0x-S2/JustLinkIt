@@ -29,7 +29,6 @@ export const GET: RequestHandler = async ({ url }) => {
 			query = db.select().from(links).where(
 				and(
 					eq(links.workspaceId, workspaceId),
-					eq(links.isArchived, false),
 					eq(links.isDeleted, false)
 				)
 			);
@@ -38,14 +37,6 @@ export const GET: RequestHandler = async ({ url }) => {
 				and(
 					eq(links.workspaceId, workspaceId),
 					eq(links.isFavorite, true),
-					eq(links.isDeleted, false)
-				)
-			);
-		} else if (category === 'archive') {
-			query = db.select().from(links).where(
-				and(
-					eq(links.workspaceId, workspaceId),
-					eq(links.isArchived, true),
 					eq(links.isDeleted, false)
 				)
 			);
@@ -98,7 +89,6 @@ export const POST: RequestHandler = async ({ request }) => {
 		createdAt: now,
 		updatedAt: now,
 		isFavorite: data.isFavorite || false,
-		isArchived: data.isArchived || false,
 		isDeleted: data.isDeleted || false
 	};
 
@@ -117,7 +107,6 @@ export const POST: RequestHandler = async ({ request }) => {
 				createdAt: newLink.createdAt,
 				updatedAt: newLink.updatedAt,
 				isFavorite: newLink.isFavorite,
-				isArchived: newLink.isArchived,
 				isDeleted: newLink.isDeleted
 			}).run();
 

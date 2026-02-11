@@ -25,8 +25,7 @@
 		const activeLinks = store.links.links.filter((l) => !l.isDeleted);
 		const total = activeLinks.length;
 		const favorites = activeLinks.filter((l) => l.isFavorite).length;
-		const archived = activeLinks.filter((l) => l.isArchived).length;
-		return { total, favorites, archived };
+		return { total, favorites };
 	});
 </script>
 
@@ -51,13 +50,9 @@
 				<span class="text-muted-foreground">Total Links</span>
 				<span class="font-bold text-primary">{stats.total}</span>
 			</div>
-			<div class="flex items-center justify-between border-b border-border/30 py-1">
+			<div class="flex items-center justify-between py-1">
 				<span class="text-muted-foreground">Favorites</span>
 				<span class="font-bold text-chart-3">{stats.favorites}</span>
-			</div>
-			<div class="flex items-center justify-between py-1">
-				<span class="text-muted-foreground">Archived</span>
-				<span class="font-bold text-muted-foreground">{stats.archived}</span>
 			</div>
 		</div>
 	</LazyPanel>

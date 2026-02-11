@@ -26,14 +26,12 @@ export const links = sqliteTable(
 		createdAt: integer('created_at').notNull(),
 		updatedAt: integer('updated_at').notNull(),
 		isFavorite: integer('is_favorite', { mode: 'boolean' }).default(false),
-		isArchived: integer('is_archived', { mode: 'boolean' }).default(false),
 		isDeleted: integer('is_deleted', { mode: 'boolean' }).default(false)
 	},
 	(table) => [
 		index('idx_links_workspace_category').on(
 			table.workspaceId,
 			table.isDeleted,
-			table.isArchived,
 			table.createdAt
 		),
 		index('idx_links_fav')

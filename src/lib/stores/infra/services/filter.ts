@@ -21,13 +21,10 @@ export class FilterService {
         // Category filtering
         switch (category) {
             case CATEGORIES.INBOX:
-                result = result.filter((l) => !l.isArchived && !l.isDeleted);
+                result = result.filter((l) => !l.isDeleted);
                 break;
             case CATEGORIES.FAVORITES:
                 result = result.filter((l) => l.isFavorite && !l.isDeleted);
-                break;
-            case CATEGORIES.ARCHIVE:
-                result = result.filter((l) => l.isArchived && !l.isDeleted);
                 break;
             case CATEGORIES.TRASH:
                 result = result.filter((l) => l.isDeleted);

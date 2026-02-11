@@ -16,7 +16,6 @@ export interface LinkStore {
     update(id: LinkId, updates: Partial<Link>): Promise<void>;
     removePermanently(id: LinkId): Promise<void>;
     toggleFavorite(id: LinkId): Promise<void>;
-    toggleArchived(id: LinkId): Promise<void>;
     toggleDeleted(id: LinkId): Promise<void>;
     fetchForWorkspace(workspaceId: WorkspaceId): Promise<void>;
     hydrate(links: Link[]): void;
@@ -56,7 +55,6 @@ export function createLinkStore(options: CreateLinkStoreOptions): LinkStore {
             createdAt: now,
             updatedAt: now,
             isFavorite: false,
-            isArchived: false,
             isDeleted: false,
             tags: linkData.tags || []
         } as Link;
@@ -125,13 +123,6 @@ export function createLinkStore(options: CreateLinkStoreOptions): LinkStore {
         }
     }
 
-    async function toggleArchived(id: LinkId): Promise<void> {
-        const link = _links.find((l) => l.id === id);
-        if (link) {
-            await update(id, { isArchived: !link.isArchived });
-        }
-    }
-
     async function toggleDeleted(id: LinkId): Promise<void> {
         const link = _links.find((l) => l.id === id);
         if (link) {
@@ -149,7 +140,6 @@ export function createLinkStore(options: CreateLinkStoreOptions): LinkStore {
         update,
         removePermanently,
         toggleFavorite,
-        toggleArchived,
         toggleDeleted
     };
 }

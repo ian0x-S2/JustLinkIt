@@ -33,8 +33,7 @@
 	const navItems = [
 		{ id: 'inbox' as Category, label: 'Inbox', key: '1' },
 		{ id: 'favorites' as Category, label: 'Favorites', key: '2' },
-		{ id: 'archive' as Category, label: 'Archive', key: '3' },
-		{ id: 'trash' as Category, label: 'Trash', key: '4' }
+		{ id: 'trash' as Category, label: 'Trash', key: '3' }
 	] as const;
 
 	function handleNavClick(category: Category) {
@@ -129,7 +128,7 @@
 						<span class="w-4 text-[10px] opacity-50">{item.key}</span>
 						<span class="flex-1 text-left">{item.label}</span>
 						{#if item.id === 'inbox'}
-							{@const count = store.links.links.filter((l) => !l.isArchived && !l.isDeleted).length}
+							{@const count = store.links.links.filter((l) => !l.isDeleted).length}
 							{#if count > 0}
 								<span class="text-[10px] opacity-70">[{count}]</span>
 							{/if}

@@ -15,7 +15,6 @@ export const API_ENDPOINTS = {
 export const CATEGORIES = {
 	INBOX: 'inbox',
 	FAVORITES: 'favorites',
-	ARCHIVE: 'archive',
 	TRASH: 'trash'
 } as const;
 

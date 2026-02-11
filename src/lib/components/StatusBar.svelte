@@ -8,8 +8,7 @@
 	const stats = $derived(() => {
 		const total = store.links.links.filter((l) => !l.isDeleted).length;
 		const favorites = store.links.links.filter((l) => l.isFavorite && !l.isDeleted).length;
-		const archived = store.links.links.filter((l) => l.isArchived && !l.isDeleted).length;
-		return { total, favorites, archived };
+		return { total, favorites };
 	});
 
 	let currentTime = $state(new Date());

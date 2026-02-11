@@ -6,7 +6,6 @@
 		Trash2,
 		FileText,
 		Star,
-		Archive,
 		RotateCcw,
 		Pencil,
 		Ellipsis,
@@ -154,19 +153,6 @@
 								>
 									<Star class="mr-2 h-3 w-3 {link.isFavorite ? 'fill-current' : ''}" />
 									<span>{link.isFavorite ? 'Remove Favorite' : 'Mark Favorite'}</span>
-								</Button>
-
-								<Button
-									variant="ghost"
-									size="sm"
-									class="h-8 justify-start rounded-sm px-2 text-[12px] font-medium"
-									onclick={() => {
-										store.links.toggleArchived(link.id);
-										actionsOpen = false;
-									}}
-								>
-									<Archive class="mr-2 h-3 w-3" />
-									<span>{link.isArchived ? 'Unarchive' : 'Archive'}</span>
 								</Button>
 							{/if}
 
