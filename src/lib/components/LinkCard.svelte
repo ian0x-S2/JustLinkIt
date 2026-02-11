@@ -144,8 +144,9 @@
 			<!-- Actions Dropdown -->
 			<div class="ml-4 shrink-0">
 				<DropdownMenu.Root>
-					<DropdownMenu.Trigger>
+					<DropdownMenu.Trigger asChild let:builder>
 						<Button
+							builders={[builder]}
 							variant="ghost"
 							size="icon"
 							class="h-7 w-7 rounded-none border border-transparent hover:border-border "
