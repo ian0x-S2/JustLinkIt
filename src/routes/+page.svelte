@@ -73,30 +73,31 @@
 				>
 					{#snippet subtitle()}
 						<div class="ml-2 flex items-center gap-2">
-							<Button
-								variant="ghost"
-								size="sm"
-								onclick={() => (store.settings.viewMode = 'list')}
-								class={cn(
-									'h-5 rounded-none px-1.5 text-[10px] font-bold uppercase transition-none',
-									store.settings.viewMode === 'list'
-										? 'bg-primary text-primary-foreground hover:bg-primary/90'
-										: 'text-muted-foreground hover:bg-muted hover:text-foreground'
-								)}
-							>
-								[l]ist
-							</Button>
-							<Button
-								variant="ghost"
-								size="sm"
-								onclick={() => (store.settings.viewMode = 'grid')}
-								class={cn(
-									'h-5 rounded-none px-1.5 text-[10px] font-bold uppercase transition-none',
-									store.settings.viewMode === 'grid'
-										? 'bg-primary text-primary-foreground hover:bg-primary/90'
-										: 'text-muted-foreground hover:bg-muted hover:text-foreground'
-								)}
-							>
+																<Button
+																	variant="ghost"
+																	size="sm"
+																	onclick={() => store.settings.setViewMode('list')}
+																	class={cn(
+																		'h-5 rounded-none px-1.5 text-[10px] font-bold uppercase transition-none',
+																		store.settings.viewMode === 'list'
+																			? 'bg-primary text-primary-foreground hover:bg-primary/90'
+																			: 'text-muted-foreground hover:bg-muted hover:text-foreground'
+																	)}
+																>
+																	[l]ist
+																</Button>
+																<Button
+																	variant="ghost"
+																	size="sm"
+																	onclick={() => store.settings.setViewMode('grid')}
+																	class={cn(
+																		'h-5 rounded-none px-1.5 text-[10px] font-bold uppercase transition-none',
+																		store.settings.viewMode === 'grid'
+																			? 'bg-primary text-primary-foreground hover:bg-primary/90'
+																			: 'text-muted-foreground hover:bg-muted hover:text-foreground'
+																	)}
+																>
+							
 								[g]rid
 							</Button>
 						</div>

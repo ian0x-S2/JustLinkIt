@@ -100,8 +100,8 @@ export const theme = {
 
 	// List items
 	item: 'py-0.5 cursor-pointer truncate flex items-center gap-2',
-	itemDefault: 'hover:bg-muted/50',
-	itemSelected: 'bg-muted text-accent border border-seccondary',
+	itemDefault: 'hover:bg-muted/50 font-normal',
+	itemSelected: 'bg-muted text-primary border border-seccondary font-bold',
 
 	itemCurrent: 'text-primary',
 

@@ -92,7 +92,7 @@
 						class={cn(theme.item, isActive ? theme.itemSelected : theme.itemDefault, 'px-2 py-1')}
 					>
 						{#if isActive}
-							<span class="font-bold text-foreground">{TUI.bullet}</span>
+							<span class="font-bold text-primary">{TUI.bullet}</span>
 						{:else}
 							<span class="w-3"></span>
 						{/if}
@@ -235,4 +235,3 @@
 		</div>
 	</Dialog.Content>
 </Dialog.Root>
-
