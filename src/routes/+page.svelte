@@ -69,7 +69,7 @@
 					focused={true}
 					class="flex-1"
 					counter="{store.filters.filteredLinks.length} items"
-					contentClass={store.settings.viewMode === 'list' ? 'px-0 pt-5' : 'p-2 pt-5'}
+					contentClass="px-0 pt-5"
 				>
 					{#snippet subtitle()}
 						<div class="ml-2 flex items-center gap-2">
