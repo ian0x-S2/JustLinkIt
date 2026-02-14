@@ -14,12 +14,15 @@
 	import { THEMES } from '$lib/constants';
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import RightSidebar from '$lib/components/RightSidebar.svelte';
+	import LinkForm from '$lib/components/LinkForm.svelte';
+	import ExportDialog from '$lib/components/ExportDialog.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import LazyStatusBar from '$lib/components/tui/LazyStatusBar.svelte';
 	import LazyPanel from '$lib/components/tui/LazyPanel.svelte';
 	import { theme } from '$lib/tui';
 	import { cn } from '$lib/utils';
+	import type { Link } from '$lib/types';
 
 	const store = getContext<AppStore>('store');
 
@@ -36,6 +39,30 @@
 	let newWorkspaceName = $state('');
 	let isAddingWorkspace = $state(false);
 	let addError = $state('');
+
+	// Add/Export Link State
+	let isAddDialogOpen = $state(false);
+	let isExportDialogOpen = $state(false);
+	let editingLink = $state<Link | null>(null);
+	let previewData = $state<{
+		url: string;
+		title: string | null;
+		description: string | null;
+		image: string | null;
+		logo: string | null;
+	} | null>(null);
+
+	$effect(() => {
+		if (!isAddDialogOpen) {
+			editingLink = null;
+			previewData = null;
+		}
+	});
+
+	function handleAddLink() {
+		editingLink = null;
+		isAddDialogOpen = true;
+	}
 
 	async function handleAddWorkspace(e?: SubmitEvent | KeyboardEvent) {
 		if (e instanceof KeyboardEvent && e.key !== 'Enter') return;
@@ -106,7 +133,7 @@
 		<!-- Main Content Area -->
 		<div class={theme.layoutMain}>
 			<!-- Left Sidebar -->
-			<LeftSidebar onAddLink={() => {}} onExport={() => {}} />
+			<LeftSidebar onAddLink={handleAddLink} onExport={() => (isExportDialogOpen = true)} />
 
 			<!-- Center Content (Settings) -->
 			<div class={theme.layoutContent}>
@@ -359,6 +386,31 @@
 				</button>
 			</div>
 		</div>
+	</Dialog.Content>
+</Dialog.Root>
+
+<!-- Add Link Dialog -->
+<Dialog.Root bind:open={isAddDialogOpen}>
+	<Dialog.Content
+		showCloseButton={false}
+		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 shadow-2xl sm:max-w-2xl"
+	>
+		<LinkForm
+			link={editingLink}
+			{previewData}
+			onsave={() => (isAddDialogOpen = false)}
+			oncancel={() => (isAddDialogOpen = false)}
+		/>
+	</Dialog.Content>
+</Dialog.Root>
+
+<!-- Export Link Dialog -->
+<Dialog.Root bind:open={isExportDialogOpen}>
+	<Dialog.Content
+		showCloseButton={false}
+		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 sm:max-w-md"
+	>
+		<ExportDialog bind:open={isExportDialogOpen} links={store.links.links.filter(l => !l.isDeleted)} />
 	</Dialog.Content>
 </Dialog.Root>
 
