@@ -150,7 +150,7 @@
 	<!-- App Info Panel -->
 	<LazyPanel title="LinkIt" titleClass={theme.titleStash} class="flex-[1.2]">
 		<div class="flex h-full flex-col">
-			<div class="relative flex min-h-[140px] flex-1 items-center justify-center overflow-hidden">
+			<div class="relative flex min-h-35 flex-1 items-center justify-center overflow-hidden">
 				<pre class="font-mono text-[10px] leading-[1.1] text-primary/80">
 					{asciiLogo}
 				</pre>
