@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { workspaces, links } from '$lib/server/db/schema';
-import { eq, desc, sql } from 'drizzle-orm';
+import { eq, desc, sql, and } from 'drizzle-orm';
 import { cacheManager } from '$lib/server/cache';
 import type { RequestHandler } from './$types';
 
@@ -15,7 +15,7 @@ export const GET: RequestHandler = async () => {
 		linkCount: sql<number>`count(${links.id})`
 	})
 	.from(workspaces)
-	.leftJoin(links, eq(workspaces.id, links.workspaceId))
+	.leftJoin(links, and(eq(workspaces.id, links.workspaceId), eq(links.isDeleted, false)))
 	.groupBy(workspaces.id)
 	.orderBy(desc(workspaces.createdAt));
 	
