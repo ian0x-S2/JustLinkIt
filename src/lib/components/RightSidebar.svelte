@@ -122,13 +122,23 @@
 		<ScrollArea type="hover" class="h-full w-full">
 			<div class="flex flex-col gap-0.5">
 				{#each trendingTags as [tag, count] (tag)}
+					{@const isSelected = store.filters.selectedTags.includes(tag)}
 					<button
 						onclick={() => store.filters.toggleTag(tag)}
-						class={cn(theme.item, theme.itemDefault, 'px-2 py-0.5')}
+						class={cn(
+							theme.item,
+							theme.itemDefault,
+							'px-2 py-0.5 relative group',
+							isSelected && 'bg-primary/20 text-primary font-bold'
+						)}
 					>
-						<span class="text-[10px] text-primary">{TUI.bullet}</span>
-						<span class="flex-1 truncate text-left">{tag}</span>
-						<span class="text-[10px] text-muted-foreground">({count})</span>
+						<span class={cn("text-[10px]", isSelected ? "text-primary" : "text-muted-foreground")}>
+							{isSelected ? TUI.arrowRight : TUI.bullet}
+						</span>
+						<span class="flex-1 truncate text-left ml-1">{tag}</span>
+						<span class={cn("text-[10px]", isSelected ? "text-primary/70" : "text-muted-foreground")}>
+							({count})
+						</span>
 					</button>
 				{:else}
 					<div class="text-muted-foreground italic text-center py-4">No tags found</div>
