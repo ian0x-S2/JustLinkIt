@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { AppStore } from '$lib/stores';
-	import { cn } from '$lib/utils.js';
+	import { cn } from '$lib/utils';
 	import { TUI, theme } from '$lib/tui';
 	import LazyPanel from './tui/LazyPanel.svelte';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
+	import { BarChart } from 'layerchart';
+	import { scaleBand } from 'd3-scale';
+	import * as ChartUI from '$lib/components/ui/chart';
+	import { subDays, format, startOfDay, isSameDay } from 'date-fns';
+	import { browser } from '$app/environment';
 
 	const store = getContext<AppStore>('store');
 
@@ -25,8 +30,27 @@
 		const activeLinks = store.links.links.filter((l) => !l.isDeleted);
 		const total = activeLinks.length;
 		const favorites = activeLinks.filter((l) => l.isFavorite).length;
-		return { total, favorites };
+		
+		// Activity data for chart (last 7 days)
+		const last7Days = Array.from({ length: 7 }, (_, i) => {
+			const date = subDays(startOfDay(new Date()), 6 - i);
+			const count = activeLinks.filter(l => isSameDay(new Date(l.createdAt), date)).length;
+			return {
+				date: format(date, 'EEE'),
+				fullDate: format(date, 'MMM d'),
+				count
+			};
+		});
+
+		return { total, favorites, activity: last7Days };
 	});
+
+	const chartConfig = {
+		count: {
+			label: "Links",
+			color: "var(--primary)"
+		}
+	} as ChartUI.ChartConfig;
 
 	const asciiLogo = `
  _      _       _    _____ _   
@@ -53,15 +77,42 @@
 	</LazyPanel>
 
 	<!-- Stats Panel -->
-	<LazyPanel title="Statistics" titleClass={theme.titleCommits} class="flex-[0.5]">
-		<div class="flex flex-col gap-1 font-mono text-[12px]">
-			<div class="flex items-center justify-between border-b border-border/30 py-1">
-				<span class="text-muted-foreground">Total Links</span>
-				<span class="font-bold text-primary">{stats.total}</span>
-			</div>
-			<div class="flex items-center justify-between py-1">
-				<span class="text-muted-foreground">Favorites</span>
-				<span class="font-bold text-chart-3">{stats.favorites}</span>
+	<LazyPanel title="Statistics" titleClass={theme.titleCommits} class="flex-[1.1]">
+		<div class="flex h-full flex-col font-mono text-[12px]">
+			<!-- Activity Chart -->
+			<div class="flex h-full flex-col gap-2">
+				<span class="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">7-Day Activity</span>
+				<div class="min-h-0 flex-1 w-full">
+					{#if browser && stats.activity.length > 0}
+						<ChartUI.ChartContainer config={chartConfig} class="h-full w-full aspect-auto">
+							<BarChart
+								data={stats.activity}
+								x="date"
+								xScale={scaleBand().padding(0.4)}
+								y="count"
+								yDomain={[0, Math.max(5, ...stats.activity.map(d => d.count))]}
+								axis="x"
+								grid={true}
+								props={{
+									xAxis: {
+										tickLabelProps: { class: "fill-muted-foreground text-[8px]" },
+										rule: false
+									},
+									bars: {
+										rounded: "top",
+										class: "fill-primary/60 hover:fill-primary transition-colors"
+									}
+								}}
+							>
+								{#snippet tooltip()}
+									<ChartUI.ChartTooltip hideLabel class="border-primary/20" />
+								{/snippet}
+							</BarChart>
+						</ChartUI.ChartContainer>
+					{:else}
+						<div class="h-full w-full bg-muted/20 animate-pulse"></div>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</LazyPanel>

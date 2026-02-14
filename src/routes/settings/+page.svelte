@@ -14,7 +14,7 @@
 	import { THEMES } from '$lib/constants';
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import RightSidebar from '$lib/components/RightSidebar.svelte';
-	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import * as Dialog from '$lib/components/ui/dialog';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import LazyStatusBar from '$lib/components/tui/LazyStatusBar.svelte';
 	import LazyPanel from '$lib/components/tui/LazyPanel.svelte';
@@ -102,7 +102,7 @@
 
 <!-- Layout Container - Lazygit Style -->
 <div class="h-screen w-screen overflow-hidden bg-background p-2 sm:p-4">
-	<div class="{theme.app} relative border-2 border-border shadow-2xl">
+	<div class={cn(theme.app, "relative border-2 border-border shadow-2xl")}>
 		<!-- Main Content Area -->
 		<div class={theme.layoutMain}>
 			<!-- Left Sidebar -->

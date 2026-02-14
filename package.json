@@ -27,6 +27,7 @@
 		"@tailwindcss/vite": "^4.1.17",
 		"@threlte/core": "^8.3.1",
 		"@threlte/extras": "^9.7.1",
+		"@types/d3-scale": "^4.0.9",
 		"@types/gsap": "^3.0.0",
 		"@types/metascraper": "^5.41.0",
 		"@types/node": "^24",
@@ -40,6 +41,7 @@
 		"eslint-plugin-svelte": "^3.13.1",
 		"formsnap": "^2.0.1",
 		"globals": "^16.5.0",
+		"layerchart": "2.0.0-next.43",
 		"mdsvex": "^0.12.6",
 		"prettier": "^3.7.4",
 		"prettier-plugin-svelte": "^3.4.0",
@@ -61,6 +63,7 @@
 	},
 	"dependencies": {
 		"@jesterkit/exe-sveltekit": "^0.1.7",
+		"d3-scale": "^4.0.2",
 		"date-fns": "^4.1.0",
 		"drizzle-orm": "^0.45.1",
 		"metascraper": "^5.49.15",
