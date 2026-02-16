@@ -3,6 +3,7 @@ import { workspaces, links, linkTags, tags } from '$lib/server/db/schema';
 import { eq, desc, sql, and } from 'drizzle-orm';
 import type { LayoutServerLoad } from './$types';
 import { SIDEBAR_COOKIE_NAME } from '$lib/components/ui/sidebar/constants';
+import { STORAGE_KEYS } from '$lib/constants';
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
 	// 1. Get workspaces with link counts
@@ -31,15 +32,15 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 		allWorkspaces.push({ ...newWsData, linkCount: 0 });
 	}
 
-	let activeWorkspaceId = cookies.get('active_workspace_id');
+	let activeWorkspaceId = cookies.get(STORAGE_KEYS.ACTIVE_WORKSPACE);
 	
 	// Validate that the active workspace still exists
 	if (!activeWorkspaceId || !allWorkspaces.find(w => w.id === activeWorkspaceId)) {
 		activeWorkspaceId = allWorkspaces[0].id;
 	}
 
-	const viewMode = (cookies.get('view_mode') as 'list' | 'grid') || 'list';
-	const theme = (cookies.get('selected_theme') as string) || 'default';
+	const viewMode = (cookies.get(STORAGE_KEYS.VIEW_MODE) as 'list' | 'grid') || 'list';
+	const theme = (cookies.get(STORAGE_KEYS.THEME) as string) || 'default';
 
 	const sidebarState = cookies.get(SIDEBAR_COOKIE_NAME);
 	const isSidebarOpen = sidebarState ? sidebarState === 'true' : true;

@@ -7,6 +7,8 @@ import mClearbit from 'metascraper-clearbit';
 import mPublisher from 'metascraper-publisher';
 import mAuthor from 'metascraper-author';
 import mUrl from 'metascraper-url';
+import { json, error } from '@sveltejs/kit';
+import { defaultLogger } from '$lib/stores/infra/logger';
 
 const scraper = metascraper([
 	mTitle(),
@@ -70,8 +72,27 @@ export async function fetchOpenGraph(url: string): Promise<OpenGraphData> {
 			logo: logo,
 			url: metadata.url || url
 		};
-	} catch (error) {
-		console.error('Error fetching metadata:', error);
+	} catch (err) {
+		defaultLogger.error('Error fetching metadata', { error: err, url });
 		return { title: null, description: null, image: null, url };
+	}
+}
+
+/**
+ * Handles a request to fetch OpenGraph data.
+ * Consolidates common logic for API routes and Server Actions.
+ */
+export async function handleOpenGraphRequest(request: Request) {
+	try {
+		const { url } = await request.json();
+
+		if (!url || typeof url !== 'string') {
+			return error(400, 'Invalid URL');
+		}
+
+		const ogData = await fetchOpenGraph(url);
+		return json(ogData);
+	} catch (err) {
+		return error(500, `Failed to fetch OpenGraph data: ${err instanceof Error ? err.message : err}`);
 	}
 }

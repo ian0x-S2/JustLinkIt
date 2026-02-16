@@ -29,15 +29,31 @@ class CacheManager {
 		this.collectionCache.set(key, ids);
 	}
 
-	invalidateLink(id: string) {
+	invalidateLink(id: string, workspaceId?: string) {
 		this.linkCache.delete(id);
-		// Invalidate all collection caches that might contain this link
-		this.collectionCache.clear();
+		
+		if (workspaceId) {
+			// Only invalidate collections for this specific workspace
+			for (const key of this.collectionCache.keys()) {
+				if (key.startsWith(`ws:${workspaceId}:`)) {
+					this.collectionCache.delete(key);
+				}
+			}
+		} else {
+			// If workspaceId is not provided, we must be more conservative
+			// but still better than clearing everything if we can find where it belongs
+			this.collectionCache.clear();
+		}
 	}
 
 	invalidateWorkspace(id: string) {
 		this.workspaceCache.delete(id);
-		this.collectionCache.clear();
+		// Only invalidate collections for this workspace
+		for (const key of this.collectionCache.keys()) {
+			if (key.startsWith(`ws:${id}:`)) {
+				this.collectionCache.delete(key);
+			}
+		}
 	}
 
 	clear() {

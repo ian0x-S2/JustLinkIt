@@ -39,3 +39,5 @@ export class NoopLogger implements Logger {
     info(): void { }
     warn(): void { }
 }
+
+export const defaultLogger = new ConsoleLogger('App');

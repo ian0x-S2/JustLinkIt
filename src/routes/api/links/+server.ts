@@ -3,6 +3,7 @@ import { db } from '$lib/server/db';
 import { links, linkTags, tags } from '$lib/server/db/schema';
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { cacheManager } from '$lib/server/cache';
+import { defaultLogger } from '$lib/stores/infra/logger';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url }) => {
@@ -120,16 +121,15 @@ export const POST: RequestHandler = async ({ request }) => {
 				}
 			}
 		});
-	} catch (error: any) {
-		console.error('Failed to create link. Data:', JSON.stringify(newLink, null, 2));
-		console.error('Error detail:', error);
+	} catch (err: any) {
+		defaultLogger.error('Failed to create link', { error: err, link: newLink });
 		return json({ 
 			error: 'Failed to create link. Make sure the workspace exists.',
-			details: error?.message,
+			details: err?.message,
 			workspaceId: newLink.workspaceId 
 		}, { status: 500 });
 	}
 
-	cacheManager.invalidateLink(id);
+	cacheManager.invalidateLink(id, newLink.workspaceId);
 	return json({ ...newLink, tags: data.tags || [] });
 };

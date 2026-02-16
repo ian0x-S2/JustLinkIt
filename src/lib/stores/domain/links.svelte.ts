@@ -13,10 +13,10 @@ export interface LinkStore {
 
     // Ações
     add(linkData: Omit<Link, 'id' | 'createdAt' | 'updatedAt' | 'workspaceId'> & { workspaceId?: WorkspaceId }): Promise<Result<Link, ApiError>>;
-    update(id: LinkId, updates: Partial<Link>): Promise<void>;
-    removePermanently(id: LinkId): Promise<void>;
-    toggleFavorite(id: LinkId): Promise<void>;
-    toggleDeleted(id: LinkId): Promise<void>;
+    update(id: LinkId, updates: Partial<Link>): Promise<Result<void, ApiError>>;
+    removePermanently(id: LinkId): Promise<Result<void, ApiError>>;
+    toggleFavorite(id: LinkId): Promise<Result<void, ApiError>>;
+    toggleDeleted(id: LinkId): Promise<Result<void, ApiError>>;
     fetchForWorkspace(workspaceId: WorkspaceId): Promise<void>;
     hydrate(links: Link[]): void;
 }
@@ -77,25 +77,25 @@ export function createLinkStore(options: CreateLinkStoreOptions): LinkStore {
         }
     }
 
-    async function update(id: LinkId, updates: Partial<Link>): Promise<void> {
+    async function update(id: LinkId, updates: Partial<Link>): Promise<Result<void, ApiError>> {
         const index = _links.findIndex((l) => l.id === id);
-        if (index === -1) return;
+        if (index === -1) {
+            return { ok: false, error: { message: 'Link not found', code: 'NOT_FOUND' } };
+        }
 
         const originalLink = { ..._links[index] };
 
-        // Optimistic update - Replace the object to ensure reactivity
+        // Optimistic update
         _links[index] = {
             ..._links[index],
             ...updates,
             updatedAt: Date.now()
         };
-        // Re-assign to trigger full reactivity if needed
         _links = [..._links];
 
         const result = await repository.updateLink(id, updates);
         if (!result.ok) {
             // Rollback
-            _links = [..._links];
             const rollbackIdx = _links.findIndex(l => l.id === id);
             if (rollbackIdx !== -1) {
                 _links[rollbackIdx] = originalLink;
@@ -103,9 +103,10 @@ export function createLinkStore(options: CreateLinkStoreOptions): LinkStore {
             }
             logger.error(`Update failed for link ${id}`, result.error);
         }
+        return result;
     }
 
-    async function removePermanently(id: LinkId): Promise<void> {
+    async function removePermanently(id: LinkId): Promise<Result<void, ApiError>> {
         const previousLinks = [..._links];
         _links = _links.filter((l) => l.id !== id);
 
@@ -114,20 +115,23 @@ export function createLinkStore(options: CreateLinkStoreOptions): LinkStore {
             _links = previousLinks;
             logger.error(`Permanent removal failed for link ${id}`, result.error);
         }
+        return result;
     }
 
-    async function toggleFavorite(id: LinkId): Promise<void> {
+    async function toggleFavorite(id: LinkId): Promise<Result<void, ApiError>> {
         const link = _links.find((l) => l.id === id);
         if (link) {
-            await update(id, { isFavorite: !link.isFavorite });
+            return update(id, { isFavorite: !link.isFavorite });
         }
+        return { ok: false, error: { message: 'Link not found', code: 'NOT_FOUND' } };
     }
 
-    async function toggleDeleted(id: LinkId): Promise<void> {
+    async function toggleDeleted(id: LinkId): Promise<Result<void, ApiError>> {
         const link = _links.find((l) => l.id === id);
         if (link) {
-            await update(id, { isDeleted: !link.isDeleted });
+            return update(id, { isDeleted: !link.isDeleted });
         }
+        return { ok: false, error: { message: 'Link not found', code: 'NOT_FOUND' } };
     }
 
     return {

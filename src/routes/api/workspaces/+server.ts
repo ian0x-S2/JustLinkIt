@@ -3,6 +3,8 @@ import { db } from '$lib/server/db';
 import { workspaces, links } from '$lib/server/db/schema';
 import { eq, desc, sql, and } from 'drizzle-orm';
 import { cacheManager } from '$lib/server/cache';
+import { generateSlug } from '$lib/utils';
+import { defaultLogger } from '$lib/stores/infra/logger';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async () => {
@@ -30,10 +32,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		const id = data.id || crypto.randomUUID();
-		const slug = data.slug || data.name.toLowerCase().trim()
-			.replace(/[^\w\s-]/g, '')
-			.replace(/[\s_-]+/g, '-')
-			.replace(/^-+|-+$/g, '') + '-' + id.slice(0, 5);
+		const slug = data.slug || generateSlug(data.name, id);
 		
 		const newWorkspace = {
 			...data,
@@ -47,7 +46,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		
 		return json(newWorkspace);
 	} catch (e) {
-		console.error('Failed to create workspace:', e);
+		defaultLogger.error('Failed to create workspace', { error: e });
 		return json({ error: 'Failed to create workspace' }, { status: 500 });
 	}
 };

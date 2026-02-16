@@ -62,7 +62,7 @@
 	});
 	setContext<AppStore>('store', store);
 
-	$effect(() => {
+$effect(() => {
 		// Only run hydration logic if data actually changes after initial mount
 		if (mounted) {
 			untrack(() => {

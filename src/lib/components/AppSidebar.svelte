@@ -6,11 +6,9 @@
 		Settings,
 		Moon,
 		Sun,
-		Command,
 		Plus,
 		ChevronsUpDown,
 		Check,
-		LogOut,
 		X
 	} from '@lucide/svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -26,6 +24,7 @@
 	import { page } from '$app/state';
 	import type { AppStore } from '$lib/stores';
 	import type { WorkspaceId } from '$lib/types';
+	import { defaultLogger } from '$lib/stores/infra/logger';
 
 	const store = getContext<AppStore>('store');
 
@@ -72,7 +71,7 @@
 					}
 				}
 			} catch (err) {
-				console.error('Failed to create workspace:', err);
+				defaultLogger.error('Failed to create workspace', { error: err });
 			}
 		}
 	}
@@ -207,7 +206,7 @@
 </Sidebar.Root>
 
 <Dialog.Root bind:open={isCreateWorkspaceOpen}>
-	<Dialog.Content showCloseButton={false} class="overflow-hidden p-0 max-w-[320px] rounded-sm">
+	<Dialog.Content showCloseButton={false} class="max-w-[320px] overflow-hidden rounded-sm p-0">
 		<div class="flex flex-col bg-background text-foreground">
 			<!-- Header -->
 			<div class="flex h-11 items-center justify-between border-b border-border px-4">
@@ -227,7 +226,7 @@
 			<!-- Body -->
 			<form onsubmit={handleCreateWorkspace}>
 				<div class="space-y-4 px-4 py-4">
-					<p class="text-[12px] text-muted-foreground leading-snug">
+					<p class="text-[12px] leading-snug text-muted-foreground">
 						Workspaces help you organize links for different projects.
 					</p>
 					<div class="space-y-1.5">
