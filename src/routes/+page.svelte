@@ -47,10 +47,6 @@
 		editingLink = link;
 		isAddDialogOpen = true;
 	}
-
-	function handleDeleteLink(id: string) {
-		store.links.removePermanently(id as LinkId);
-	}
 </script>
 
 <!-- Layout Container - Lazygit Style -->
@@ -118,7 +114,10 @@
 												{link}
 												viewMode="list"
 												onedit={handleEditLink}
-												ondelete={handleDeleteLink}
+												onToggleFavorite={(id) => store.links.toggleFavorite(id as LinkId)}
+												onToggleDeleted={(id) => store.links.toggleDeleted(id as LinkId)}
+												onPermanentDelete={(id) => store.links.removePermanently(id as LinkId)}
+												onUpdateTags={(id, tags) => store.links.update(id as LinkId, { tags })}
 											/>
 										{/each}
 									</div>
@@ -129,7 +128,10 @@
 												{link}
 												viewMode="grid"
 												onedit={handleEditLink}
-												ondelete={handleDeleteLink}
+												onToggleFavorite={(id) => store.links.toggleFavorite(id as LinkId)}
+												onToggleDeleted={(id) => store.links.toggleDeleted(id as LinkId)}
+												onPermanentDelete={(id) => store.links.removePermanently(id as LinkId)}
+												onUpdateTags={(id, tags) => store.links.update(id as LinkId, { tags })}
 											/>
 										{/each}
 									</div>

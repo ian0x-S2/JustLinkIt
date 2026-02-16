@@ -2,8 +2,6 @@
 	import type { Link } from '$lib/types';
 	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { getContext } from 'svelte';
-	import type { AppStore } from '$lib/stores';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { cn } from '$lib/utils.js';
 	import { TUI, formatRelativeTime } from '$lib/tui';
@@ -14,11 +12,21 @@
 		link: Link;
 		viewMode?: 'list' | 'grid';
 		onedit: (link: Link) => void;
-		ondelete: (id: string) => void;
+		onToggleFavorite: (id: string) => void;
+		onToggleDeleted: (id: string) => void;
+		onPermanentDelete: (id: string) => void;
+		onUpdateTags: (id: string, tags: string[]) => void;
 	}
 
-	let { link, viewMode = 'list', onedit, ondelete }: Props = $props();
-	const store = getContext<AppStore>('store');
+	let {
+		link,
+		viewMode = 'list',
+		onedit,
+		onToggleFavorite,
+		onToggleDeleted,
+		onPermanentDelete,
+		onUpdateTags
+	}: Props = $props();
 
 	let isDeleteDialogOpen = $state(false);
 	let logoError = $state(false);
@@ -27,15 +35,11 @@
 
 	$effect(() => {
 		// Reset error states when link changes
-		link.id;
+		void link.id;
 		logoError = false;
 		logoLoaded = false;
 		imageError = false;
 	});
-
-	async function updateTags(tags: string[]) {
-		await store.links.update(link.id, { tags });
-	}
 
 	function getDomain(url: string) {
 		try {
@@ -45,8 +49,8 @@
 		}
 	}
 
-	async function handlePermanentDelete() {
-		await store.links.removePermanently(link.id);
+	function handlePermanentDelete() {
+		onPermanentDelete(link.id);
 		isDeleteDialogOpen = false;
 	}
 </script>
@@ -58,7 +62,7 @@
 	>
 		{#if link.isDeleted}
 			<DropdownMenu.Item
-				onclick={() => store.links.toggleDeleted(link.id)}
+				onclick={() => onToggleDeleted(link.id)}
 				class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold uppercase data-highlighted:bg-muted data-highlighted:text-accent"
 			>
 				<RotateCcw class="h-3.5 w-3.5 text-primary" />
@@ -67,7 +71,7 @@
 			</DropdownMenu.Item>
 		{/if}
 		<DropdownMenu.Item
-			onclick={() => store.links.toggleFavorite(link.id)}
+			onclick={() => onToggleFavorite(link.id)}
 			class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold uppercase data-highlighted:bg-muted data-highlighted:text-accent"
 		>
 			<Star
@@ -93,7 +97,7 @@
 				if (link.isDeleted) {
 					isDeleteDialogOpen = true;
 				} else {
-					store.links.toggleDeleted(link.id);
+					onToggleDeleted(link.id);
 				}
 			}}
 			class="flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[11px] font-bold text-destructive uppercase data-highlighted:bg-muted data-highlighted:text-destructive"
@@ -207,7 +211,7 @@
 		<div class="flex h-6 items-center justify-between border-b border-border/50 bg-muted/20 px-2">
 			<div class="flex items-center gap-2 truncate">
 				<button
-					onclick={() => store.links.toggleFavorite(link.id)}
+					onclick={() => onToggleFavorite(link.id)}
 					class={cn(
 						'flex h-4 w-4 shrink-0 items-center justify-center transition-transform hover:scale-110',
 						link.isFavorite ? 'text-chart-3' : 'text-muted-foreground/30 hover:text-primary'
@@ -271,7 +275,7 @@
 			</a>
 
 			<div class="mt-1">
-				<TagInput selected={link.tags} onchange={updateTags} />
+				<TagInput selected={link.tags} onchange={(tags) => onUpdateTags(link.id, tags)} />
 			</div>
 
 			<!-- Actions for Card -->
@@ -283,7 +287,7 @@
 						class="h-auto px-1 text-[9px] font-bold text-primary uppercase transition-none"
 						onclick={(e) => {
 							e.preventDefault();
-							store.links.toggleDeleted(link.id);
+							onToggleDeleted(link.id);
 						}}
 					>
 						[r]estore
@@ -309,7 +313,7 @@
 						)}
 						onclick={(e) => {
 							e.preventDefault();
-							store.links.toggleFavorite(link.id);
+							onToggleFavorite(link.id);
 						}}
 					>
 						[f]av
@@ -331,7 +335,7 @@
 						class="h-auto px-1 text-[9px] font-bold text-destructive uppercase transition-none "
 						onclick={(e) => {
 							e.preventDefault();
-							store.links.toggleDeleted(link.id);
+							onToggleDeleted(link.id);
 						}}
 					>
 						[d]el

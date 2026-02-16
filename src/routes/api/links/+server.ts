@@ -1,10 +1,25 @@
 import { json } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { links, linkTags, tags } from '$lib/server/db/schema';
-import { eq, and, desc, sql } from 'drizzle-orm';
+import { eq, and, desc, inArray } from 'drizzle-orm';
 import { cacheManager } from '$lib/server/cache';
 import { defaultLogger } from '$lib/stores/infra/logger';
+import * as v from 'valibot';
 import type { RequestHandler } from './$types';
+
+const LinkSchema = v.object({
+	url: v.pipe(v.string(), v.url()),
+	workspaceId: v.string(),
+	title: v.optional(v.nullable(v.string())),
+	description: v.optional(v.nullable(v.string())),
+	image: v.optional(v.nullable(v.string())),
+	author: v.optional(v.nullable(v.string())),
+	publisher: v.optional(v.nullable(v.string())),
+	logo: v.optional(v.nullable(v.string())),
+	isFavorite: v.optional(v.boolean(), false),
+	isDeleted: v.optional(v.boolean(), false),
+	tags: v.optional(v.array(v.string()), [])
+});
 
 export const GET: RequestHandler = async ({ url }) => {
 	const workspaceId = url.searchParams.get('workspaceId');
@@ -17,10 +32,24 @@ export const GET: RequestHandler = async ({ url }) => {
 	const cachedIds = cacheManager.getCollection(cacheKey);
 
 	if (cachedIds) {
-		const result = cachedIds.map(id => cacheManager.getLink(id)).filter(Boolean);
-		if (result.length === cachedIds.length) {
-			return json(result);
+		const cachedLinks = cachedIds.map(id => cacheManager.getLink(id));
+		const missingIds = cachedIds.filter((_, i) => !cachedLinks[i]);
+
+		if (missingIds.length === 0) {
+			return json(cachedLinks);
 		}
+
+		// Optimization: Only fetch missing links from DB
+		const dbMissingLinks = db.select().from(links).where(inArray(links.id, missingIds)).all();
+		
+		// Update cache with missing links
+		dbMissingLinks.forEach(link => cacheManager.setLink(link as any));
+
+		// Re-assemble result maintain order
+		const linkMap = new Map(dbMissingLinks.map(l => [l.id, l]));
+		const result = cachedIds.map(id => cacheManager.getLink(id) || linkMap.get(id)).filter(Boolean);
+		
+		return json(result);
 	}
 
 	let query = db.select().from(links).where(eq(links.workspaceId, workspaceId));
@@ -51,85 +80,94 @@ export const GET: RequestHandler = async ({ url }) => {
 		}
 	}
 
-	const dbLinks = await query.orderBy(desc(links.createdAt));
+	const dbLinks = query.orderBy(desc(links.createdAt)).all();
+	const linkIds = dbLinks.map((l) => l.id);
 
-	// Fetch tags for these links
-	const linkIds = dbLinks.map(l => l.id);
-	const tagsData = await db.select({
-		linkId: linkTags.linkId,
-		tagName: tags.name
-	})
-	.from(linkTags)
-	.innerJoin(tags, eq(linkTags.tagId, tags.id))
-	.where(sql`${linkTags.linkId} IN ${linkIds.length ? linkIds : ['']}`);
+	let linksWithTags = dbLinks.map(link => ({ ...link, tags: [] as string[] }));
 
-	const linksWithTags = dbLinks.map(link => ({
-		...link,
-		tags: tagsData.filter(t => t.linkId === link.id).map(t => t.tagName)
-	}));
+	if (linkIds.length > 0) {
+		const tagsData = db
+			.select({
+				linkId: linkTags.linkId,
+				tagName: tags.name
+			})
+			.from(linkTags)
+			.innerJoin(tags, eq(linkTags.tagId, tags.id))
+			.where(inArray(linkTags.linkId, linkIds))
+			.all();
 
-	// Update cache
-	linksWithTags.forEach(l => cacheManager.setLink(l as any));
-	cacheManager.setCollection(cacheKey, linkIds);
+		const tagsByLinkId = tagsData.reduce((acc, curr) => {
+			if (!acc[curr.linkId]) acc[curr.linkId] = [];
+			acc[curr.linkId].push(curr.tagName);
+			return acc;
+		}, {} as Record<string, string[]>);
+
+		linksWithTags = dbLinks.map((link) => ({
+			...link,
+			tags: tagsByLinkId[link.id] || []
+		}));
+		
+		// Cache the full results
+		linksWithTags.forEach(link => cacheManager.setLink(link as any));
+		cacheManager.setCollection(cacheKey, linkIds);
+	}
 
 	return json(linksWithTags);
 };
 
 export const POST: RequestHandler = async ({ request }) => {
-	const data = await request.json();
-	const id = crypto.randomUUID();
-	const now = Date.now();
-
-	if (!data.workspaceId) {
-		return json({ error: 'workspaceId is required' }, { status: 400 });
-	}
-
-	const newLink = {
-		...data,
-		id,
-		createdAt: now,
-		updatedAt: now,
-		isFavorite: data.isFavorite || false,
-		isDeleted: data.isDeleted || false
-	};
-
 	try {
-		db.transaction((tx) => {
-			tx.insert(links).values({
-				id: newLink.id,
-				workspaceId: newLink.workspaceId,
-				url: newLink.url,
-				title: newLink.title,
-				description: newLink.description,
-				image: newLink.image,
-				author: newLink.author,
-				publisher: newLink.publisher,
-				logo: newLink.logo,
-				createdAt: newLink.createdAt,
-				updatedAt: newLink.updatedAt,
-				isFavorite: newLink.isFavorite,
-				isDeleted: newLink.isDeleted
-			}).run();
+		const jsonBody = await request.json();
+		const result = v.safeParse(LinkSchema, jsonBody);
 
-			if (data.tags?.length) {
+		if (!result.success) {
+			return json({ error: 'Validation failed', details: result.issues }, { status: 400 });
+		}
+
+		const data = result.output;
+		const id = crypto.randomUUID();
+		const now = Date.now();
+
+		const newLink = {
+			id,
+			workspaceId: data.workspaceId,
+			url: data.url,
+			title: data.title ?? null,
+			description: data.description ?? null,
+			image: data.image ?? null,
+			author: data.author ?? null,
+			publisher: data.publisher ?? null,
+			logo: data.logo ?? null,
+			createdAt: now,
+			updatedAt: now,
+			isFavorite: data.isFavorite ?? false,
+			isDeleted: data.isDeleted ?? false
+		};
+
+		db.transaction((tx) => {
+			tx.insert(links).values(newLink).run();
+
+			if (data.tags && data.tags.length > 0) {
 				for (const tagName of data.tags) {
-					tx.insert(tags).values({ id: crypto.randomUUID(), name: tagName }).onConflictDoNothing().run();
-					const [tag] = tx.select().from(tags).where(eq(tags.name, tagName)).limit(1).all();
+					tx.insert(tags)
+						.values({ id: crypto.randomUUID(), name: tagName })
+						.onConflictDoNothing()
+						.run();
+					const tag = tx.select().from(tags).where(eq(tags.name, tagName)).get();
 					if (tag) {
 						tx.insert(linkTags).values({ linkId: id, tagId: tag.id }).onConflictDoNothing().run();
 					}
 				}
 			}
 		});
-	} catch (err: any) {
-		defaultLogger.error('Failed to create link', { error: err, link: newLink });
-		return json({ 
-			error: 'Failed to create link. Make sure the workspace exists.',
-			details: err?.message,
-			workspaceId: newLink.workspaceId 
-		}, { status: 500 });
-	}
 
-	cacheManager.invalidateLink(id, newLink.workspaceId);
-	return json({ ...newLink, tags: data.tags || [] });
+		const fullLink = { ...newLink, tags: data.tags || [] };
+		cacheManager.setLink(fullLink as any);
+		cacheManager.invalidateWorkspace(data.workspaceId);
+
+		return json(fullLink);
+	} catch (error: any) {
+		defaultLogger.error('Failed to create link', { error });
+		return json({ error: 'Internal server error', details: error.message }, { status: 500 });
+	}
 };

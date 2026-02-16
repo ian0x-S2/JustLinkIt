@@ -2,16 +2,7 @@
 	import type { Link } from '$lib/types';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
-	import {
-		Trash2,
-		FileText,
-		Star,
-		RotateCcw,
-		Pencil,
-		Ellipsis,
-		ExternalLink,
-		Globe
-	} from '@lucide/svelte';
+	import { Trash2, Star, RotateCcw, Pencil, Ellipsis, ExternalLink, Globe } from '@lucide/svelte';
 	import { formatDistanceToNow } from 'date-fns';
 	import * as Popover from '$lib/components/ui/popover';
 	import { getContext } from 'svelte';
@@ -33,7 +24,7 @@
 
 	$effect(() => {
 		// Reset error states when link changes
-		link.id;
+		void link.id;
 		logoError = false;
 		logoLoaded = false;
 	});

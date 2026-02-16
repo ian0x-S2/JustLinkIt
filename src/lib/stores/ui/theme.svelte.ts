@@ -29,9 +29,9 @@ export function createThemeStore(initialValue?: ThemeId): ThemeStore {
 
 			// Fallback during hydration/initial render on client
 			if (browser) {
-				const domTheme = document.documentElement.getAttribute('data-theme') as ThemeId;
+				const domTheme = document.documentElement.getAttribute('data-theme');
 				if (domTheme && (Object.values(THEMES) as string[]).includes(domTheme)) {
-					return domTheme;
+					return domTheme as ThemeId;
 				}
 			}
 
