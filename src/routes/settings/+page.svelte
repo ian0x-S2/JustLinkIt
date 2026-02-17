@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Input } from '$lib/components/ui/input';
+	import { Button } from '$lib/components/ui/button';
 	import { Layers, Plus, Database, Info, Loader2, X } from '@lucide/svelte';
 	import { getContext } from 'svelte';
 	import type { AppStore } from '$lib/stores';
@@ -14,7 +15,7 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import LazyStatusBar from '$lib/components/tui/LazyStatusBar.svelte';
 	import LazyPanel from '$lib/components/tui/LazyPanel.svelte';
-	import { theme } from '$lib/tui';
+	import { theme, TUI } from '$lib/tui';
 	import { cn } from '$lib/utils';
 	import type { Link } from '$lib/types';
 
@@ -369,47 +370,67 @@
 <Dialog.Root bind:open={isDeleteDialogOpen}>
 	<Dialog.Content
 		showCloseButton={false}
-		class="max-w-md overflow-hidden rounded-none border-2 border-white bg-black p-0 font-mono shadow-2xl"
+		class="max-w-md overflow-hidden rounded-none border-2 border-border bg-background p-0 font-mono shadow-2xl"
 	>
 		<div class="flex flex-col">
 			<!-- Header -->
 			<div
-				class="flex h-8 items-center justify-between border-b-2 border-white bg-destructive px-3"
+				class="flex h-9 items-center justify-between border-b border-border bg-destructive px-3"
 			>
-				<h2 class="text-[11px] font-bold tracking-tight text-destructive-foreground uppercase">
-					Delete Workspace
-				</h2>
-				<button
-					onclick={() => (isDeleteDialogOpen = false)}
-					class="text-destructive-foreground hover:bg-white/20"
-				>
-					<X class="h-4 w-4" />
-				</button>
+				<div class="flex items-center gap-2">
+					<span class="text-[11px] font-bold tracking-tight text-destructive-foreground uppercase">
+						Delete Workspace
+					</span>
+				</div>
+				<div class="flex items-center gap-4 text-[9px]">
+					<div class="flex items-center gap-1 text-destructive-foreground/70">
+						<span
+							class="border border-destructive-foreground/30 bg-destructive-foreground/10 px-1 py-0.5 text-[7px] font-bold text-destructive-foreground uppercase"
+							>esc</span
+						>
+						<span>close</span>
+					</div>
+					<Button
+						variant="ghost"
+						size="icon"
+						onclick={() => (isDeleteDialogOpen = false)}
+						class="h-6 w-6 rounded-none border border-transparent text-destructive-foreground hover:bg-white/20"
+					>
+						<X class="h-3.5 w-3.5" />
+					</Button>
+				</div>
 			</div>
 
 			<!-- Body -->
-			<div class="space-y-4 p-4 text-white">
-				<p class="text-[13px] leading-relaxed">
+			<div class="space-y-4 p-6">
+				<p class="text-[13px] leading-relaxed text-foreground">
 					Are you sure you want to delete <span class="font-bold text-destructive"
-						>{workspaceToDelete?.name}</span
-					>? This will permanently remove all links in this workspace.
+						>[{workspaceToDelete?.name}]</span
+					>? 
 				</p>
+				<div class="border border-destructive/20 bg-destructive/5 p-3">
+					<p class="text-[11px] leading-tight text-muted-foreground italic">
+						{TUI.bullet} This action is irreversible. All links associated with this workspace will be permanently removed from the local database.
+					</p>
+				</div>
 			</div>
 
 			<!-- Footer -->
-			<div class="flex items-center justify-end gap-2 border-t border-white/20 p-2">
-				<button
+			<div class="flex items-center justify-end gap-2 border-t border-border bg-muted/20 px-4 py-3">
+				<Button
+					variant="ghost"
 					onclick={() => (isDeleteDialogOpen = false)}
-					class="px-3 py-1 text-[11px] font-bold text-white uppercase hover:bg-white/10"
+					class="h-8 rounded-none border border-border bg-background px-4 text-[11px] font-bold uppercase transition-colors hover:bg-muted"
 				>
-					[c]ancel
-				</button>
-				<button
+					Cancel
+				</Button>
+				<Button
+					variant="destructive"
 					onclick={confirmDeleteWorkspace}
-					class="bg-destructive px-3 py-1 text-[11px] font-bold text-destructive-foreground uppercase hover:bg-destructive/90"
+					class="h-8 rounded-none px-4 text-[11px] font-bold uppercase shadow-sm active:scale-95"
 				>
-					[d]elete
-				</button>
+					Confirm Delete
+				</Button>
 			</div>
 		</div>
 	</Dialog.Content>
