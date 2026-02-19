@@ -11,6 +11,6 @@ export const DELETE: RequestHandler = async ({ params }) => {
 
 	await db.delete(workspaces).where(eq(workspaces.id, id));
 	cacheManager.clear();
-	
+
 	return json({ success: true });
 };

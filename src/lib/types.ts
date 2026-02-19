@@ -42,9 +42,7 @@ export interface Link {
 /**
  * Standard Result type for operations that can fail
  */
-export type Result<T, E = Error> = 
-	| { ok: true; value: T }
-	| { ok: false; error: E };
+export type Result<T, E = Error> = { ok: true; value: T } | { ok: false; error: E };
 
 export interface ApiError {
 	message: string;

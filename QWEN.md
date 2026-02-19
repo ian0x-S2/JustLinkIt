@@ -37,4 +37,3 @@ Generates a Svelte Playground link. Ask user before use.
 
 - Your main function is to generate semantic commits when requested.
 - Improve prompts when the user requests. Improved prompts will be generated with markdown and stored in a folder called `prompt-improve`.
-

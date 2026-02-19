@@ -17,20 +17,21 @@ const WorkspaceSchema = v.object({
 });
 
 export const GET: RequestHandler = async () => {
-	const result = db.select({
-		id: workspaces.id,
-		name: workspaces.name,
-		slug: workspaces.slug,
-		icon: workspaces.icon,
-		createdAt: workspaces.createdAt,
-		linkCount: sql<number>`count(${links.id})`
-	})
-	.from(workspaces)
-	.leftJoin(links, and(eq(workspaces.id, links.workspaceId), eq(links.isDeleted, false)))
-	.groupBy(workspaces.id)
-	.orderBy(desc(workspaces.createdAt))
-	.all();
-	
+	const result = db
+		.select({
+			id: workspaces.id,
+			name: workspaces.name,
+			slug: workspaces.slug,
+			icon: workspaces.icon,
+			createdAt: workspaces.createdAt,
+			linkCount: sql<number>`count(${links.id})`
+		})
+		.from(workspaces)
+		.leftJoin(links, and(eq(workspaces.id, links.workspaceId), eq(links.isDeleted, false)))
+		.groupBy(workspaces.id)
+		.orderBy(desc(workspaces.createdAt))
+		.all();
+
 	return json(result);
 };
 
@@ -46,7 +47,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const data = result.output;
 		const id = data.id || crypto.randomUUID();
 		const slug = data.slug || generateSlug(data.name, id);
-		
+
 		const newWorkspace = {
 			id,
 			name: data.name,
@@ -57,7 +58,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		db.insert(workspaces).values(newWorkspace).run();
 		cacheManager.clear();
-		
+
 		return json(newWorkspace);
 	} catch (e) {
 		defaultLogger.error('Failed to create workspace', { error: e });

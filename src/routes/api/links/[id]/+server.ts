@@ -40,14 +40,14 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 			.from(links)
 			.where(eq(links.id, id))
 			.get();
-		
+
 		if (!link) return json({ error: 'Link not found' }, { status: 404 });
-		
+
 		const workspaceId = link.workspaceId;
 
 		db.transaction((tx) => {
 			const { tags: tagsToUpdate, ...linkUpdate } = updates;
-			
+
 			if (Object.keys(linkUpdate).length > 0) {
 				tx.update(links)
 					.set({ ...linkUpdate, updatedAt: now } as any)
@@ -91,9 +91,9 @@ export const DELETE: RequestHandler = async ({ params }) => {
 			.from(links)
 			.where(eq(links.id, id))
 			.get();
-		
+
 		if (!link) return json({ error: 'Link not found' }, { status: 404 });
-		
+
 		const workspaceId = link.workspaceId;
 
 		db.delete(links).where(eq(links.id, id)).run();

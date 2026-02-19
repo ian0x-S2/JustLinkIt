@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { Canvas } from "@threlte/core";
-	import Scene from "./GlobeScene.svelte";
-	import { cn } from "../utils/cn";
-	import type { ComponentProps } from "svelte";
-	import type { GlobeMarker } from "./types";
-	import { NoToneMapping } from "three";
+	import { Canvas } from '@threlte/core';
+	import Scene from './GlobeScene.svelte';
+	import { cn } from '../utils/cn';
+	import type { ComponentProps } from 'svelte';
+	import type { GlobeMarker } from './types';
+	import { NoToneMapping } from 'three';
 
 	type SceneProps = ComponentProps<typeof Scene>;
 
@@ -17,40 +17,40 @@
 		 * Radius of the sphere.
 		 * @default 2
 		 */
-		radius?: SceneProps["radius"];
+		radius?: SceneProps['radius'];
 		/**
 		 * Optional overrides for the Fresnel shader uniforms.
 		 */
-		fresnelConfig?: SceneProps["fresnelConfig"];
+		fresnelConfig?: SceneProps['fresnelConfig'];
 		/**
 		 * Optional configuration for the atmospheric halo.
 		 */
-		atmosphereConfig?: SceneProps["atmosphereConfig"];
+		atmosphereConfig?: SceneProps['atmosphereConfig'];
 		/**
 		 * Number of points rendered on the surface.
 		 * @default 15000
 		 */
-		pointCount?: SceneProps["pointCount"];
+		pointCount?: SceneProps['pointCount'];
 		/**
 		 * Color applied to points that fall on land.
 		 * @default "#00ffff"
 		 */
-		landPointColor?: SceneProps["landPointColor"];
+		landPointColor?: SceneProps['landPointColor'];
 		/**
 		 * Blending mode for the points.
 		 * @default THREE.AdditiveBlending
 		 */
-		pointsBlending?: SceneProps["pointsBlending"];
+		pointsBlending?: SceneProps['pointsBlending'];
 		/**
 		 * Size of each point in world units.
 		 * @default 0.05
 		 */
-		pointSize?: SceneProps["pointSize"];
+		pointSize?: SceneProps['pointSize'];
 		/**
 		 * Whether the globe should auto-rotate.
 		 * @default true
 		 */
-		autoRotate?: SceneProps["autoRotate"];
+		autoRotate?: SceneProps['autoRotate'];
 		/**
 		 * Whether to lock the camera's polar angle (vertical rotation).
 		 * If true, limits the vertical view to a narrow band.
@@ -71,7 +71,7 @@
 	}
 
 	let {
-		class: className = "",
+		class: className = '',
 		radius = 2,
 		fresnelConfig,
 		atmosphereConfig,
@@ -86,10 +86,10 @@
 		...rest
 	}: Props = $props();
 
-	const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1;
+	const dpr = typeof window !== 'undefined' ? window.devicePixelRatio : 1;
 </script>
 
-<div class={cn("relative h-full w-full overflow-hidden", className)} {...rest}>
+<div class={cn('relative h-full w-full overflow-hidden', className)} {...rest}>
 	<div class="absolute inset-0 z-0">
 		<Canvas {dpr} toneMapping={NoToneMapping}>
 			<Scene

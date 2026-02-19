@@ -31,7 +31,7 @@ class CacheManager {
 
 	invalidateLink(id: string, workspaceId?: string) {
 		this.linkCache.delete(id);
-		
+
 		if (workspaceId) {
 			// Only invalidate collections for this specific workspace
 			for (const key of this.collectionCache.keys()) {

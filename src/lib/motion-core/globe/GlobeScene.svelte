@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { T, useThrelte } from "@threlte/core";
-	import { OrbitControls, interactivity } from "@threlte/extras";
-	import * as THREE from "three";
-	import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/controls/OrbitControls.js";
-	import gsap from "gsap";
-	import landGeoJsonRaw from "../assets/ne_110m_land.geojson?raw";
-	import type { GlobeMarker } from "./types";
-	import GlobeMarkerItem from "./GlobeMarkerItem.svelte";
+	import { T, useThrelte } from '@threlte/core';
+	import { OrbitControls, interactivity } from '@threlte/extras';
+	import * as THREE from 'three';
+	import type { OrbitControls as OrbitControlsType } from 'three/examples/jsm/controls/OrbitControls.js';
+	import gsap from 'gsap';
+	import landGeoJsonRaw from '../assets/ne_110m_land.geojson?raw';
+	import type { GlobeMarker } from './types';
+	import GlobeMarkerItem from './GlobeMarkerItem.svelte';
 
 	interactivity();
 
@@ -123,24 +123,24 @@
 	}
 
 	type GeoJSONPolygon = {
-		type: "Polygon";
+		type: 'Polygon';
 		coordinates: number[][][];
 	};
 
 	type GeoJSONMultiPolygon = {
-		type: "MultiPolygon";
+		type: 'MultiPolygon';
 		coordinates: number[][][][];
 	};
 
 	type GeoJSONGeometry = GeoJSONPolygon | GeoJSONMultiPolygon;
 
 	type GeoJSONFeature = {
-		type: "Feature";
+		type: 'Feature';
 		geometry: GeoJSONGeometry | null;
 	};
 
 	type GeoJSONFeatureCollection = {
-		type: "FeatureCollection";
+		type: 'FeatureCollection';
 		features: GeoJSONFeature[];
 	};
 
@@ -169,12 +169,12 @@
 		atmosphereConfig = {},
 		pointCount = 15000,
 		pointSize = 0.05,
-		landPointColor = "#00ffff",
+		landPointColor = '#00ffff',
 		pointsBlending = THREE.AdditiveBlending,
 		autoRotate = true,
 		lockedPolarAngle = true,
 		markers = [],
-		focusOn = null,
+		focusOn = null
 	}: Props = $props();
 
 	const initialCameraPosition = { x: 0, y: 0, z: 8 };
@@ -252,14 +252,14 @@
 `;
 
 	const defaultFresnelConfig: Required<FresnelConfig> = {
-		color: "#111113",
-		rimColor: "#00ffff",
+		color: '#111113',
+		rimColor: '#00ffff',
 		rimPower: 6,
-		rimIntensity: 1.5,
+		rimIntensity: 1.5
 	};
 
 	const defaultAtmosphereConfig: Required<AtmosphereConfig & { blending: THREE.Blending }> = {
-		color: "#00ffff",
+		color: '#00ffff',
 		scale: 1.1,
 		power: 12.0,
 		coefficient: 0.9,
@@ -274,8 +274,8 @@
 			color: { value: new THREE.Color(defaultFresnelConfig.color) },
 			rimColor: { value: new THREE.Color(defaultFresnelConfig.rimColor) },
 			rimPower: { value: defaultFresnelConfig.rimPower },
-			rimIntensity: { value: defaultFresnelConfig.rimIntensity },
-		},
+			rimIntensity: { value: defaultFresnelConfig.rimIntensity }
+		}
 	});
 
 	const atmosphereMaterial = new THREE.ShaderMaterial({
@@ -285,19 +285,19 @@
 			color: { value: new THREE.Color(defaultAtmosphereConfig.color) },
 			power: { value: defaultAtmosphereConfig.power },
 			coefficient: { value: defaultAtmosphereConfig.coefficient },
-			intensity: { value: defaultAtmosphereConfig.intensity },
+			intensity: { value: defaultAtmosphereConfig.intensity }
 		},
 		side: THREE.BackSide,
 		blending: defaultAtmosphereConfig.blending,
 		transparent: true,
 		depthWrite: false,
-		toneMapped: false,
+		toneMapped: false
 	});
 
 	$effect(() => {
 		const config = {
 			...defaultFresnelConfig,
-			...fresnelConfig,
+			...fresnelConfig
 		};
 
 		material.uniforms.color.value.set(config.color);
@@ -312,7 +312,7 @@
 	$effect(() => {
 		const config = {
 			...defaultAtmosphereConfig,
-			...atmosphereConfig,
+			...atmosphereConfig
 		};
 
 		atmosphereMaterial.uniforms.color.value.set(config.color);
@@ -325,9 +325,7 @@
 	});
 
 	let filteredPositions = $state<Float32Array | null>(null);
-	let meshCount = $derived(
-		filteredPositions ? filteredPositions.length / 3 : 0,
-	);
+	let meshCount = $derived(filteredPositions ? filteredPositions.length / 3 : 0);
 
 	$effect(() => {
 		const count = Math.max(1, Math.floor(pointCount));
@@ -369,18 +367,15 @@
 				y,
 				z,
 				duration: 1.5,
-				ease: "power2.inOut",
+				ease: 'power2.inOut',
 				onUpdate: () => {
 					controls?.update();
-				},
+				}
 			});
 		}
 	});
 
-	function updateMeshMatrices(
-		mesh: THREE.InstancedMesh,
-		positions: Float32Array,
-	) {
+	function updateMeshMatrices(mesh: THREE.InstancedMesh, positions: Float32Array) {
 		const dummy = new THREE.Object3D();
 		const count = positions.length / 3;
 		for (let i = 0; i < count; i++) {
@@ -400,26 +395,24 @@
 			const collection = JSON.parse(raw) as GeoJSONFeatureCollection;
 			return extractPolygons(collection);
 		} catch (error) {
-			console.warn("GlobeScene: failed to parse land GeoJSON", error);
+			console.warn('GlobeScene: failed to parse land GeoJSON', error);
 			return [];
 		}
 	}
 
-	function extractPolygons(
-		collection: GeoJSONFeatureCollection,
-	): ParsedPolygon[] {
+	function extractPolygons(collection: GeoJSONFeatureCollection): ParsedPolygon[] {
 		const polygons: ParsedPolygon[] = [];
 		for (const feature of collection.features ?? []) {
 			const geometry = feature.geometry;
 			if (!geometry) continue;
-			if (geometry.type === "Polygon") {
+			if (geometry.type === 'Polygon') {
 				const polygon = convertPolygon(geometry.coordinates);
 				if (polygon) {
 					polygons.push(polygon);
 				}
 				continue;
 			}
-			if (geometry.type === "MultiPolygon") {
+			if (geometry.type === 'MultiPolygon') {
 				for (const coords of geometry.coordinates) {
 					const polygon = convertPolygon(coords);
 					if (polygon) {
@@ -433,11 +426,7 @@
 
 	function convertPolygon(rings: number[][][]): ParsedPolygon | null {
 		const converted = rings
-			.map((ring) =>
-				ring.map(
-					([lon, lat]) => [lon * DEG2RAD, lat * DEG2RAD] as SphericalPoint,
-				),
-			)
+			.map((ring) => ring.map(([lon, lat]) => [lon * DEG2RAD, lat * DEG2RAD] as SphericalPoint))
 			.filter((ring) => ring.length >= 3);
 
 		if (!converted.length) {
@@ -446,7 +435,7 @@
 
 		return {
 			rings: converted,
-			bbox: computeBoundingBox(converted[0]),
+			bbox: computeBoundingBox(converted[0])
 		};
 	}
 
@@ -455,7 +444,7 @@
 			minLon: Infinity,
 			maxLon: -Infinity,
 			minLat: Infinity,
-			maxLat: -Infinity,
+			maxLat: -Infinity
 		};
 
 		for (const [lon, lat] of ring) {
@@ -468,11 +457,7 @@
 		return bbox;
 	}
 
-	function cartesianToLonLat(
-		x: number,
-		y: number,
-		z: number,
-	): { lon: number; lat: number } {
+	function cartesianToLonLat(x: number, y: number, z: number): { lon: number; lat: number } {
 		const radius = Math.sqrt(x * x + y * y + z * z);
 		if (radius === 0) {
 			return { lon: 0, lat: 0 };
@@ -504,11 +489,7 @@
 		return false;
 	}
 
-	function isWithinBounds(
-		lon: number,
-		lat: number,
-		bbox: BoundingBox,
-	): boolean {
+	function isWithinBounds(lon: number, lat: number, bbox: BoundingBox): boolean {
 		return (
 			lon >= bbox.minLon - EPSILON &&
 			lon <= bbox.maxLon + EPSILON &&
@@ -517,11 +498,7 @@
 		);
 	}
 
-	function isPointInsidePolygon(
-		lon: number,
-		lat: number,
-		rings: SphericalPoint[][],
-	): boolean {
+	function isPointInsidePolygon(lon: number, lat: number, rings: SphericalPoint[][]): boolean {
 		if (!rings.length) return false;
 		if (!isPointInRing(lon, lat, rings[0])) return false;
 		for (let i = 1; i < rings.length; i++) {
@@ -532,11 +509,7 @@
 		return true;
 	}
 
-	function isPointInRing(
-		lon: number,
-		lat: number,
-		ring: SphericalPoint[],
-	): boolean {
+	function isPointInRing(lon: number, lat: number, ring: SphericalPoint[]): boolean {
 		let inside = false;
 		for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
 			const xi = ring[i][0];
@@ -547,8 +520,7 @@
 			if (Math.abs(denom) < EPSILON) {
 				continue;
 			}
-			const intersects =
-				yi > lat !== yj > lat && lon < ((xj - xi) * (lat - yi)) / denom + xi;
+			const intersects = yi > lat !== yj > lat && lon < ((xj - xi) * (lat - yi)) / denom + xi;
 			if (intersects) inside = !inside;
 		}
 		return inside;
@@ -557,11 +529,7 @@
 
 <T.PerspectiveCamera
 	makeDefault
-	position={[
-		initialCameraPosition.x,
-		initialCameraPosition.y,
-		initialCameraPosition.z,
-	]}
+	position={[initialCameraPosition.x, initialCameraPosition.y, initialCameraPosition.z]}
 >
 	<OrbitControls
 		bind:ref={controls}
@@ -579,11 +547,7 @@
 
 <T.Group bind:ref={globeGroup}>
 	<T.Mesh {geometry} {material} />
-	<T.Mesh
-		{geometry}
-		material={atmosphereMaterial}
-		scale={currentAtmosphereScale}
-	/>
+	<T.Mesh {geometry} material={atmosphereMaterial} scale={currentAtmosphereScale} />
 
 	{#if filteredPositions && meshCount > 0}
 		{#key meshCount}
@@ -604,11 +568,7 @@
 	{/if}
 
 	{#each markers as marker, i (marker.label || i)}
-		{@const pos = lonLatToCartesian(
-			marker.location[1],
-			marker.location[0],
-			radius * 1.002,
-		)}
+		{@const pos = lonLatToCartesian(marker.location[1], marker.location[0], radius * 1.002)}
 		<GlobeMarkerItem {marker} {radius} position={[pos.x, pos.y, pos.z]} />
 	{/each}
 </T.Group>

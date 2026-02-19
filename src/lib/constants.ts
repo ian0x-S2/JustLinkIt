@@ -26,7 +26,7 @@ export const CATEGORIES = {
 	TRASH: 'trash'
 } as const;
 
-export type Category = typeof CATEGORIES[keyof typeof CATEGORIES];
+export type Category = (typeof CATEGORIES)[keyof typeof CATEGORIES];
 
 export const APP_CONFIG = {
 	DEFAULT_WORKSPACE_ID: 'default' as const,

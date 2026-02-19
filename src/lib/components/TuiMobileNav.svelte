@@ -31,14 +31,16 @@
 			onclick={() => handleTabClick(tab.id)}
 			class={cn(
 				'flex flex-1 flex-col items-center justify-center gap-1 border-r border-border last:border-r-0',
-				(activeTab === tab.id && page.url.pathname === '/') ? 'bg-primary/10 text-primary' : 'text-muted-foreground'
+				activeTab === tab.id && page.url.pathname === '/'
+					? 'bg-primary/10 text-primary'
+					: 'text-muted-foreground'
 			)}
 		>
 			<span class="font-mono text-[10px] font-bold">
-				{(activeTab === tab.id && page.url.pathname === '/') ? TUI.arrowRight : tab.key}
+				{activeTab === tab.id && page.url.pathname === '/' ? TUI.arrowRight : tab.key}
 			</span>
-			<span class="font-mono text-[11px] font-bold uppercase tracking-tighter">
-				{(activeTab === tab.id && page.url.pathname === '/') ? `[${tab.label}]` : tab.label}
+			<span class="font-mono text-[11px] font-bold tracking-tighter uppercase">
+				{activeTab === tab.id && page.url.pathname === '/' ? `[${tab.label}]` : tab.label}
 			</span>
 		</button>
 	{/each}
@@ -50,7 +52,7 @@
 		)}
 	>
 		<span class="font-mono text-[10px] font-bold">,</span>
-		<span class="font-mono text-[11px] font-bold uppercase tracking-tighter">Set</span>
+		<span class="font-mono text-[11px] font-bold tracking-tighter uppercase">Set</span>
 	</a>
 </nav>
 

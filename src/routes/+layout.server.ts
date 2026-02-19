@@ -5,7 +5,18 @@ import type { LayoutServerLoad } from './$types';
 import { SIDEBAR_COOKIE_NAME } from '$lib/components/ui/sidebar/constants';
 import { STORAGE_KEYS } from '$lib/constants';
 
-export const load: LayoutServerLoad = async ({ cookies }) => {
+export const load: LayoutServerLoad = async ({ cookies, request }) => {
+	const userAgent = request.headers.get('user-agent') || '';
+	const isMobileCookie = cookies.get('isMobile');
+	
+	let isMobile = false;
+	if (isMobileCookie !== undefined) {
+		isMobile = isMobileCookie === 'true';
+	} else {
+		// More robust regex for mobile detection
+		isMobile = /Mobile|Android|iP(hone|ad|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/i.test(userAgent);
+	}
+
 	// 1. Get workspaces with link counts
 	const allWorkspaces = db
 		.select({
@@ -77,7 +88,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 		activeWorkspaceId,
 		viewMode,
 		isSidebarOpen,
-		theme
+		theme,
+		isMobileServer: isMobile
 	};
 };
-

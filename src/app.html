@@ -8,11 +8,11 @@
 			(function () {
 				const mode = localStorage.getItem('mode-watcher-mode') || 'system';
 				const theme = localStorage.getItem('selected_theme') || 'default';
-				
+
 				const isDark =
 					mode === 'dark' ||
 					(mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-				
+
 				const color = isDark ? '#09090b' : '#ffffff';
 				const scheme = isDark ? 'dark' : 'light';
 
@@ -27,7 +27,7 @@
 				csMeta.name = 'color-scheme';
 				csMeta.content = scheme;
 				head.appendChild(csMeta);
-				
+
 				if (isDark) document.documentElement.classList.add('dark');
 				document.documentElement.setAttribute('data-theme', theme);
 			})();

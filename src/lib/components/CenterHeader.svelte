@@ -237,7 +237,9 @@
 						disabled={isLoading}
 						class="h-auto p-0 font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
 					>
-						<span class="text-[10px]"><span class="font-bold text-primary">[enter]</span> confirm & save</span>
+						<span class="text-[10px]"
+							><span class="font-bold text-primary">[enter]</span> confirm & save</span
+						>
 					</Button>
 					<Button
 						variant="ghost"
@@ -248,7 +250,9 @@
 						}}
 						class="h-auto p-0 font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
 					>
-						<span class="text-[10px]"><span class="font-bold text-destructive">[esc]</span> cancel</span>
+						<span class="text-[10px]"
+							><span class="font-bold text-destructive">[esc]</span> cancel</span
+						>
 					</Button>
 				</div>
 			</div>
@@ -259,4 +263,3 @@
 		{/if}
 	</div>
 </div>
-

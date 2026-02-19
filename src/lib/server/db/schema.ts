@@ -29,11 +29,7 @@ export const links = sqliteTable(
 		isDeleted: integer('is_deleted', { mode: 'boolean' }).default(false)
 	},
 	(table) => [
-		index('idx_links_workspace_category').on(
-			table.workspaceId,
-			table.isDeleted,
-			table.createdAt
-		),
+		index('idx_links_workspace_category').on(table.workspaceId, table.isDeleted, table.createdAt),
 		index('idx_links_fav')
 			.on(table.workspaceId, table.createdAt)
 			.where(sql`is_favorite = 1 AND is_deleted = 0`)

@@ -2,6 +2,7 @@
 	import { cn } from '$lib/utils';
 	import { theme } from '$lib/tui';
 	import { IsMobile } from '$lib/hooks/is-mobile.svelte';
+	import { page } from '$app/state';
 	import DesktopLayout from './DesktopLayout.svelte';
 	import MobileLayout from './MobileLayout.svelte';
 	import TuiMobileNav from '$lib/components/TuiMobileNav.svelte';
@@ -21,7 +22,7 @@
 		singlePanel?: boolean;
 	} = $props();
 
-	const isMobile = new IsMobile();
+	const isMobile = new IsMobile(page.data.isMobileServer);
 </script>
 
 <div

@@ -25,4 +25,3 @@ export function createSettingsStore(initialValue: 'list' | 'grid' = 'list'): Set
 		}
 	};
 }
-

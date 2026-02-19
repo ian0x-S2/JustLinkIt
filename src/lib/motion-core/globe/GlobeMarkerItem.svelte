@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { T, useTask } from "@threlte/core";
-	import { HTML } from "@threlte/extras";
-	import * as THREE from "three";
-	import type { GlobeMarker } from "./types";
+	import { T, useTask } from '@threlte/core';
+	import { HTML } from '@threlte/extras';
+	import * as THREE from 'three';
+	import type { GlobeMarker } from './types';
 
 	interface Props {
 		/**
@@ -62,12 +62,12 @@
 		}
 	});
 
-	let color = $derived(new THREE.Color(marker.color || "#ffffff"));
+	let color = $derived(new THREE.Color(marker.color || '#ffffff'));
 	let scale = $derived((marker.size || 0.1) * 3);
 	let normalizedPosition = $derived(
 		Array.isArray(position)
 			? position
-			: ([position.x, position.y, position.z] as [number, number, number]),
+			: ([position.x, position.y, position.z] as [number, number, number])
 	);
 
 	$effect(() => {
@@ -77,11 +77,7 @@
 	});
 </script>
 
-<T.Group
-	bind:ref={group}
-	position={normalizedPosition}
-	scale={[scale, scale, scale]}
->
+<T.Group bind:ref={group} position={normalizedPosition} scale={[scale, scale, scale]}>
 	<T.Mesh position.z={-pinHeight / 2} rotation.x={Math.PI / 2}>
 		<T.CylinderGeometry args={[0.02, 0.02, pinHeight, 8]} />
 		<T.MeshBasicMaterial {color} />
@@ -98,20 +94,11 @@
 
 	<T.Mesh bind:ref={pulseMesh} position.z={-pinHeight}>
 		<T.SphereGeometry args={[headRadius, 16, 16]} />
-		<T.MeshBasicMaterial
-			bind:ref={pulseMaterial}
-			{color}
-			transparent
-			depthWrite={false}
-		/>
+		<T.MeshBasicMaterial bind:ref={pulseMaterial} {color} transparent depthWrite={false} />
 	</T.Mesh>
 
 	{#if marker.label}
-		<HTML
-			position={[0, 0, -pinHeight - headRadius * 2]}
-			center
-			pointerEvents="none"
-		>
+		<HTML position={[0, 0, -pinHeight - headRadius * 2]} center pointerEvents="none">
 			<div
 				class="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 rounded bg-neutral-900/80 px-2 py-1 text-xs whitespace-nowrap text-white backdrop-blur-sm transition-opacity duration-200"
 				class:opacity-100={isHovered}

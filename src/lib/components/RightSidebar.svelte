@@ -30,11 +30,11 @@
 		const activeLinks = store.links.links.filter((l) => !l.isDeleted);
 		const total = activeLinks.length;
 		const favorites = activeLinks.filter((l) => l.isFavorite).length;
-		
+
 		// Activity data for chart (last 7 days)
 		const last7Days = Array.from({ length: 7 }, (_, i) => {
 			const date = subDays(startOfDay(new Date()), 6 - i);
-			const count = activeLinks.filter(l => isSameDay(new Date(l.createdAt), date)).length;
+			const count = activeLinks.filter((l) => isSameDay(new Date(l.createdAt), date)).length;
 			return {
 				date: format(date, 'EEE'),
 				fullDate: format(date, 'MMM d'),
@@ -47,8 +47,8 @@
 
 	const chartConfig = {
 		count: {
-			label: "Links",
-			color: "var(--primary)"
+			label: 'Links',
+			color: 'var(--primary)'
 		}
 	} as ChartUI.ChartConfig;
 
@@ -60,7 +60,6 @@
 | |____| | | | |   < _| |_| |_ 
 |______|_|_| |_|_|\\_\\_____|\\__|
 `;
-
 </script>
 
 <aside class="flex h-full w-full shrink-0 flex-col gap-4 border-border">
@@ -69,26 +68,28 @@
 		<div class="flex h-full flex-col font-mono text-[12px]">
 			<!-- Activity Chart -->
 			<div class="flex h-full flex-col gap-2">
-				<span class="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">7-Day Activity</span>
-				<div class="min-h-0 flex-1 w-full">
+				<span class="text-[10px] font-bold tracking-tighter text-muted-foreground uppercase"
+					>7-Day Activity</span
+				>
+				<div class="min-h-0 w-full flex-1">
 					{#if browser && stats.activity.length > 0}
-						<ChartUI.ChartContainer config={chartConfig} class="h-full w-full aspect-auto">
+						<ChartUI.ChartContainer config={chartConfig} class="aspect-auto h-full w-full">
 							<BarChart
 								data={stats.activity}
 								x="date"
 								xScale={scaleBand().padding(0.4)}
 								y="count"
-								yDomain={[0, Math.max(5, ...stats.activity.map(d => d.count))]}
+								yDomain={[0, Math.max(5, ...stats.activity.map((d) => d.count))]}
 								axis="x"
 								grid={true}
 								props={{
 									xAxis: {
-										tickLabelProps: { class: "fill-muted-foreground text-[8px]" },
+										tickLabelProps: { class: 'fill-muted-foreground text-[8px]' },
 										rule: false
 									},
 									bars: {
-										rounded: "top",
-										class: "fill-primary/60 hover:fill-primary transition-colors"
+										rounded: 'top',
+										class: 'fill-primary/60 hover:fill-primary transition-colors'
 									}
 								}}
 							>
@@ -98,7 +99,7 @@
 							</BarChart>
 						</ChartUI.ChartContainer>
 					{:else}
-						<div class="h-full w-full bg-muted/20 animate-pulse"></div>
+						<div class="h-full w-full animate-pulse bg-muted/20"></div>
 					{/if}
 				</div>
 			</div>
@@ -116,15 +117,17 @@
 						class={cn(
 							theme.item,
 							theme.itemDefault,
-							'px-2 py-0.5 relative group',
-							isSelected && 'bg-primary/20 text-primary font-bold'
+							'group relative px-2 py-0.5',
+							isSelected && 'bg-primary/20 font-bold text-primary'
 						)}
 					>
-						<span class={cn("text-[10px]", isSelected ? "text-primary" : "text-muted-foreground")}>
+						<span class={cn('text-[10px]', isSelected ? 'text-primary' : 'text-muted-foreground')}>
 							{isSelected ? TUI.arrowRight : TUI.bullet}
 						</span>
-						<span class="flex-1 truncate text-left ml-1">{tag}</span>
-						<span class={cn("text-[10px]", isSelected ? "text-primary/70" : "text-muted-foreground")}>
+						<span class="ml-1 flex-1 truncate text-left">{tag}</span>
+						<span
+							class={cn('text-[10px]', isSelected ? 'text-primary/70' : 'text-muted-foreground')}
+						>
 							({count})
 						</span>
 					</button>
@@ -136,9 +139,11 @@
 	</LazyPanel>
 
 	<!-- App Info Panel -->
-	<LazyPanel title="LinkIt" titleClass={theme.titleStash} class="flex-1 min-h-[120px]">
+	<LazyPanel title="LinkIt" titleClass={theme.titleStash} class="min-h-[120px] flex-1">
 		<div class="flex h-full flex-col">
-			<div class="relative hidden min-h-35 flex-1 items-center justify-center overflow-hidden lg:flex">
+			<div
+				class="relative hidden min-h-35 flex-1 items-center justify-center overflow-hidden lg:flex"
+			>
 				<pre class="font-mono text-[10px] leading-[1.1] text-primary/80">
 					{asciiLogo}
 				</pre>

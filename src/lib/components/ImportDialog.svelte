@@ -47,7 +47,7 @@
 				links = links.map((l: any) => ({
 					...l,
 					workspaceId: store.workspaces.activeId,
-					id: crypto.randomUUID() 
+					id: crypto.randomUUID()
 				}));
 			}
 
@@ -60,7 +60,7 @@
 				} else {
 					stats = { imported: links.length, skipped: 0, workspaces: workspaces.length };
 				}
-				
+
 				success = true;
 				if (store.workspaces.activeId) {
 					await store.links.fetchForWorkspace(store.workspaces.activeId);
@@ -81,7 +81,7 @@
 	}
 </script>
 
-<div class="flex flex-col bg-background text-foreground font-mono">
+<div class="flex flex-col bg-background font-mono text-foreground">
 	<!-- Header -->
 	<div class="flex h-9 items-center justify-between border-b border-border bg-muted/50 px-3">
 		<div class="flex items-center gap-2">
@@ -117,14 +117,14 @@
 				</p>
 
 				<div class="flex items-center gap-3 border border-border/40 bg-muted/5 p-3">
-					<Checkbox 
-						id="import-current" 
+					<Checkbox
+						id="import-current"
 						bind:checked={importIntoCurrent}
 						class="rounded-none border-border"
 					/>
-					<Label 
-						for="import-current" 
-						class="flex-1 cursor-pointer text-[11px] font-medium leading-none text-foreground select-none"
+					<Label
+						for="import-current"
+						class="flex-1 cursor-pointer text-[11px] leading-none font-medium text-foreground select-none"
 					>
 						Import into <span class="font-bold text-primary">[{store.workspaces.active.name}]</span>
 					</Label>
@@ -143,23 +143,27 @@
 		<div class="grid gap-4 pt-2">
 			{#if success}
 				<div class="flex flex-col items-center justify-center space-y-3 py-4 text-center">
-					<div class="flex h-12 w-12 items-center justify-center border border-primary bg-primary/5">
+					<div
+						class="flex h-12 w-12 items-center justify-center border border-primary bg-primary/5"
+					>
 						<CheckCircle2 class="h-6 w-6 text-primary" />
 					</div>
 					<div>
-						<p class="text-[14px] font-bold text-foreground uppercase tracking-tight">Import Successful!</p>
+						<p class="text-[14px] font-bold tracking-tight text-foreground uppercase">
+							Import Successful!
+						</p>
 						<div class="mt-2 flex flex-col gap-1">
 							<p class="text-[11px] text-muted-foreground">
-								<span class="text-primary font-bold">+{stats.imported}</span> links imported.
+								<span class="font-bold text-primary">+{stats.imported}</span> links imported.
 							</p>
 							{#if stats.skipped > 0}
 								<p class="text-[11px] text-muted-foreground">
-									<span class="text-destructive font-bold">{stats.skipped}</span> duplicates skipped.
+									<span class="font-bold text-destructive">{stats.skipped}</span> duplicates skipped.
 								</p>
 							{/if}
 							{#if stats.workspaces > 0}
 								<p class="text-[11px] text-muted-foreground">
-									<span class="text-primary font-bold">+{stats.workspaces}</span> workspaces created.
+									<span class="font-bold text-primary">+{stats.workspaces}</span> workspaces created.
 								</p>
 							{/if}
 						</div>
@@ -189,10 +193,10 @@
 						<p class="text-[12px] font-bold uppercase">Import Error</p>
 						<p class="text-[11px] opacity-90">{error}</p>
 					</div>
-					<Button 
-						variant="ghost" 
-						size="icon" 
-						onclick={() => (error = null)} 
+					<Button
+						variant="ghost"
+						size="icon"
+						onclick={() => (error = null)}
 						class="h-6 w-6 text-destructive hover:bg-destructive/10"
 					>
 						<X class="h-3.5 w-3.5" />
@@ -213,7 +217,9 @@
 					</div>
 					<div class="flex-1 overflow-hidden">
 						<p class="text-[13px] font-bold">Try Again</p>
-						<p class="truncate text-[10px] font-normal text-muted-foreground">Select another JSON file</p>
+						<p class="truncate text-[10px] font-normal text-muted-foreground">
+							Select another JSON file
+						</p>
 					</div>
 					<span class="text-primary opacity-0 transition-opacity group-hover:opacity-100">
 						{TUI.arrowRight}
@@ -240,8 +246,10 @@
 						{/if}
 					</div>
 					<div class="flex-1 overflow-hidden">
-						<p class="text-[14px] font-bold uppercase tracking-tight">Choose JSON File</p>
-						<p class="truncate text-[11px] font-normal text-muted-foreground">Browse local filesystem for backup</p>
+						<p class="text-[14px] font-bold tracking-tight uppercase">Choose JSON File</p>
+						<p class="truncate text-[11px] font-normal text-muted-foreground">
+							Browse local filesystem for backup
+						</p>
 					</div>
 					<span class="text-primary opacity-0 transition-opacity group-hover:opacity-100">
 						{TUI.arrowRight}

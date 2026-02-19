@@ -32,7 +32,7 @@ export const GET: RequestHandler = async ({ url }) => {
 	const cachedIds = cacheManager.getCollection(cacheKey);
 
 	if (cachedIds) {
-		const cachedLinks = cachedIds.map(id => cacheManager.getLink(id));
+		const cachedLinks = cachedIds.map((id) => cacheManager.getLink(id));
 		const missingIds = cachedIds.filter((_, i) => !cachedLinks[i]);
 
 		if (missingIds.length === 0) {
@@ -41,14 +41,16 @@ export const GET: RequestHandler = async ({ url }) => {
 
 		// Optimization: Only fetch missing links from DB
 		const dbMissingLinks = db.select().from(links).where(inArray(links.id, missingIds)).all();
-		
+
 		// Update cache with missing links
-		dbMissingLinks.forEach(link => cacheManager.setLink(link as any));
+		dbMissingLinks.forEach((link) => cacheManager.setLink(link as any));
 
 		// Re-assemble result maintain order
-		const linkMap = new Map(dbMissingLinks.map(l => [l.id, l]));
-		const result = cachedIds.map(id => cacheManager.getLink(id) || linkMap.get(id)).filter(Boolean);
-		
+		const linkMap = new Map(dbMissingLinks.map((l) => [l.id, l]));
+		const result = cachedIds
+			.map((id) => cacheManager.getLink(id) || linkMap.get(id))
+			.filter(Boolean);
+
 		return json(result);
 	}
 
@@ -56,34 +58,33 @@ export const GET: RequestHandler = async ({ url }) => {
 
 	if (!fetchAll) {
 		if (category === 'inbox') {
-			query = db.select().from(links).where(
-				and(
-					eq(links.workspaceId, workspaceId),
-					eq(links.isDeleted, false)
-				)
-			);
+			query = db
+				.select()
+				.from(links)
+				.where(and(eq(links.workspaceId, workspaceId), eq(links.isDeleted, false)));
 		} else if (category === 'favorites') {
-			query = db.select().from(links).where(
-				and(
-					eq(links.workspaceId, workspaceId),
-					eq(links.isFavorite, true),
-					eq(links.isDeleted, false)
-				)
-			);
+			query = db
+				.select()
+				.from(links)
+				.where(
+					and(
+						eq(links.workspaceId, workspaceId),
+						eq(links.isFavorite, true),
+						eq(links.isDeleted, false)
+					)
+				);
 		} else if (category === 'trash') {
-			query = db.select().from(links).where(
-				and(
-					eq(links.workspaceId, workspaceId),
-					eq(links.isDeleted, true)
-				)
-			);
+			query = db
+				.select()
+				.from(links)
+				.where(and(eq(links.workspaceId, workspaceId), eq(links.isDeleted, true)));
 		}
 	}
 
 	const dbLinks = query.orderBy(desc(links.createdAt)).all();
 	const linkIds = dbLinks.map((l) => l.id);
 
-	let linksWithTags = dbLinks.map(link => ({ ...link, tags: [] as string[] }));
+	let linksWithTags = dbLinks.map((link) => ({ ...link, tags: [] as string[] }));
 
 	if (linkIds.length > 0) {
 		const tagsData = db
@@ -96,19 +97,22 @@ export const GET: RequestHandler = async ({ url }) => {
 			.where(inArray(linkTags.linkId, linkIds))
 			.all();
 
-		const tagsByLinkId = tagsData.reduce((acc, curr) => {
-			if (!acc[curr.linkId]) acc[curr.linkId] = [];
-			acc[curr.linkId].push(curr.tagName);
-			return acc;
-		}, {} as Record<string, string[]>);
+		const tagsByLinkId = tagsData.reduce(
+			(acc, curr) => {
+				if (!acc[curr.linkId]) acc[curr.linkId] = [];
+				acc[curr.linkId].push(curr.tagName);
+				return acc;
+			},
+			{} as Record<string, string[]>
+		);
 
 		linksWithTags = dbLinks.map((link) => ({
 			...link,
 			tags: tagsByLinkId[link.id] || []
 		}));
-		
+
 		// Cache the full results
-		linksWithTags.forEach(link => cacheManager.setLink(link as any));
+		linksWithTags.forEach((link) => cacheManager.setLink(link as any));
 		cacheManager.setCollection(cacheKey, linkIds);
 	}
 
