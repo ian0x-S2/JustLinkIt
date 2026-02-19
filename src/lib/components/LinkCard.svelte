@@ -116,7 +116,7 @@
 			'transition-colors hover:bg-muted/30'
 		)}
 	>
-		<div class="flex min-h-[28px] items-center gap-2 px-2 py-0.5">
+		<div class="flex min-h-[44px] items-center gap-2 px-3 py-2">
 			<!-- Selection indicator -->
 			<span class="w-3 shrink-0 text-[10px] text-primary opacity-0 group-hover:opacity-100">
 				{TUI.arrowRight}
@@ -124,7 +124,7 @@
 
 			<!-- Compact Line -->
 			<div
-				class="grid min-w-0 flex-1 grid-cols-[20px_1fr_200px_150px_40px] items-center gap-2 font-mono text-[12px]"
+				class="grid min-w-0 flex-1 grid-cols-[20px_1fr_auto] items-center gap-2 font-mono text-[12px] lg:grid-cols-[20px_1fr_200px_150px_40px]"
 			>
 				<button
 					class={cn(
@@ -152,20 +152,22 @@
 					{/if}
 				</button>
 
-				<a
-					href={link.url}
-					target="_blank"
-					rel="noopener noreferrer"
-					class="truncate pr-4 font-bold text-foreground hover:text-primary"
-				>
-					{link.title || link.url}
-				</a>
+				<div class="flex min-w-0 flex-col lg:contents">
+					<a
+						href={link.url}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="truncate pr-4 font-bold text-foreground hover:text-primary"
+					>
+						{link.title || link.url}
+					</a>
 
-				<span class="truncate text-[11px] text-primary">
-					{getDomain(link.url)}
-				</span>
+					<span class="truncate text-[10px] text-primary lg:text-[11px]">
+						{getDomain(link.url)}
+					</span>
+				</div>
 
-				<div class="hidden gap-2 truncate text-[10px] text-chart-3 sm:flex">
+				<div class="hidden gap-2 truncate text-[10px] text-chart-3 lg:flex">
 					{#each link.tags.slice(0, 2) as tag (tag)}
 						<span>#{tag}</span>
 					{/each}

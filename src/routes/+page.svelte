@@ -13,17 +13,29 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import { getContext } from 'svelte';
+	import { page } from '$app/state';
 	import type { AppStore } from '$lib/stores';
 	import type { Link, LinkId } from '$lib/types';
 	import { theme } from '$lib/tui';
 	import { cn } from '$lib/utils';
+	import { IsMobile } from '$lib/hooks/is-mobile.svelte';
+	import TuiMobileNav from '$lib/components/TuiMobileNav.svelte';
 
 	const store = getContext<AppStore>('store');
+	const isMobile = new IsMobile();
 
 	let isAddDialogOpen = $state(false);
 	let isExportDialogOpen = $state(false);
 	let isImportDialogOpen = $state(false);
 	let editingLink = $state<Link | null>(null);
+	let activeMobileTab = $state<'spaces' | 'links' | 'stats'>('links');
+
+	$effect(() => {
+		const tab = page.url.searchParams.get('tab');
+		if (tab && (tab === 'spaces' || tab === 'links' || tab === 'stats')) {
+			activeMobileTab = tab;
+		}
+	});
 
 	let previewData = $state<{
 		url: string;
@@ -51,26 +63,61 @@
 	}
 </script>
 
+<svelte:window
+	onkeydown={(e) => {
+		if (isMobile.matches) {
+			if (e.key === '1') activeMobileTab = 'spaces';
+			if (e.key === '2') activeMobileTab = 'links';
+			if (e.key === '3') activeMobileTab = 'stats';
+		}
+	}}
+/>
+
 <!-- Layout Container - Lazygit Style -->
-<div class="h-screen w-screen overflow-hidden bg-background p-1 sm:p-2">
-	<div class={cn(theme.app, 'relative border-2 border-border ')}>
+<div
+	class={cn(
+		theme.app,
+		'relative h-[99dvh] w-screen overflow-hidden bg-background p-1 md:p-2',
+		!isMobile.matches ? '' : 'pb-15 '
+	)}
+>
+	<div class="relative flex h-full overflow-hidden border-2 border-border shadow-xs">
 		<!-- Main Content Area -->
-		<div class={theme.layoutMain}>
+		<div
+			class="flex h-full w-full gap-0 overflow-hidden p-2 pt-3 md:gap-2 md:p-1 md:pb-6 lg:gap-4 lg:p-4 lg:pb-8"
+		>
 			<!-- Left Sidebar (Workspace/Categories) -->
-			<LeftSidebar
-				onAddLink={handleAddLink}
-				onExport={() => (isExportDialogOpen = true)}
-				onImport={() => (isImportDialogOpen = true)}
-			/>
+			<aside
+				class={cn(
+					'hidden h-full min-w-0 overflow-y-auto p-2',
+					activeMobileTab === 'spaces' && 'flex w-full flex-col gap-4',
+					'md:flex! md:w-60 md:shrink-0 lg:w-75'
+				)}
+			>
+				<LeftSidebar
+					onAddLink={handleAddLink}
+					onExport={() => (isExportDialogOpen = true)}
+					onImport={() => (isImportDialogOpen = true)}
+				/>
+			</aside>
 
 			<!-- Center Feed (Links) -->
-			<div class={theme.layoutContent}>
+			<main
+				class={cn(
+					theme.layoutContent,
+					'hidden h-full min-w-0 flex-1 flex-col ',
+					(activeMobileTab === 'links' || !isMobile.matches) && 'flex',
+					'md:flex!'
+				)}
+			>
 				<LazyPanel
 					title="Links"
 					titleClass={theme.titleBranches}
 					focused={true}
 					class="flex-1"
-					counter="{store.filters.filteredLinks.length} items"
+					counter={!isMobile.matches || activeMobileTab === 'links'
+						? `${store.filters.filteredLinks.length} items`
+						: undefined}
 					contentClass="px-0 pt-5"
 				>
 					{#snippet subtitle()}
@@ -104,7 +151,7 @@
 						</div>
 					{/snippet}
 
-					<!-- Sticky Header with Input -->
+					<!-- Unified Header (Add Link) -->
 					<CenterHeader />
 
 					<!-- Scrollable Feed Content -->
@@ -128,7 +175,7 @@
 										{/each}
 									</div>
 								{:else}
-									<div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 xl:grid-cols-3">
+									<div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 xl:grid-cols-3">
 										{#each store.filters.filteredLinks as link (link.id)}
 											<LinkCard
 												{link}
@@ -143,61 +190,33 @@
 									</div>
 								{/if}
 
-								<!-- Bottom spacing -->
-								<div class="h-4"></div>
+								<div class="h-8"></div>
 							</div>
 						</ScrollArea>
 					</div>
 				</LazyPanel>
-			</div>
+			</main>
 
 			<!-- Right Sidebar (Preview/Details) -->
-			<RightSidebar />
+			<aside
+				class={cn(
+					'hidden h-full min-w-0 overflow-y-auto p-2',
+					activeMobileTab === 'stats' && 'flex w-full flex-col gap-4',
+					'md:hidden lg:flex! lg:w-65 lg:shrink-0 xl:w-75'
+				)}
+			>
+				<RightSidebar />
+			</aside>
 		</div>
 
-		<!-- Lazygit-style Status Bar -->
-		<LazyStatusBar />
+		<!-- Status Bar -->
+		<div class="absolute right-0 bottom-0 left-0 z-40 hidden md:flex">
+			<LazyStatusBar />
+		</div>
 	</div>
 </div>
 
-<!-- Dialogs -->
-<Dialog.Root bind:open={isAddDialogOpen}>
-	<Dialog.Content
-		showCloseButton={false}
-		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 shadow-2xl sm:max-w-2xl"
-	>
-		<LinkForm
-			link={editingLink}
-			{previewData}
-			onsave={() => (isAddDialogOpen = false)}
-			oncancel={() => (isAddDialogOpen = false)}
-		/>
-	</Dialog.Content>
-</Dialog.Root>
-
-<Dialog.Root bind:open={isExportDialogOpen}>
-	<Dialog.Content
-		showCloseButton={false}
-		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 sm:max-w-md"
-	>
-		<ExportDialog bind:open={isExportDialogOpen} links={store.filters.filteredLinks} />
-	</Dialog.Content>
-</Dialog.Root>
-
-<Dialog.Root bind:open={isImportDialogOpen}>
-	<Dialog.Content
-		showCloseButton={false}
-		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 sm:max-w-xl"
-	>
-		<ImportDialog bind:open={isImportDialogOpen} />
-	</Dialog.Content>
-</Dialog.Root>
-
-<style>
-	:global(body) {
-		background-color: black;
-		margin: 0;
-		padding: 0;
-	}
-</style>
-
+<!-- Mobile Navigation Bar (TUI Style) -->
+<div class="fixed right-0 bottom-0 left-0 z-50 block md:hidden">
+	<TuiMobileNav bind:activeTab={activeMobileTab} />
+</div>

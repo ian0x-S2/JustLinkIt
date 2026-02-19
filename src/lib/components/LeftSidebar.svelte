@@ -82,9 +82,9 @@
 	);
 </script>
 
-<aside class={theme.sidebar}>
+<aside class={cn(theme.sidebar, 'h-full w-full')}>
 	<!-- Workspace Panel -->
-	<LazyPanel title="Workspaces" titleClass={theme.titleStatus} class="min-h-30 flex-[0.8]">
+	<LazyPanel title="Workspaces" titleClass={theme.titleStatus} class="min-h-[140px] flex-1">
 		<ScrollArea type="hover" class="h-full w-full">
 			<div class="flex flex-col gap-0.5">
 				{#each sortedWorkspaces as ws, i (ws.id)}
@@ -99,7 +99,7 @@
 							<span class="w-3"></span>
 						{/if}
 						<span class="flex-1 truncate text-left">{ws.name}</span>
-						<span class="text-[10px] opacity-50">@{ws.slug}</span>
+						<span class="hidden text-[10px] opacity-50 sm:inline">@{ws.slug}</span>
 					</button>
 
 					{#if isActive && sortedWorkspaces.length > 1}
@@ -118,7 +118,7 @@
 	</LazyPanel>
 
 	<!-- Categories Panel -->
-	<LazyPanel title="Categories" titleClass={theme.titleFiles} class="flex-1">
+	<LazyPanel title="Categories" titleClass={theme.titleFiles} class="min-h-[140px] flex-[0.8]">
 		<ScrollArea type="hover" class="h-full w-full">
 			<nav class="flex flex-col gap-0.5">
 				{#each navItems as item (item.id)}
@@ -145,21 +145,21 @@
 	</LazyPanel>
 
 	<!-- Actions Panel -->
-	<LazyPanel title="Actions" titleClass={theme.titleBranches} class="flex-[0.6]">
-		<div class="flex flex-col gap-0.5">
-			<button onclick={onAddLink} class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}>
+	<LazyPanel title="Actions" titleClass={theme.titleBranches} class="min-h-[180px] flex-1">
+		<div class="flex flex-col gap-1">
+			<button onclick={onAddLink} class={cn(theme.item, theme.itemDefault, 'px-2 py-2')}>
 				<span class="w-4 text-[10px] opacity-50">a</span>
 				<span>Add Link</span>
 			</button>
-			<button onclick={toggleMode} class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}>
+			<button onclick={toggleMode} class={cn(theme.item, theme.itemDefault, 'px-2 py-2')}>
 				<span class="w-4 text-[10px] opacity-50">t</span>
 				<span>Toggle Theme</span>
 			</button>
-			<button onclick={onExport} class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}>
+			<button onclick={onExport} class={cn(theme.item, theme.itemDefault, 'px-2 py-2')}>
 				<span class="w-4 text-[10px] opacity-50">e</span>
 				<span>Export Links</span>
 			</button>
-			<button onclick={onImport} class={cn(theme.item, theme.itemDefault, 'px-2 py-1')}>
+			<button onclick={onImport} class={cn(theme.item, theme.itemDefault, 'px-2 py-2')}>
 				<span class="w-4 text-[10px] opacity-50">i</span>
 				<span>Import Links</span>
 			</button>
@@ -168,7 +168,7 @@
 				class={cn(
 					theme.item,
 					page.url.pathname === '/settings' ? theme.itemSelected : theme.itemDefault,
-					'px-2 py-1'
+					'px-2 py-2'
 				)}
 			>
 				<span class="w-4 text-[10px] opacity-50">,</span>

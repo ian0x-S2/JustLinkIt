@@ -1,9 +1,26 @@
-import { MediaQuery } from "svelte/reactivity";
+import { browser } from '$app/environment';
 
-const DEFAULT_MOBILE_BREAKPOINT = 768;
+const DEFAULT_MOBILE_BREAKPOINT = 1025;
 
-export class IsMobile extends MediaQuery {
+export class IsMobile {
+	#matches = $state(false);
+
 	constructor(breakpoint: number = DEFAULT_MOBILE_BREAKPOINT) {
-		super(`max-width: ${breakpoint - 1}px`);
+		if (browser) {
+			const query = `(max-width: ${breakpoint - 1}px)`;
+			const mediaQueryList = window.matchMedia(query);
+			
+			// Set initial value
+			this.#matches = mediaQueryList.matches;
+
+			// Listen for changes
+			mediaQueryList.addEventListener('change', (e) => {
+				this.#matches = e.matches;
+			});
+		}
+	}
+
+	get matches() {
+		return this.#matches;
 	}
 }

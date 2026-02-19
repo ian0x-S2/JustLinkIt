@@ -1,27 +1,28 @@
 <script lang="ts">
 	import { theme } from '$lib/tui';
+	import { cn } from '$lib/utils';
 </script>
 
 <div class={theme.statusBar}>
 	<div class={theme.statusItem}>
-		<div>
-			<span class={theme.statusKey}>1-5</span>: jump to panel
+		<div class="hidden sm:block">
+			<span class={theme.statusKey}>1-5</span>: jump
 		</div>
-		<div>
+		<div class="hidden sm:block">
 			<span class={theme.statusKey}>esc</span>: cancel
 		</div>
-		<div>
+		<div class="hidden xs:block">
 			<span class={theme.statusKey}>q</span>: quit
 		</div>
 		<div>
 			<span class={theme.statusKey}>x</span>: menu
 		</div>
-		<div>
+		<div class="hidden md:block">
 			<span class={theme.statusKey}>◄ ▲ ▼ ►</span>: navigate
 		</div>
 	</div>
-	<div class="flex items-center gap-4">
-		<span class={theme.statusDonate}>Donate</span>
+	<div class="flex items-center gap-2 sm:gap-4">
+		<span class={cn(theme.statusDonate, "hidden xs:inline")}>Donate</span>
 		<span class={theme.statusVersion}>v0.1.0</span>
 	</div>
 </div>

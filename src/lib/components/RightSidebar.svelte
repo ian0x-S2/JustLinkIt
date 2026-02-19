@@ -60,24 +60,12 @@
 | |____| | | | |   < _| |_| |_ 
 |______|_|_| |_|_|\\_\\_____|\\__|
 `;
+
 </script>
 
-<aside class="ml-2 hidden w-75 shrink-0 flex-col gap-4 border-border lg:flex">
-	<!-- Search Panel -->
-	<LazyPanel title="Search" titleClass={theme.titleStatus} class="min-h-20 flex-[0.3]">
-		<div class="relative mt-1">
-			<span class="absolute top-1/2 left-2 -translate-y-1/2 text-[13px] text-primary">/</span>
-			<input
-				value={store.filters.searchQuery}
-				oninput={(e) => store.filters.setSearchQuery(e.currentTarget.value)}
-				placeholder="type to filter..."
-				class="w-full border-none bg-background pl-6 font-mono text-[13px] text-foreground outline-none"
-			/>
-		</div>
-	</LazyPanel>
-
+<aside class="flex h-full w-full shrink-0 flex-col gap-4 border-border">
 	<!-- Stats Panel -->
-	<LazyPanel title="Statistics" titleClass={theme.titleCommits} class="flex-[1.1]">
+	<LazyPanel title="Statistics" titleClass={theme.titleCommits} class="min-h-[200px] flex-1">
 		<div class="flex h-full flex-col font-mono text-[12px]">
 			<!-- Activity Chart -->
 			<div class="flex h-full flex-col gap-2">
@@ -118,7 +106,7 @@
 	</LazyPanel>
 
 	<!-- Tags Panel -->
-	<LazyPanel title="Top Tags" titleClass={theme.titleBranches} class="flex-1">
+	<LazyPanel title="Top Tags" titleClass={theme.titleBranches} class="min-h-[180px] flex-1">
 		<ScrollArea type="hover" class="h-full w-full">
 			<div class="flex flex-col gap-0.5">
 				{#each trendingTags as [tag, count] (tag)}
@@ -148,9 +136,9 @@
 	</LazyPanel>
 
 	<!-- App Info Panel -->
-	<LazyPanel title="LinkIt" titleClass={theme.titleStash} class="flex-[1.2]">
+	<LazyPanel title="LinkIt" titleClass={theme.titleStash} class="flex-1 min-h-[120px]">
 		<div class="flex h-full flex-col">
-			<div class="relative flex min-h-35 flex-1 items-center justify-center overflow-hidden">
+			<div class="relative hidden min-h-35 flex-1 items-center justify-center overflow-hidden lg:flex">
 				<pre class="font-mono text-[10px] leading-[1.1] text-primary/80">
 					{asciiLogo}
 				</pre>

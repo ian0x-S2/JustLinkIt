@@ -91,7 +91,7 @@ $effect(() => {
 <ModeWatcher themeStorageKey={STORAGE_KEYS.THEME} />
 
 <Tooltip.Provider delayDuration={400}>
-	<div class="flex h-screen w-full overflow-hidden bg-background">
+	<div class="flex h-[100dvh] w-full overflow-hidden bg-background">
 		{@render children?.()}
 	</div>
 </Tooltip.Provider>

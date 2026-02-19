@@ -132,7 +132,7 @@
 	}
 </script>
 
-<div class="border-b border-border px-2 py-3 pt-0">
+<div class="border-b border-border px-3 py-3 lg:px-4 lg:py-5 lg:pt-2">
 	<div class="flex flex-col gap-2">
 		<!-- Prompt row -->
 		<div class="flex items-center gap-2">

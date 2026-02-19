@@ -83,9 +83,9 @@ export const theme = {
 		'absolute top-0 left-2 -translate-y-1/2 bg-background px-1 flex items-center gap-1 z-20',
 	panelBorder: 'absolute inset-0 border border-border pointer-events-none',
 	panelBorderFocus: 'border-border border-2',
-	panelContent: 'flex flex-col flex-1 min-h-0 overflow-hidden p-2 pt-5',
+	panelContent: 'flex flex-col flex-1 min-h-0 overflow-hidden p-2 sm:p-3 pt-5 sm:pt-6',
 	panelFooter:
-		'absolute bottom-0 right-2 translate-y-1/2 bg-background px-1 text-muted-foreground text-[10px] z-20',
+		'absolute bottom-1 right-2 translate-y-1/2 bg-background px-1 text-muted-foreground text-[10px] z-20',
 
 	// Panel titles
 	titleStatus: 'text-destructive font-bold uppercase tracking-tight',
@@ -99,7 +99,7 @@ export const theme = {
 	titleSubmodules: 'text-chart-3 text-[11px]',
 
 	// List items
-	item: 'py-0.5 cursor-pointer truncate flex items-center gap-2',
+	item: 'py-1.5 cursor-pointer truncate flex items-center gap-2',
 	itemDefault: 'hover:bg-muted/50 font-normal',
 	itemSelected: 'bg-muted text-primary border border-secondary font-bold',
 

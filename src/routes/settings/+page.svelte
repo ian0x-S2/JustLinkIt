@@ -18,8 +18,11 @@
 	import { theme, TUI } from '$lib/tui';
 	import { cn } from '$lib/utils';
 	import type { Link } from '$lib/types';
+	import { IsMobile } from '$lib/hooks/is-mobile.svelte';
+	import TuiMobileNav from '$lib/components/TuiMobileNav.svelte';
 
 	const store = getContext<AppStore>('store');
+	const isMobile = new IsMobile();
 
 	const sortedWorkspaces = $derived(
 		[...store.workspaces.workspaces].sort((a, b) => {
@@ -124,19 +127,29 @@
 </script>
 
 <!-- Layout Container - Lazygit Style -->
-<div class="h-screen w-screen overflow-hidden bg-background p-2 sm:p-2">
-	<div class={cn(theme.app, 'relative border-2 border-border shadow-2xl')}>
+<div
+	class={cn(
+		theme.app,
+		'relative h-[99dvh] w-screen overflow-hidden bg-background p-1 md:p-2',
+		!isMobile.matches ? '' : 'pb-15'
+	)}
+>
+	<div class="relative flex h-full overflow-hidden border-2 border-border p-2">
 		<!-- Main Content Area -->
-		<div class={theme.layoutMain}>
+		<div
+			class="flex h-full w-full gap-0 overflow-hidden pt-3 md:gap-2 md:p-1 md:pb-6 lg:gap-4 lg:p-4 lg:pb-8"
+		>
 			<!-- Left Sidebar -->
-			<LeftSidebar
-				onAddLink={handleAddLink}
-				onExport={() => (isExportDialogOpen = true)}
-				onImport={() => (isImportDialogOpen = true)}
-			/>
+			<aside class="hidden h-full min-w-0 overflow-y-auto p-2 md:flex! md:w-60 md:shrink-0 lg:w-75">
+				<LeftSidebar
+					onAddLink={handleAddLink}
+					onExport={() => (isExportDialogOpen = true)}
+					onImport={() => (isImportDialogOpen = true)}
+				/>
+			</aside>
 
 			<!-- Center Content (Settings) -->
-			<div class={theme.layoutContent}>
+			<main class={cn(theme.layoutContent, 'flex h-full min-w-0 flex-1 flex-col')}>
 				<LazyPanel
 					title="Settings"
 					titleClass={theme.titleBranches}
@@ -158,7 +171,7 @@
 					<!-- Scrollable Content -->
 					<div class="mt-1 min-h-0 flex-1 overflow-hidden">
 						<ScrollArea type="hover" class="h-full w-full">
-							<div class="flex flex-col space-y-6 p-2">
+							<div class="flex flex-col space-y-6 p-2 pb-10">
 								<!-- Section: Workspaces -->
 								<section class="space-y-4">
 									<div>
@@ -355,15 +368,26 @@
 						</ScrollArea>
 					</div>
 				</LazyPanel>
-			</div>
+			</main>
 
 			<!-- Right Sidebar -->
-			<RightSidebar />
+			<aside
+				class="hidden h-full min-w-0 overflow-y-auto p-2 md:hidden lg:!flex lg:w-[260px] lg:shrink-0 xl:w-[300px]"
+			>
+				<RightSidebar />
+			</aside>
 		</div>
 
 		<!-- Status Bar -->
-		<LazyStatusBar />
+		<div class="absolute right-0 bottom-0 left-0 z-40 hidden md:flex">
+			<LazyStatusBar />
+		</div>
 	</div>
+</div>
+
+<!-- Mobile Navigation Bar (TUI Style) -->
+<div class="fixed right-0 bottom-0 left-0 z-50 block md:hidden">
+	<TuiMobileNav activeTab="links" />
 </div>
 
 <!-- Deletion Dialog - Styled to match Lazygit -->
@@ -374,9 +398,7 @@
 	>
 		<div class="flex flex-col">
 			<!-- Header -->
-			<div
-				class="flex h-9 items-center justify-between border-b border-border bg-destructive px-3"
-			>
+			<div class="flex h-9 items-center justify-between border-b border-border bg-destructive px-3">
 				<div class="flex items-center gap-2">
 					<span class="text-[11px] font-bold tracking-tight text-destructive-foreground uppercase">
 						Delete Workspace
@@ -406,11 +428,12 @@
 				<p class="text-[13px] leading-relaxed text-foreground">
 					Are you sure you want to delete <span class="font-bold text-destructive"
 						>[{workspaceToDelete?.name}]</span
-					>? 
+					>?
 				</p>
 				<div class="border border-destructive/20 bg-destructive/5 p-3">
 					<p class="text-[11px] leading-tight text-muted-foreground italic">
-						{TUI.bullet} This action is irreversible. All links associated with this workspace will be permanently removed from the local database.
+						{TUI.bullet} This action is irreversible. All links associated with this workspace will be
+						permanently removed from the local database.
 					</p>
 				</div>
 			</div>
@@ -440,7 +463,7 @@
 <Dialog.Root bind:open={isAddDialogOpen}>
 	<Dialog.Content
 		showCloseButton={false}
-		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 shadow-2xl sm:max-w-2xl"
+		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 shadow-2xl lg:max-w-2xl"
 	>
 		<LinkForm
 			link={editingLink}
@@ -455,7 +478,7 @@
 <Dialog.Root bind:open={isExportDialogOpen}>
 	<Dialog.Content
 		showCloseButton={false}
-		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 sm:max-w-md"
+		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 lg:max-w-md"
 	>
 		<ExportDialog
 			bind:open={isExportDialogOpen}
@@ -467,17 +490,8 @@
 <Dialog.Root bind:open={isImportDialogOpen}>
 	<Dialog.Content
 		showCloseButton={false}
-		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 sm:max-w-xl"
+		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 lg:max-w-xl"
 	>
 		<ImportDialog bind:open={isImportDialogOpen} />
 	</Dialog.Content>
 </Dialog.Root>
-
-<style>
-	:global(body) {
-		background-color: black;
-		margin: 0;
-		padding: 0;
-	}
-</style>
-
