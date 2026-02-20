@@ -26,7 +26,7 @@
 				{@render main()}
 			</main>
 		{:else if activeTab === 'spaces' && left}
-			<aside class="flex h-full w-full min-w-0 flex-col overflow-y-auto p-2">
+			<aside class="flex h-full w-full min-w-0 flex-col overflow-y-auto p-2 px-1">
 				{@render left()}
 			</aside>
 		{:else if activeTab === 'links' && main}
@@ -34,7 +34,7 @@
 				{@render main()}
 			</main>
 		{:else if activeTab === 'stats' && right}
-			<aside class="flex h-full w-full min-w-0 flex-col overflow-y-auto p-2">
+			<aside class="flex h-full w-full min-w-0 flex-col overflow-y-auto p-2 px-1">
 				{@render right()}
 			</aside>
 		{/if}
