@@ -36,10 +36,10 @@
 					: 'text-muted-foreground'
 			)}
 		>
-			<span class="font-mono text-[10px] font-bold">
+			<span class="font-mono text-xs font-bold">
 				{activeTab === tab.id && page.url.pathname === '/' ? TUI.arrowRight : tab.key}
 			</span>
-			<span class="font-mono text-[11px] font-bold tracking-tighter uppercase">
+			<span class="font-mono text-xs font-bold tracking-tighter uppercase">
 				{activeTab === tab.id && page.url.pathname === '/' ? `[${tab.label}]` : tab.label}
 			</span>
 		</button>
@@ -51,17 +51,17 @@
 			page.url.pathname === '/settings' ? 'bg-primary/10 text-primary' : 'text-muted-foreground'
 		)}
 	>
-		<span class="font-mono text-[10px] font-bold">,</span>
-		<span class="font-mono text-[11px] font-bold tracking-tighter uppercase">Set</span>
+		<span class="font-mono text-xs font-bold">,</span>
+		<span class="font-mono text-xs font-bold tracking-tighter uppercase">Set</span>
 	</a>
 </nav>
 
 <style>
 	.tui-mobile-nav {
 		display: flex;
-		height: 60px;
+		height: 56px;
 		width: 100%;
-		border-top: 2px solid var(--border);
+		border-top: 1px solid var(--border);
 		background-color: var(--background);
 		padding-bottom: env(safe-area-inset-bottom, 0);
 	}

@@ -38,7 +38,7 @@
 `;
 </script>
 
-<aside class="flex h-full w-full shrink-0 flex-col gap-4 border-border">
+<div class="flex h-full w-full flex-col gap-3">
 	<!-- Stats Panel -->
 	<LazyPanel title="Statistics" titleClass={theme.titleCommits} class="min-h-50 flex-1">
 		<div class="flex h-full flex-col font-mono text-[12px]">
@@ -142,4 +142,4 @@
 			</div>
 		</div>
 	</LazyPanel>
-</aside>
+</div>

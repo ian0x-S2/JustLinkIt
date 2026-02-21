@@ -16,11 +16,9 @@
 </script>
 
 <AppShell>
-	<div class="flex h-full w-full gap-2 overflow-hidden p-1 pb-6 lg:gap-4 lg:p-1.5 lg:pb-7">
+	<div class="flex h-full w-full gap-2 overflow-hidden p-2 pb-6">
 		{#if left}
-			<aside
-				class="flex h-full w-[240px] min-w-0 shrink-0 flex-col overflow-y-auto p-2 lg:w-[300px]"
-			>
+			<aside class={cn(theme.sidebar, 'h-full min-w-0 flex-col overflow-y-auto')}>
 				{@render left()}
 			</aside>
 		{/if}
@@ -32,9 +30,7 @@
 		{/if}
 
 		{#if right}
-			<aside
-				class="hidden h-full w-[260px] min-w-0 shrink-0 flex-col overflow-y-auto p-2 lg:flex xl:w-[300px]"
-			>
+			<aside class={cn(theme.sidebar, 'hidden h-full min-w-0 flex-col overflow-y-auto lg:flex')}>
 				{@render right()}
 			</aside>
 		{/if}

@@ -10,7 +10,6 @@
 	import { X, Globe, Tag, Type, Loader, TextAlignStart } from '@lucide/svelte';
 	import { browser } from '$app/environment';
 	import { cn } from '$lib/utils.js';
-	import { TUI } from '$lib/tui';
 
 	interface Props {
 		link?: Link | null;
@@ -116,16 +115,16 @@
 
 <div class="flex h-full flex-col bg-background font-mono text-foreground">
 	<!-- Header - Lazygit style -->
-	<div class="flex h-9 items-center justify-between border-b border-border bg-muted/50 px-3">
+	<div class="flex h-6 items-center justify-between border-b border-border bg-muted/50 px-2">
 		<div class="flex items-center gap-2">
-			<span class="text-[11px] font-bold tracking-tight text-foreground uppercase">
+			<span class="text-xs font-bold tracking-tight text-foreground uppercase">
 				{link ? 'Edit Link' : 'Add Link'}
 			</span>
 		</div>
-		<div class="flex items-center gap-4 text-[9px]">
+		<div class="flex items-center gap-3 text-xs">
 			<div class="flex items-center gap-1 text-muted-foreground">
 				<span
-					class="border border-border bg-muted px-1 py-0.5 text-[7px] font-bold text-foreground uppercase"
+					class="border border-border bg-muted px-1 py-0 text-xs font-bold text-foreground uppercase"
 					>esc</span
 				>
 				<span>cancel</span>
@@ -134,7 +133,7 @@
 				variant="ghost"
 				size="icon"
 				onclick={oncancel}
-				class="h-6 w-6 rounded-none border border-transparent hover:border-border hover:bg-muted"
+				class="h-5 w-5 rounded-none border border-transparent hover:border-border hover:bg-muted"
 			>
 				<X class="h-3.5 w-3.5" />
 			</Button>
@@ -142,14 +141,13 @@
 	</div>
 
 	<!-- Body -->
-	<div class="max-h-[85vh] flex-1 space-y-6 overflow-y-auto px-4 py-6">
+	<div class="max-h-[85vh] flex-1 space-y-4 overflow-y-auto px-3 py-4">
 		<!-- URL Field -->
-		<div class="space-y-2">
+		<div class="space-y-1">
 			<div class="flex items-center gap-2">
-				<Globe class="h-4 w-4 text-primary" />
-				<Label
-					for="url"
-					class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">URL</Label
+				<Globe class="h-3.5 w-3.5 text-primary" />
+				<Label for="url" class="text-xs font-bold tracking-wider text-muted-foreground uppercase"
+					>URL</Label
 				>
 			</div>
 			<div class="flex gap-2">
@@ -158,7 +156,7 @@
 					bind:value={url}
 					placeholder="https://example.com"
 					class={cn(
-						'h-9 flex-1 rounded-none border border-border bg-muted/10 font-mono text-[13px]',
+						'h-8 flex-1 rounded-none border border-border bg-muted/10 font-mono text-sm',
 						'focus-visible:border-primary focus-visible:bg-background focus-visible:ring-0'
 					)}
 				/>
@@ -166,10 +164,10 @@
 					variant="outline"
 					onclick={fetchOpenGraphPreview}
 					disabled={!url || isLoadingPreview}
-					class="h-9 rounded-none border border-border bg-background px-4 text-[12px] font-bold uppercase transition-all hover:bg-muted active:scale-95"
+					class="h-8 rounded-none border border-border bg-background px-3 text-xs font-bold uppercase transition-all hover:bg-muted active:scale-95"
 				>
 					{#if isLoadingPreview}
-						<Loader class="mr-2 h-3.5 w-3.5 animate-spin" />
+						<Loader class="mr-2 h-3 w-3 animate-spin" />
 					{/if}
 					Fetch
 				</Button>
@@ -177,12 +175,11 @@
 		</div>
 
 		<!-- Title Field -->
-		<div class="space-y-2">
+		<div class="space-y-1">
 			<div class="flex items-center gap-2">
-				<Type class="h-4 w-4 text-primary" />
-				<Label
-					for="title"
-					class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Title</Label
+				<Type class="h-3.5 w-3.5 text-primary" />
+				<Label for="title" class="text-xs font-bold tracking-wider text-muted-foreground uppercase"
+					>Title</Label
 				>
 			</div>
 			<Input
@@ -190,31 +187,30 @@
 				bind:value={title}
 				placeholder="Give it a name..."
 				class={cn(
-					'h-9 rounded-none border border-border bg-muted/10 font-mono text-[13px]',
+					'h-8 rounded-none border border-border bg-muted/10 font-mono text-sm',
 					'focus-visible:border-primary focus-visible:bg-background focus-visible:ring-0'
 				)}
 			/>
 		</div>
 
 		<!-- Tags Field -->
-		<div class="space-y-2">
+		<div class="space-y-1">
 			<div class="flex items-center gap-2">
-				<Tag class="h-4 w-4 text-primary" />
-				<Label
-					for="tags"
-					class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Tags</Label
+				<Tag class="h-3.5 w-3.5 text-primary" />
+				<Label for="tags" class="text-xs font-bold tracking-wider text-muted-foreground uppercase"
+					>Tags</Label
 				>
 			</div>
 			<TagInput selected={tags} onchange={(newTags) => (tags = newTags)} />
 		</div>
 
 		<!-- Description -->
-		<div class="space-y-2">
+		<div class="space-y-1">
 			<div class="flex items-center gap-2">
-				<TextAlignStart class="h-4 w-4 text-primary" />
+				<TextAlignStart class="h-3.5 w-3.5 text-primary" />
 				<Label
 					for="description"
-					class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase"
+					class="text-xs font-bold tracking-wider text-muted-foreground uppercase"
 					>Description</Label
 				>
 			</div>
@@ -224,23 +220,23 @@
 				placeholder="What makes this link interesting?"
 				rows={3}
 				class={cn(
-					'min-h-24 resize-none rounded-none border border-border bg-muted/10 px-3 py-2 font-mono text-[13px] leading-relaxed',
+					'min-h-20 resize-none rounded-none border border-border bg-muted/10 px-2 py-1.5 font-mono text-sm leading-relaxed',
 					'focus-visible:border-primary focus-visible:bg-background focus-visible:ring-0'
 				)}
 			/>
 		</div>
 
 		{#if image}
-			<div class="pt-2">
+			<div class="pt-1">
 				<div class="relative aspect-video overflow-hidden border border-border bg-muted/20">
 					<img src={image} alt="Preview" class="h-full w-full object-cover" />
 					<Button
 						variant="secondary"
 						size="icon"
-						class="absolute top-2 right-2 h-7 w-7 rounded-none border border-border bg-background shadow-lg hover:bg-muted"
+						class="absolute top-2 right-2 h-6 w-6 rounded-none border border-border bg-background shadow-lg hover:bg-muted"
 						onclick={() => (image = '')}
 					>
-						<X class="h-4 w-4" />
+						<X class="h-3.5 w-3.5" />
 					</Button>
 				</div>
 			</div>
@@ -249,22 +245,22 @@
 
 	<!-- Footer -->
 	<div
-		class="mt-auto flex items-center justify-end gap-3 border-t border-border bg-muted/20 px-4 py-3"
+		class="mt-auto flex items-center justify-end gap-2 border-t border-border bg-muted/20 px-3 py-2"
 	>
 		<Button
 			variant="ghost"
 			onclick={oncancel}
-			class="h-8 rounded-none border border-border bg-background px-4 text-[11px] font-bold uppercase transition-colors hover:bg-muted"
+			class="h-7 rounded-none border border-border bg-background px-3 text-xs font-bold uppercase transition-colors hover:bg-muted"
 		>
 			Cancel
 		</Button>
 		<Button
 			onclick={handleSubmit}
 			disabled={isSaving || !url.trim()}
-			class="h-8 rounded-none border border-primary bg-primary px-5 text-[11px] font-bold text-primary-foreground uppercase shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50"
+			class="h-7 rounded-none border border-primary bg-primary px-4 text-xs font-bold text-primary-foreground uppercase shadow-sm transition-all hover:bg-primary/90 active:scale-95 disabled:opacity-50"
 		>
 			{#if isSaving}
-				<Loader class="mr-2 h-3.5 w-3.5 animate-spin" />
+				<Loader class="mr-2 h-3 w-3 animate-spin" />
 			{/if}
 			{link ? 'Save changes' : 'Add link'}
 		</Button>

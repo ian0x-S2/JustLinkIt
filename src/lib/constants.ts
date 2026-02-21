@@ -40,6 +40,17 @@ export const APP_CONFIG = {
 	}
 };
 
+export const TUI_DIMENSIONS = {
+	SIDEBAR_WIDTH: 280,
+	SIDEBAR_WIDTH_LG: 320,
+	PANEL_GAP: 8,
+	ITEM_HEIGHT: 36,
+	HEADER_HEIGHT: 24,
+	LINE_HEIGHT: 20,
+	PADDING: 8,
+	GAP: 4
+} as const;
+
 export const DEFAULT_WORKSPACE: Workspace = {
 	id: APP_CONFIG.DEFAULT_WORKSPACE_ID as WorkspaceId,
 	name: 'My Workspace',

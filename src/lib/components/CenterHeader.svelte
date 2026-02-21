@@ -92,11 +92,11 @@
 	}
 </script>
 
-<div class="border-b border-border px-3 py-3 lg:px-4 lg:py-5 lg:pt-2">
+<div class="border-b border-border px-3 py-2">
 	<div class="flex flex-col gap-2">
 		<!-- Prompt row -->
 		<div class="flex items-center gap-2">
-			<span class="text-[14px] font-bold text-primary">$</span>
+			<span class="text-base font-bold text-primary">$</span>
 			<div class="flex flex-1 items-center gap-2">
 				<input
 					bind:value={urlInput}
@@ -118,10 +118,10 @@
 						}
 					}}
 					placeholder="Paste link to add..."
-					class="w-full border-none bg-background font-mono text-[13px] text-foreground outline-none placeholder:text-muted-foreground/50"
+					class="w-full border-none bg-background font-mono text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
 				/>
 				{#if isLoading}
-					<span class="w-4 text-center font-mono text-[14px] text-primary">
+					<span class="w-4 text-center font-mono text-base text-primary">
 						{spinnerFrames[spinnerFrameIndex]}
 					</span>
 				{:else if urlInput}
@@ -141,14 +141,14 @@
 
 		<!-- Preview -->
 		{#if inlinePreview}
-			<div class="relative mt-2 border border-border bg-background">
+			<div class="relative mt-1 border border-border bg-background">
 				<div class="flex h-6 items-center justify-between border-b border-border bg-muted/30 px-2">
 					<div class="flex items-center gap-2">
-						<span class="text-[10px] font-bold tracking-tighter text-destructive uppercase"
+						<span class="text-xs font-bold tracking-tighter text-destructive uppercase"
 							>Preview</span
 						>
 						{#if isLoading}
-							<span class="animate-pulse text-[10px] text-primary italic">fetching metadata...</span
+							<span class="animate-pulse text-xs text-primary italic">fetching metadata...</span
 							>
 						{/if}
 					</div>
@@ -162,28 +162,28 @@
 						<X class="h-3 w-3" />
 					</button>
 				</div>
-				<div class="flex gap-3 p-3">
+				<div class="flex gap-2 p-2">
 					{#if inlinePreview.image}
-						<div class="h-16 w-24 shrink-0 overflow-hidden border border-border bg-muted/20">
+						<div class="h-14 w-20 shrink-0 overflow-hidden border border-border bg-muted/20">
 							<img src={inlinePreview.image} alt="" class="h-full w-full object-cover" />
 						</div>
 					{:else}
 						<div
-							class="flex h-16 w-24 shrink-0 items-center justify-center border border-border bg-muted/10"
+							class="flex h-14 w-20 shrink-0 items-center justify-center border border-border bg-muted/10"
 						>
-							<span class="font-mono text-2xl text-muted-foreground/20">{TUI.bullet}</span>
+							<span class="font-mono text-xl text-muted-foreground/20">{TUI.bullet}</span>
 						</div>
 					{/if}
 					<div class="min-w-0 flex-1">
-						<h3 class="truncate text-[12px] font-bold text-foreground">
+						<h3 class="truncate text-sm font-bold text-foreground">
 							{inlinePreview.title || inlinePreview.url}
 						</h3>
 						{#if inlinePreview.description}
-							<p class="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground">
+							<p class="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
 								{inlinePreview.description}
 							</p>
 						{/if}
-						<div class="mt-2 border-t border-border/30 pt-2">
+						<div class="mt-1 border-t border-border/30 pt-1">
 							<TagInput selected={previewTags} onchange={(tags) => (previewTags = tags)} />
 						</div>
 					</div>
@@ -197,7 +197,7 @@
 						disabled={isLoading}
 						class="h-auto p-0 font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
 					>
-						<span class="text-[10px]"
+						<span class="text-xs"
 							><span class="font-bold text-primary">[enter]</span> confirm & save</span
 						>
 					</Button>
@@ -210,7 +210,7 @@
 						}}
 						class="h-auto p-0 font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
 					>
-						<span class="text-[10px]"
+						<span class="text-xs"
 							><span class="font-bold text-destructive">[esc]</span> cancel</span
 						>
 					</Button>
@@ -219,7 +219,7 @@
 		{/if}
 
 		{#if error}
-			<p class="font-mono text-[11px] text-destructive">{error}</p>
+			<p class="font-mono text-xs text-destructive">{error}</p>
 		{/if}
 	</div>
 </div>

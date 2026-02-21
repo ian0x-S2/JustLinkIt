@@ -20,13 +20,13 @@
 </script>
 
 <AppShell showStatusBar={false}>
-	<div class="flex h-full w-full gap-0 overflow-hidden px-1.5 pt-3">
+	<div class="flex h-full w-full gap-0 overflow-hidden p-2">
 		{#if singlePanel && main}
 			<main class={cn(theme.layoutContent, 'flex h-full w-full min-w-0 flex-1 flex-col')}>
 				{@render main()}
 			</main>
 		{:else if activeTab === 'spaces' && left}
-			<aside class="flex h-full w-full min-w-0 flex-col overflow-y-auto p-2 px-1">
+			<aside class={cn(theme.sidebar, 'h-full w-full min-w-0 flex-col overflow-y-auto')}>
 				{@render left()}
 			</aside>
 		{:else if activeTab === 'links' && main}
@@ -34,7 +34,7 @@
 				{@render main()}
 			</main>
 		{:else if activeTab === 'stats' && right}
-			<aside class="flex h-full w-full min-w-0 flex-col overflow-y-auto p-2 px-1">
+			<aside class={cn(theme.sidebar, 'h-full w-full min-w-0 flex-col overflow-y-auto')}>
 				{@render right()}
 			</aside>
 		{/if}

@@ -67,39 +67,39 @@ export const LG = {
 // Theme classes
 export const theme = {
 	// App
-	app: 'h-full w-full bg-background text-foreground font-mono text-[13px] selection:bg-accent selection:text-accent-foreground overflow-hidden flex flex-col',
+	app: 'h-full w-full bg-background text-foreground font-mono text-sm selection:bg-accent selection:text-accent-foreground overflow-hidden flex flex-col',
 
 	// Layout parts
-	layoutMain: 'flex flex-1 overflow-hidden gap-4 p-4',
+	layoutMain: 'flex flex-1 overflow-hidden gap-2 p-2',
 	layoutContent: 'flex flex-col flex-1 min-h-0 py-2',
 
 	// Left sidebar with panels
-	sidebar: 'w-[300px] shrink-0 flex flex-col gap-4',
+	sidebar: 'w-[280px] lg:w-[320px] shrink-0 flex flex-col gap-3 min-w-0 pt-2 pb-2',
 
 	// Panel
-	panel: 'relative flex flex-col bg-background min-h-0',
+	panel: 'relative flex flex-col bg-background min-h-0 min-w-0',
 	panelFocus: 'z-10',
 	panelHeader:
 		'absolute top-0 left-2 -translate-y-1/2 bg-background px-1 flex items-center gap-1 z-20',
 	panelBorder: 'absolute inset-0 border border-border pointer-events-none',
-	panelBorderFocus: 'border-border border-2',
-	panelContent: 'flex flex-col flex-1 min-h-0 overflow-hidden p-2 sm:p-3 pt-5 sm:pt-6',
+	panelBorderFocus: 'border-foreground/30 border-2',
+	panelContent: 'flex flex-col flex-1 min-h-0 overflow-hidden p-2 pt-4',
 	panelFooter:
-		'absolute bottom-1 right-2 translate-y-1/2 bg-background px-1 text-muted-foreground text-[10px] z-20',
+		'absolute bottom-0 right-2 translate-y-1/2 bg-background px-1 text-muted-foreground text-xs z-20',
 
 	// Panel titles
-	titleStatus: 'text-destructive font-bold uppercase tracking-tight',
-	titleFiles: 'text-destructive font-bold uppercase tracking-tight',
-	titleBranches: 'text-primary font-bold uppercase tracking-tight',
-	titleCommits: 'text-primary font-bold uppercase tracking-tight',
-	titleStash: 'text-muted-foreground font-bold uppercase tracking-tight',
-	titleReflog: 'text-chart-3 text-[11px]',
-	titleRemotes: 'text-chart-3 text-[11px]',
-	titleTags: 'text-chart-3 text-[11px]',
-	titleSubmodules: 'text-chart-3 text-[11px]',
+	titleStatus: 'text-destructive font-bold uppercase tracking-tight text-xs',
+	titleFiles: 'text-destructive font-bold uppercase tracking-tight text-xs',
+	titleBranches: 'text-primary font-bold uppercase tracking-tight text-xs',
+	titleCommits: 'text-primary font-bold uppercase tracking-tight text-xs',
+	titleStash: 'text-muted-foreground font-bold uppercase tracking-tight text-xs',
+	titleReflog: 'text-chart-3 text-xs',
+	titleRemotes: 'text-chart-3 text-xs',
+	titleTags: 'text-chart-3 text-xs',
+	titleSubmodules: 'text-chart-3 text-xs',
 
 	// List items
-	item: 'py-1.5 cursor-pointer truncate flex items-center gap-2',
+	item: 'py-1 cursor-pointer truncate flex items-center gap-2 min-w-0 w-full',
 	itemDefault: 'hover:bg-muted/50 font-normal',
 	itemSelected: 'bg-muted text-primary border border-secondary font-bold',
 
@@ -121,12 +121,12 @@ export const theme = {
 	mainText: 'text-foreground leading-relaxed',
 	mainLink: 'text-primary hover:underline',
 	mainLinkHighlight: 'text-secondary',
-	mainHeading: 'text-foreground font-bold text-lg mt-4 mb-2',
+	mainHeading: 'text-foreground font-bold text-base mt-4 mb-2',
 	mainBullet: 'text-foreground ml-4',
 
 	// Status bar
 	statusBar:
-		'bg-background border-t border-border px-3 py-1 flex items-center justify-between text-[11px] shrink-0 w-full',
+		'bg-background border-t border-border px-2 py-1 flex items-center justify-between text-xs shrink-0 w-full h-6',
 	statusItem: 'text-muted-foreground flex items-center gap-4',
 	statusKey: 'text-primary',
 	statusDonate: 'text-secondary ml-4',

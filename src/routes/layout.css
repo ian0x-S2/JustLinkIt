@@ -166,9 +166,22 @@
 	--mobile-nav-height: 80px;
 	--safe-area-bottom: env(safe-area-inset-bottom, 0px);
 	--mobile-breakpoint: 768px;
+
+	/* TUI System Variables */
+	--tui-cell: 1ch;
+	--tui-gap: 4px;
+	--tui-padding: 8px;
+	--tui-header-height: 24px;
+	--tui-line-height: 20px;
 }
 
 @theme inline {
+	--font-size-xs: 10px;
+	--font-size-sm: 12px;
+	--font-size-base: 14px;
+	--font-size-lg: 16px;
+	--font-size-xl: 18px;
+
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
 	--color-card: var(--card);

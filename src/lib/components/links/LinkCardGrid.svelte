@@ -73,9 +73,9 @@
 					<Globe class="h-3 w-3" />
 				{/if}
 			</button>
-			<span class="truncate font-mono text-[10px] text-primary">{getDomain(link.url)}</span>
+			<span class="truncate font-mono text-xs text-primary">{getDomain(link.url)}</span>
 		</div>
-		<span class="text-[9px] text-muted-foreground">{formatRelativeTime(link.createdAt)}</span>
+		<span class="text-xs text-muted-foreground">{formatRelativeTime(link.createdAt)}</span>
 	</div>
 
 	<!-- Image / Content -->
@@ -100,7 +100,7 @@
 			href={link.url}
 			target="_blank"
 			rel="noopener noreferrer"
-			class="line-clamp-1 text-[12px] font-bold text-foreground transition-colors hover:text-primary"
+			class="line-clamp-1 text-sm font-bold text-foreground transition-colors hover:text-primary"
 		>
 			{link.title || link.url}
 		</a>
@@ -110,12 +110,12 @@
 		</div>
 
 		<!-- Actions for Card -->
-		<div class="mt-4 flex items-center gap-2 py-2">
+		<div class="mt-2 flex items-center gap-2 py-2">
 			{#if link.isDeleted}
 				<Button
 					variant="ghost"
 					size="sm"
-					class="h-auto px-1 text-[9px] font-bold text-primary uppercase transition-none"
+					class="h-auto px-1 text-xs font-bold text-primary uppercase transition-none"
 					onclick={(e) => {
 						e.preventDefault();
 						onToggleDeleted(link.id);
@@ -126,7 +126,7 @@
 				<Button
 					variant="ghost"
 					size="sm"
-					class="h-auto px-1 text-[9px] font-bold text-destructive uppercase transition-none"
+					class="h-auto px-1 text-xs font-bold text-destructive uppercase transition-none"
 					onclick={(e) => {
 						e.preventDefault();
 						onDeleteRequest();
@@ -139,7 +139,7 @@
 					variant="ghost"
 					size="sm"
 					class={cn(
-						'h-auto px-1 text-[9px] font-bold uppercase transition-none',
+						'h-auto px-1 text-xs font-bold uppercase transition-none',
 						link.isFavorite ? 'text-chart-3' : 'text-primary'
 					)}
 					onclick={(e) => {
@@ -152,7 +152,7 @@
 				<Button
 					variant="ghost"
 					size="sm"
-					class="h-auto px-1 text-[9px] font-bold text-primary uppercase transition-none"
+					class="h-auto px-1 text-xs font-bold text-primary uppercase transition-none"
 					onclick={(e) => {
 						e.preventDefault();
 						onedit(link);
@@ -163,7 +163,7 @@
 				<Button
 					variant="ghost"
 					size="sm"
-					class="h-auto px-1 text-[9px] font-bold text-destructive uppercase transition-none "
+					class="h-auto px-1 text-xs font-bold text-destructive uppercase transition-none "
 					onclick={(e) => {
 						e.preventDefault();
 						onToggleDeleted(link.id);

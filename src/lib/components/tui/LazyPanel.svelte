@@ -29,7 +29,7 @@
 <div class="relative flex flex-col bg-background min-h-0 {focused ? theme.panelFocus : ''} {className}">
 	<!-- Title / Header -->
 	<div class={theme.panelHeader}>
-		<span class={titleClass}>{title}</span>
+		<span class={cn(titleClass, 'px-0.5')}>{title}</span>
 		{#if subtitle}
 			<span class="text-[#6e7681]">{TUI.separator}</span>
 			{@render subtitle()}

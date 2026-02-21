@@ -31,15 +31,15 @@
 <div
 	class={cn('group flex flex-col border-b border-border/30', 'transition-colors hover:bg-muted/30')}
 >
-	<div class="flex min-h-11 items-center gap-2 px-3 py-2">
+	<div class="flex h-10 items-center gap-2 px-2 py-1">
 		<!-- Selection indicator -->
-		<span class="w-3 shrink-0 text-[10px] text-primary opacity-0 group-hover:opacity-100">
+		<span class="w-3 shrink-0 text-xs text-primary opacity-0 group-hover:opacity-100">
 			{TUI.arrowRight}
 		</span>
 
 		<!-- Compact Line -->
 		<div
-			class="grid min-w-0 flex-1 grid-cols-[20px_1fr_auto] items-center gap-2 font-mono text-[12px] lg:grid-cols-[20px_1fr_200px_150px_40px]"
+			class="grid min-w-0 flex-1 grid-cols-[20px_1fr_auto] items-center gap-2 font-mono text-sm lg:grid-cols-[20px_1fr_180px_120px_40px]"
 		>
 			<button
 				class={cn(
@@ -77,12 +77,12 @@
 					{link.title || link.url}
 				</a>
 
-				<span class="truncate text-[10px] text-primary lg:text-[11px]">
+				<span class="truncate text-xs text-primary lg:text-sm">
 					{getDomain(link.url)}
 				</span>
 			</div>
 
-			<div class="hidden gap-2 truncate text-[10px] text-chart-3 lg:flex">
+			<div class="hidden gap-2 truncate text-xs text-chart-3 lg:flex">
 				{#each link.tags.slice(0, 2) as tag (tag)}
 					<span>#{tag}</span>
 				{/each}
@@ -91,7 +91,7 @@
 				{/if}
 			</div>
 
-			<span class="text-right text-[10px] text-muted-foreground">
+			<span class="text-right text-xs text-muted-foreground">
 				{formatRelativeTime(link.createdAt)}
 			</span>
 		</div>
