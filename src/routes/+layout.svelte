@@ -7,10 +7,11 @@
 	import { pwaInfo } from 'virtual:pwa-info';
 
 	import { STORAGE_KEYS } from '$lib/constants';
+	import type { LayoutData } from './$types';
 
 	interface Props {
 		children?: Snippet;
-		data: any;
+		data: LayoutData;
 	}
 
 	let { children, data }: Props = $props();

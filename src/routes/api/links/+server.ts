@@ -6,6 +6,16 @@ import { cacheManager } from '$lib/server/cache';
 import { defaultLogger } from '$lib/stores/infra/logger';
 import * as v from 'valibot';
 import type { RequestHandler } from './$types';
+import type { Link, LinkId, WorkspaceId } from '$lib/types';
+
+function toLink(dbLink: any, tags: string[] = []): Link {
+	return {
+		...dbLink,
+		id: dbLink.id as LinkId,
+		workspaceId: dbLink.workspaceId as WorkspaceId,
+		tags
+	};
+}
 
 const LinkSchema = v.object({
 	url: v.pipe(v.string(), v.url()),
@@ -42,8 +52,8 @@ export const GET: RequestHandler = async ({ url }) => {
 		// Optimization: Only fetch missing links from DB
 		const dbMissingLinks = db.select().from(links).where(inArray(links.id, missingIds)).all();
 
-		// Update cache with missing links
-		dbMissingLinks.forEach((link) => cacheManager.setLink(link as any));
+		// Update cache with missing links (they won't have tags here, but it's better than as any)
+		dbMissingLinks.forEach((link) => cacheManager.setLink(toLink(link)));
 
 		// Re-assemble result maintain order
 		const linkMap = new Map(dbMissingLinks.map((l) => [l.id, l]));
@@ -84,7 +94,7 @@ export const GET: RequestHandler = async ({ url }) => {
 	const dbLinks = query.orderBy(desc(links.createdAt)).all();
 	const linkIds = dbLinks.map((l) => l.id);
 
-	let linksWithTags = dbLinks.map((link) => ({ ...link, tags: [] as string[] }));
+	let linksWithTags: Link[] = dbLinks.map((link) => toLink(link));
 
 	if (linkIds.length > 0) {
 		const tagsData = db
@@ -106,13 +116,10 @@ export const GET: RequestHandler = async ({ url }) => {
 			{} as Record<string, string[]>
 		);
 
-		linksWithTags = dbLinks.map((link) => ({
-			...link,
-			tags: tagsByLinkId[link.id] || []
-		}));
+		linksWithTags = dbLinks.map((link) => toLink(link, tagsByLinkId[link.id] || []));
 
 		// Cache the full results
-		linksWithTags.forEach((link) => cacheManager.setLink(link as any));
+		linksWithTags.forEach((link) => cacheManager.setLink(link));
 		cacheManager.setCollection(cacheKey, linkIds);
 	}
 
@@ -165,8 +172,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 		});
 
-		const fullLink = { ...newLink, tags: data.tags || [] };
-		cacheManager.setLink(fullLink as any);
+		const fullLink = toLink(newLink, data.tags || []);
+		cacheManager.setLink(fullLink);
 		cacheManager.invalidateWorkspace(data.workspaceId);
 
 		return json(fullLink);

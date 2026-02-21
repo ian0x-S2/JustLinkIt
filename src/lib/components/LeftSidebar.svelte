@@ -84,7 +84,7 @@
 
 <aside class={cn(theme.sidebar, 'h-full w-full')}>
 	<!-- Workspace Panel -->
-	<LazyPanel title="Workspaces" titleClass={theme.titleStatus} class="min-h-[140px] flex-1">
+	<LazyPanel title="Workspaces" titleClass={theme.titleStatus} class="min-h-35 flex-1">
 		<ScrollArea type="hover" class="h-full w-full">
 			<div class="flex flex-col gap-0.5">
 				{#each sortedWorkspaces as ws, i (ws.id)}
@@ -118,7 +118,7 @@
 	</LazyPanel>
 
 	<!-- Categories Panel -->
-	<LazyPanel title="Categories" titleClass={theme.titleFiles} class="min-h-[140px] flex-[0.8]">
+	<LazyPanel title="Categories" titleClass={theme.titleFiles} class="min-h-35 flex-[0.8]">
 		<ScrollArea type="hover" class="h-full w-full">
 			<nav class="flex flex-col gap-0.5">
 				{#each navItems as item (item.id)}
@@ -145,7 +145,7 @@
 	</LazyPanel>
 
 	<!-- Actions Panel -->
-	<LazyPanel title="Actions" titleClass={theme.titleBranches} class="min-h-[180px] flex-1">
+	<LazyPanel title="Actions" titleClass={theme.titleBranches} class="min-h-45 flex-1">
 		<div class="flex flex-col gap-1">
 			<button onclick={onAddLink} class={cn(theme.item, theme.itemDefault, 'px-2 py-2')}>
 				<span class="w-4 text-[10px] opacity-50">a</span>

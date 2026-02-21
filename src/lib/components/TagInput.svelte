@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { Badge } from '$lib/components/ui/badge';
-	import { X, Plus, Tag as TagIcon, Check, ChevronUp, ChevronDown } from '@lucide/svelte';
+	import { X, Plus, Tag as TagIcon, Check } from '@lucide/svelte';
 	import { getContext } from 'svelte';
 	import type { AppStore } from '$lib/stores';
 	import * as Popover from '$lib/components/ui/popover';
-	import { buttonVariants } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
 	import { Combobox } from 'bits-ui';
 	import { TUI } from '$lib/tui';
@@ -33,12 +31,11 @@
 	// Watch for selection changes
 	$effect(() => {
 		if (selectedValue) {
-			// Só adiciona se não estiver já selecionada
 			if (!selected.includes(selectedValue)) {
 				addTag(selectedValue);
 			}
 			selectedValue = undefined;
-			value = ''; // Limpa a busca após selecionar
+			value = '';
 		}
 	});
 
@@ -50,7 +47,6 @@
 
 	const hasReachedLimit = $derived(selected.length >= 10);
 
-	// Verifica se a busca atual corresponde a uma tag já selecionada
 	const isSearchingSelectedTag = $derived(
 		value.trim() !== '' &&
 			selected.some((t: string) => t.toLowerCase() === value.trim().toLowerCase())
@@ -66,12 +62,10 @@
 		const trimmed = tag.trim();
 		if (!trimmed) return;
 
-		// Validação: não adiciona duplicatas
 		if (selected.includes(trimmed)) {
 			return;
 		}
 
-		// Validação: limita a 10 tags (ajuste conforme necessário)
 		if (selected.length >= 10) {
 			return;
 		}
@@ -134,7 +128,7 @@
 				loop={true}
 				bind:value={selectedValue}
 				inputValue={value}
-				items={store.filters.allTags.map((t: any) => ({ value: t, label: t }))}
+				items={store.filters.allTags.map((t: string) => ({ value: t, label: t }))}
 				bind:open
 			>
 				<div class="flex items-center border-b border-muted-foreground/5 px-2.5">
