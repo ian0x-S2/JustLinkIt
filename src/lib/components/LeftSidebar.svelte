@@ -182,26 +182,35 @@
 <Dialog.Root bind:open={isCreateWorkspaceOpen}>
 	<Dialog.Content
 		showCloseButton={false}
-		class="max-w-80 overflow-hidden rounded-none border-2 border-foreground bg-background p-0 shadow-2xl"
+		class="max-w-80 overflow-hidden rounded-none border-2 border-foreground/30 bg-background p-0 shadow-2xl"
 	>
 		<div class="flex flex-col font-mono text-foreground">
 			<!-- Header -->
-			<div class="flex h-6 items-center justify-between border-b border-border bg-muted/50 px-2">
+			<div class="flex h-11 items-center justify-between border-b border-border bg-muted/50 px-4">
 				<div class="flex items-center gap-2">
 					<span class="text-xs font-bold tracking-tight text-foreground uppercase">
 						Create Workspace
 					</span>
 				</div>
-				<button
-					onclick={() => (isCreateWorkspaceOpen = false)}
-					class="text-muted-foreground transition-colors hover:text-foreground"
-				>
-					<X class="h-4 w-4" />
-				</button>
+				<div class="flex items-center gap-3">
+					<div class="flex items-center gap-1 text-muted-foreground">
+						<span class="border border-border bg-muted px-1 py-0 text-xs font-bold text-foreground uppercase"
+							>esc</span
+						>
+					</div>
+					<Button
+						variant="ghost"
+						size="icon"
+						onclick={() => (isCreateWorkspaceOpen = false)}
+						class="h-7 w-7 rounded-none border border-transparent hover:border-border hover:bg-muted"
+					>
+						<X class="h-4 w-4" />
+					</Button>
+				</div>
 			</div>
 
 			<!-- Body -->
-			<div class="space-y-4 px-3 py-4">
+			<div class="space-y-4 p-6">
 				<div class="space-y-2">
 					<Label for="ws-name" class="text-xs font-bold tracking-wider text-muted-foreground uppercase"
 						>Name</Label

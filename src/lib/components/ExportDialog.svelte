@@ -45,16 +45,15 @@
 
 <div class="flex flex-col bg-background text-foreground">
 	<!-- Header - Lazygit style -->
-	<div class="flex h-9 items-center justify-between border-b border-border bg-muted/50 px-3">
+	<div class="flex h-11 items-center justify-between border-b border-border bg-muted/50 px-4">
 		<div class="flex items-center gap-2">
-			<span class="text-[11px] font-bold tracking-tight text-foreground uppercase">
+			<span class="text-xs font-bold tracking-tight text-foreground uppercase">
 				Export Workspace
 			</span>
 		</div>
-		<div class="flex items-center gap-4 text-[9px]">
+		<div class="flex items-center gap-3 text-xs">
 			<div class="flex items-center gap-1 text-muted-foreground">
-				<span
-					class="border border-border bg-muted px-1 py-0.5 text-[7px] font-bold text-foreground uppercase"
+				<span class="border border-border bg-muted px-1 py-0 text-xs font-bold text-foreground uppercase"
 					>esc</span
 				>
 				<span>close</span>
@@ -63,15 +62,15 @@
 				variant="ghost"
 				size="icon"
 				onclick={() => (open = false)}
-				class="h-6 w-6 rounded-none border border-transparent hover:border-border hover:bg-muted"
+				class="h-7 w-7 rounded-none border border-transparent hover:border-border hover:bg-muted"
 			>
-				<X class="h-3.5 w-3.5" />
+				<X class="h-4 w-4" />
 			</Button>
 		</div>
 	</div>
 
 	<!-- Body -->
-	<div class="flex-1 space-y-4 px-4 py-4">
+	<div class="flex-1 space-y-4 p-6">
 		<p class="text-[12px] leading-relaxed text-muted-foreground">
 			Export {links.length} links to a file. Choose a format below:
 		</p>

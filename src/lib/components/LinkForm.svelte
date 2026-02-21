@@ -115,7 +115,7 @@
 
 <div class="flex h-full flex-col bg-background font-mono text-foreground">
 	<!-- Header - Lazygit style -->
-	<div class="flex h-6 items-center justify-between border-b border-border bg-muted/50 px-2">
+	<div class="flex h-11 items-center justify-between border-b border-border bg-muted/50 px-4">
 		<div class="flex items-center gap-2">
 			<span class="text-xs font-bold tracking-tight text-foreground uppercase">
 				{link ? 'Edit Link' : 'Add Link'}
@@ -123,8 +123,7 @@
 		</div>
 		<div class="flex items-center gap-3 text-xs">
 			<div class="flex items-center gap-1 text-muted-foreground">
-				<span
-					class="border border-border bg-muted px-1 py-0 text-xs font-bold text-foreground uppercase"
+				<span class="border border-border bg-muted px-1 py-0 text-xs font-bold text-foreground uppercase"
 					>esc</span
 				>
 				<span>cancel</span>
@@ -133,15 +132,16 @@
 				variant="ghost"
 				size="icon"
 				onclick={oncancel}
-				class="h-5 w-5 rounded-none border border-transparent hover:border-border hover:bg-muted"
+				class="h-7 w-7 rounded-none border border-transparent hover:border-border hover:bg-muted"
 			>
-				<X class="h-3.5 w-3.5" />
+				<X class="h-4 w-4" />
 			</Button>
 		</div>
 	</div>
 
+
 	<!-- Body -->
-	<div class="max-h-[85vh] flex-1 space-y-4 overflow-y-auto px-3 py-4">
+	<div class="max-h-[85vh] flex-1 space-y-4 overflow-y-auto p-6">
 		<!-- URL Field -->
 		<div class="space-y-1">
 			<div class="flex items-center gap-2">

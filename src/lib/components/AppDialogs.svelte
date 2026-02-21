@@ -36,7 +36,7 @@
 <Dialog.Root bind:open={isAddDialogOpen}>
 	<Dialog.Content
 		showCloseButton={false}
-		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 shadow-2xl lg:max-w-2xl"
+		class="overflow-hidden rounded-none border-2 border-foreground/30 bg-background p-0 shadow-2xl lg:max-w-2xl"
 	>
 		<LinkForm
 			link={editingLink}
@@ -50,7 +50,7 @@
 <Dialog.Root bind:open={isExportDialogOpen}>
 	<Dialog.Content
 		showCloseButton={false}
-		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 lg:max-w-md"
+		class="overflow-hidden rounded-none border-2 border-foreground/30 bg-background p-0 lg:max-w-md"
 	>
 		<ExportDialog
 			bind:open={isExportDialogOpen}
@@ -62,7 +62,7 @@
 <Dialog.Root bind:open={isImportDialogOpen}>
 	<Dialog.Content
 		showCloseButton={false}
-		class="overflow-hidden rounded-none border-2 border-border bg-background p-0 lg:max-w-xl"
+		class="overflow-hidden rounded-none border-2 border-foreground/30 bg-background p-0 lg:max-w-xl"
 	>
 		<ImportDialog bind:open={isImportDialogOpen} />
 	</Dialog.Content>
