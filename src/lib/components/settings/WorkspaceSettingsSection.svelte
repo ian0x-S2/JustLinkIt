@@ -2,7 +2,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import { Layers, Plus, Loader2, X } from '@lucide/svelte';
+	import { Layers, Plus, X, Loader } from '@lucide/svelte';
 	import { getContext } from 'svelte';
 	import type { AppStore } from '$lib/stores';
 	import type { WorkspaceId } from '$lib/types';
@@ -59,7 +59,11 @@
 
 		try {
 			const id = workspaceToDelete.id;
+			const wasActive = id === store.workspaces.activeId;
 			await store.workspaces.remove(id as WorkspaceId);
+			if (wasActive) {
+				await store.setActiveWorkspace(store.workspaces.activeId);
+			}
 			isDeleteDialogOpen = false;
 			workspaceToDelete = null;
 		} catch (e) {
@@ -82,9 +86,7 @@
 
 <section class="space-y-4">
 	<div>
-		<h2 class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
-			Workspaces
-		</h2>
+		<h2 class="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">Workspaces</h2>
 	</div>
 
 	<div class="group relative">
@@ -92,7 +94,7 @@
 			class="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary"
 		>
 			{#if isAddingWorkspace}
-				<Loader2 class="h-3.5 w-3.5 animate-spin" />
+				<Loader class="h-3.5 w-3.5 animate-spin" />
 			{:else}
 				<Plus class="h-3.5 w-3.5" />
 			{/if}
@@ -101,7 +103,7 @@
 			bind:value={newWorkspaceName}
 			onkeydown={handleAddWorkspace}
 			placeholder="Create new workspace..."
-			class="h-8 rounded-none border-border/20 bg-muted/20 pl-9 font-mono text-[13px] transition-all focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-primary"
+			class="h-8 rounded-none border-border/20 bg-muted/20 pl-9 font-mono text-[13px] transition-all  "
 		/>
 		{#if newWorkspaceName.trim() && !isAddingWorkspace}
 			<button
