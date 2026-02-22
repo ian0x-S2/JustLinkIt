@@ -57,14 +57,16 @@
 
 			<div class="mt-1 min-h-0 flex-1 overflow-hidden">
 				<ScrollArea type="hover" class="h-full w-full">
-					<div class="flex flex-col space-y-6 p-2 pb-10">
-						<WorkspaceSettingsSection />
-						<ThemeSettingsSection />
-						<SystemSettingsSection />
+					<div class="flex min-h-full flex-col justify-between space-y-6 p-2 pb-10">
+						<div>
+							<WorkspaceSettingsSection />
+							<ThemeSettingsSection />
+							<SystemSettingsSection />
+						</div>
 
-						<div class="border-t border-border/20 pt-4 text-center">
+						<div class="border-t border-border/20 pt-6 text-center">
 							<p class="text-[11px] text-muted-foreground">
-								© 2026 LinkFeed • Local-First Bookmark Manager
+								© 2026 LinkIt • Local-First Bookmark Manager
 							</p>
 						</div>
 					</div>
