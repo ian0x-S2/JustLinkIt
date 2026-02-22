@@ -55,18 +55,21 @@
 
 <div
 	in:fade={{ duration: 200 }}
-	class="flex flex-col items-center justify-center px-6 py-20 text-center"
+	class="flex w-full flex-col items-center justify-center px-6 py-20 text-center"
 >
 	<!-- TUI Box style -->
 	<div
-		class={cn('flex flex-col items-center p-6', 'border-2 border-dashed border-border bg-muted/20')}
+		class={cn(
+			'flex w-[90%] flex-col items-center p-6',
+			'border-2 border-dashed border-border bg-muted/20'
+		)}
 	>
 		<div class="mb-4 flex h-12 w-12 items-center justify-center bg-muted text-muted-foreground">
 			<config.icon class="h-6 w-6" />
 		</div>
 
-		<h3 class="text-[15px] font-bold text-foreground">{config.title}</h3>
-		<p class="mt-1 max-w-[280px] text-[12px] leading-relaxed text-muted-foreground">
+		<h3 class="text-lg font-bold text-foreground">{config.title}</h3>
+		<p class="mt-2 max-w-[350px] text-sm leading-relaxed text-muted-foreground">
 			{config.description}
 		</p>
 
