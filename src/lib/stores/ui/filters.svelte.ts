@@ -8,7 +8,8 @@ export interface CreateFilterStoreOptions {
 
 export interface FilterStore {
 	// Estado
-	readonly searchQuery: string;
+	searchQuery: string;
+	readonly isSearchMode: boolean;
 	readonly selectedTags: string[];
 	readonly activeCategory: Category;
 	readonly filteredLinks: Link[];
@@ -16,6 +17,7 @@ export interface FilterStore {
 
 	// Ações
 	setSearchQuery(query: string): void;
+	setSearchMode(active: boolean): void;
 	toggleTag(tag: string): void;
 	clearTags(): void;
 	setCategory(category: Category): void;
@@ -28,6 +30,7 @@ export function createFilterStore(options: CreateFilterStoreOptions): FilterStor
 	// Estado privado
 	let _searchQuery = $state('');
 	let _debouncedSearchQuery = $state('');
+	let _isSearchMode = $state(false);
 	let _selectedTags = $state<string[]>([]);
 	let _activeCategory = $state<Category>(CATEGORIES.INBOX);
 
@@ -41,14 +44,12 @@ export function createFilterStore(options: CreateFilterStoreOptions): FilterStor
 
 	// Estado derivado
 	const searchQuery = $derived(_searchQuery);
+	const isSearchMode = $derived(_isSearchMode);
 	const selectedTags = $derived(_selectedTags);
 	const activeCategory = $derived(_activeCategory);
 
 	const filteredLinks = $derived.by(() => {
-		// Use debounced query for heavy filtering if it's not empty, 
-		// otherwise use direct query for immediate feedback on clear
-		const query = _searchQuery === '' ? '' : _debouncedSearchQuery;
-		return FilterService.filter(getLinks(), _activeCategory, query, _selectedTags);
+		return FilterService.filter(getLinks(), _activeCategory, _searchQuery, _selectedTags);
 	});
 
 	const allTags = $derived.by(() => {
@@ -57,6 +58,13 @@ export function createFilterStore(options: CreateFilterStoreOptions): FilterStor
 
 	function setSearchQuery(query: string): void {
 		_searchQuery = query;
+	}
+
+	function setSearchMode(active: boolean): void {
+		_isSearchMode = active;
+		if (!active) {
+			_searchQuery = '';
+		}
 	}
 
 	function toggleTag(tag: string): void {
@@ -84,7 +92,13 @@ export function createFilterStore(options: CreateFilterStoreOptions): FilterStor
 
 	return {
 		get searchQuery() {
-			return searchQuery;
+			return _searchQuery;
+		},
+		set searchQuery(value: string) {
+			_searchQuery = value;
+		},
+		get isSearchMode() {
+			return isSearchMode;
 		},
 		get selectedTags() {
 			return selectedTags;
@@ -99,6 +113,7 @@ export function createFilterStore(options: CreateFilterStoreOptions): FilterStor
 			return allTags;
 		},
 		setSearchQuery,
+		setSearchMode,
 		toggleTag,
 		clearTags,
 		setCategory,

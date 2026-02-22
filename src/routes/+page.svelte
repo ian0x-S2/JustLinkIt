@@ -45,9 +45,18 @@
 
 <svelte:window
 	onkeydown={(e) => {
+		if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
 		if (e.key === '1') activeMobileTab = 'spaces';
 		if (e.key === '2') activeMobileTab = 'links';
 		if (e.key === '3') activeMobileTab = 'stats';
+
+		if (e.key === 'l') store.settings.setViewMode('list');
+		if (e.key === 'g') store.settings.setViewMode('grid');
+		if (e.key === 's' || e.key === '/') {
+			e.preventDefault();
+			store.filters.setSearchMode(!store.filters.isSearchMode);
+		}
 	}}
 />
 
@@ -110,6 +119,19 @@
 						)}
 					>
 						[g]rid
+					</Button>
+					<Button
+						variant="ghost"
+						size="sm"
+						onclick={() => store.filters.setSearchMode(!store.filters.isSearchMode)}
+						class={cn(
+							'h-5 rounded-none px-1.5 text-[10px] font-bold uppercase transition-none',
+							store.filters.isSearchMode
+								? 'bg-primary text-primary-foreground hover:bg-primary/90'
+								: 'text-muted-foreground hover:bg-muted hover:text-foreground'
+						)}
+					>
+						[s]earch
 					</Button>
 				</div>
 			{/snippet}

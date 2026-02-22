@@ -9,6 +9,7 @@
 	import { isValidUrl, extractUrl } from '$lib/utils/url';
 	import { PreviewService, type LinkPreview } from '$lib/stores/infra/services/preview';
 	import { APP_CONFIG } from '$lib/constants';
+	import Input from './ui/input/input.svelte';
 
 	const store = getContext<AppStore>('store');
 
@@ -18,11 +19,23 @@
 
 	let error = $state('');
 	let inlinePreview = $state<LinkPreview | null>(null);
+	let inputRef = $state<HTMLInputElement | null>(null);
 
 	// TUI Spinner logic
 	const spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 	let spinnerFrameIndex = $state(0);
 	let lastFetchedUrl = $state('');
+
+	$effect(() => {
+		if (store.filters.isSearchMode) {
+			inputRef?.focus();
+			inlinePreview = null;
+			error = '';
+			lastFetchedUrl = '';
+			isLoading = false;
+			return;
+		}
+	});
 
 	$effect(() => {
 		let interval: any;
@@ -42,6 +55,14 @@
 
 	// Automatic fetching logic
 	$effect(() => {
+		if (store.filters.isSearchMode) {
+			inlinePreview = null;
+			error = '';
+			lastFetchedUrl = '';
+			isLoading = false;
+			return;
+		}
+
 		const trimmed = urlInput.trim();
 		if (!trimmed) {
 			inlinePreview = null;
@@ -96,40 +117,59 @@
 	<div class="flex flex-col gap-2">
 		<!-- Prompt row -->
 		<div class="flex items-center gap-2">
-			<span class="text-base font-bold text-primary">$</span>
+			<span class="text-base font-bold text-primary">{store.filters.isSearchMode ? '?' : '$'}</span>
 			<div class="flex flex-1 items-center gap-2">
-				<input
-					bind:value={urlInput}
-					onkeydown={(e) => {
-						if (e.key === 'Enter') {
-							e.preventDefault();
-							if (inlinePreview) {
-								handleSave();
-							} else if (urlInput.trim()) {
-								// Force fetch if Enter pressed before debounce
-								const url = extractUrl(urlInput.trim());
-								if (url && isValidUrl(url)) {
-									fetchPreview(url);
-								}
+				{#if store.filters.isSearchMode}
+					<Input
+						bind:ref={inputRef}
+						bind:value={store.filters.searchQuery}
+						onkeydown={(e) => {
+							if (e.key === 'Escape') {
+								store.filters.setSearchQuery('');
+								store.filters.setSearchMode(false);
 							}
-						} else if (e.key === 'Escape') {
-							urlInput = '';
-							inlinePreview = null;
-						}
-					}}
-					placeholder="Paste link to add..."
-					class="w-full border-none bg-background font-mono text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
-				/>
+						}}
+						placeholder="Search links..."
+						class="w-full border-none bg-background  font-mono text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
+					/>
+				{:else}
+					<Input
+						bind:ref={inputRef}
+						bind:value={urlInput}
+						onkeydown={(e) => {
+							if (e.key === 'Enter') {
+								e.preventDefault();
+								if (inlinePreview) {
+									handleSave();
+								} else if (urlInput.trim()) {
+									const url = extractUrl(urlInput.trim());
+									if (url && isValidUrl(url)) {
+										fetchPreview(url);
+									}
+								}
+							} else if (e.key === 'Escape') {
+								urlInput = '';
+								inlinePreview = null;
+							}
+						}}
+						placeholder="Paste link to add..."
+						class="w-full border-none bg-background font-mono text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
+					/>
+				{/if}
 				{#if isLoading}
 					<span class="w-4 text-center font-mono text-base text-primary">
 						{spinnerFrames[spinnerFrameIndex]}
 					</span>
-				{:else if urlInput}
+				{:else if store.filters.isSearchMode ? store.filters.searchQuery : urlInput}
 					<button
 						onclick={() => {
-							urlInput = '';
-							inlinePreview = null;
-							lastFetchedUrl = '';
+							if (store.filters.isSearchMode) {
+								store.filters.setSearchQuery('');
+							} else {
+								urlInput = '';
+								inlinePreview = null;
+								lastFetchedUrl = '';
+							}
 						}}
 						class="text-muted-foreground hover:text-foreground"
 					>
@@ -148,8 +188,7 @@
 							>Preview</span
 						>
 						{#if isLoading}
-							<span class="animate-pulse text-xs text-primary italic">fetching metadata...</span
-							>
+							<span class="animate-pulse text-xs text-primary italic">fetching metadata...</span>
 						{/if}
 					</div>
 					<button
@@ -210,8 +249,7 @@
 						}}
 						class="h-auto p-0 font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
 					>
-						<span class="text-xs"
-							><span class="font-bold text-destructive">[esc]</span> cancel</span
+						<span class="text-xs"><span class="font-bold text-destructive">[esc]</span> cancel</span
 						>
 					</Button>
 				</div>
