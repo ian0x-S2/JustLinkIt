@@ -91,7 +91,11 @@
 					{@const isActive = ws.id === store.workspaces.activeId}
 					<button
 						onclick={() => handleWorkspaceSelect(ws.id)}
-						class={cn(theme.item, isActive ? theme.itemSelected : theme.itemDefault, 'w-full min-w-0 px-2')}
+						class={cn(
+							theme.item,
+							isActive ? theme.itemSelected : theme.itemDefault,
+							'w-full min-w-0 px-2'
+						)}
 					>
 						{#if isActive}
 							<span class="shrink-0 font-bold text-primary">{TUI.bullet}</span>
@@ -132,11 +136,24 @@
 						{#if item.id === 'inbox'}
 							{@const count = store.links.links.filter((l) => !l.isDeleted).length}
 							{#if count > 0}
-								<span class="text-xs opacity-70">[{count}]</span>
+								<span class="w-8 text-right text-xs opacity-70">[{count}]</span>
+							{:else}
+								<span class="w-8"></span>
 							{/if}
-						{/if}
-						{#if isActive}
-							<span class="text-xs">{TUI.arrowRight}</span>
+						{:else if item.id === 'favorites'}
+							{@const count = store.links.links.filter((l) => l.isFavorite && !l.isDeleted).length}
+							{#if count > 0}
+								<span class="w-8 text-right text-xs opacity-70">[{count}]</span>
+							{:else}
+								<span class="w-8"></span>
+							{/if}
+						{:else if item.id === 'trash'}
+							{@const count = store.links.links.filter((l) => l.isDeleted).length}
+							{#if count > 0}
+								<span class="w-8 text-right text-xs opacity-70">[{count}]</span>
+							{:else}
+								<span class="w-8"></span>
+							{/if}
 						{/if}
 					</button>
 				{/each}
@@ -194,7 +211,8 @@
 				</div>
 				<div class="flex items-center gap-3">
 					<div class="flex items-center gap-1 text-muted-foreground">
-						<span class="border border-border bg-muted px-1 py-0 text-xs font-bold text-foreground uppercase"
+						<span
+							class="border border-border bg-muted px-1 py-0 text-xs font-bold text-foreground uppercase"
 							>esc</span
 						>
 					</div>
@@ -212,8 +230,9 @@
 			<!-- Body -->
 			<div class="space-y-4 p-6">
 				<div class="space-y-2">
-					<Label for="ws-name" class="text-xs font-bold tracking-wider text-muted-foreground uppercase"
-						>Name</Label
+					<Label
+						for="ws-name"
+						class="text-xs font-bold tracking-wider text-muted-foreground uppercase">Name</Label
 					>
 					<Input
 						id="ws-name"
