@@ -14,7 +14,7 @@
 	const store = getContext<AppStore>('store');
 
 	const trendingTags = $derived.by(() => {
-		return StatsService.getTrendingTags(store.links.links);
+		return StatsService.getTrendingTags(store.links.links, 100);
 	});
 
 	const stats = $derived.by(() => {
