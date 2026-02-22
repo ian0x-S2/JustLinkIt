@@ -11,7 +11,8 @@ export const STORAGE_KEYS = {
 
 export const THEMES = {
 	DEFAULT: 'default' as ThemeId,
-	EVERFOREST: 'everforest' as ThemeId
+	EVERFOREST: 'everforest' as ThemeId,
+	NORD: 'nord' as ThemeId
 } as const;
 
 export const API_ENDPOINTS = {

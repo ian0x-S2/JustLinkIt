@@ -30,7 +30,9 @@
 					<div
 						class={cn(
 							'h-3 w-3 rounded-full border border-border',
-							value === 'default' ? 'bg-[#8b5cf6]' : 'bg-[#83c092]'
+							value === 'default' ? 'bg-[#8b5cf6]' : 
+							value === 'everforest' ? 'bg-[#83c092]' : 
+							value === 'nord' ? 'bg-[#88c0d0]' : 'bg-muted'
 						)}
 					></div>
 					<span
