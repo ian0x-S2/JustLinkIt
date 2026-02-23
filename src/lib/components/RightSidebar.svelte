@@ -128,7 +128,7 @@
 				class="flex flex-col gap-2 border-t border-border/20 bg-background/50 p-1 backdrop-blur-sm"
 			>
 				<div class="text-[11px] leading-relaxed text-muted-foreground">
-					Local-first link manager inspired by Lazygit.
+					Local-first link manager.
 				</div>
 				<div class="flex items-center justify-between">
 					<div class="flex items-center gap-2">

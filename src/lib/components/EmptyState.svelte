@@ -79,7 +79,7 @@
 				variant="outline"
 				class={cn(
 					'mt-6 flex h-9 items-center gap-2 rounded-none border-2 border-primary bg-primary/5 px-4',
-					'text-[12px] font-bold text-primary hover:bg-primary/10'
+					'text-[12px] font-bold text-primary hover:bg-primary/10 hover:text-primary!'
 				)}
 			>
 				<span class="rounded bg-secondary px-1 text-secondary-foreground">a</span>
