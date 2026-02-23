@@ -6,7 +6,7 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { pwaInfo } from 'virtual:pwa-info';
 
-	import { STORAGE_KEYS } from '$lib/constants';
+	import { STORAGE_KEYS, getPwaThemeColor } from '$lib/constants';
 	import type { LayoutData } from './$types';
 	import type { Link, Workspace, WorkspaceId, ThemeId } from '$lib/types';
 
@@ -18,7 +18,18 @@
 	let { children, data }: Props = $props();
 	let mounted = $state(false);
 
-	const themeColor = $derived(mode.current === 'dark' ? '#09090b' : '#ffffff');
+	const store = createAppStore({
+		initialData: untrack(() => ({
+			workspaces: data.workspaces as Workspace[],
+			links: data.links as Link[],
+			activeWorkspaceId: data.activeWorkspaceId as WorkspaceId,
+			viewMode: data.viewMode,
+			theme: data.theme as ThemeId
+		}))
+	});
+	setContext<AppStore>('store', store);
+
+	const themeColor = $derived(getPwaThemeColor(store.theme.current, mode.current === 'dark'));
 	const colorScheme = $derived(mode.current === 'dark' ? 'dark' : 'light');
 
 	$effect(() => {
@@ -53,19 +64,7 @@
 		}
 	});
 
-	const store = createAppStore({
-		initialData: untrack(() => ({
-			workspaces: data.workspaces as Workspace[],
-			links: data.links as Link[],
-			activeWorkspaceId: data.activeWorkspaceId as WorkspaceId,
-			viewMode: data.viewMode,
-			theme: data.theme as ThemeId
-		}))
-	});
-	setContext<AppStore>('store', store);
-
 	$effect(() => {
-		// Only run hydration logic if data actually changes after initial mount
 		if (mounted) {
 			untrack(() => {
 				store.hydrate({

@@ -15,6 +15,26 @@ export const THEMES = {
 	NORD: 'nord' as ThemeId
 } as const;
 
+export const PWA_THEME_COLORS = {
+	[THEMES.DEFAULT]: {
+		light: '#bac2de',
+		dark: '#1e1e2e'
+	},
+	[THEMES.EVERFOREST]: {
+		light: '#f3eacb',
+		dark: '#2d333b'
+	},
+	[THEMES.NORD]: {
+		light: '#d8dee9',
+		dark: '#272c38'
+	}
+} as const;
+
+export function getPwaThemeColor(theme: ThemeId, isDark: boolean): string {
+	const themeColors = PWA_THEME_COLORS[theme] ?? PWA_THEME_COLORS[THEMES.DEFAULT];
+	return isDark ? themeColors.dark : themeColors.light;
+}
+
 export const API_ENDPOINTS = {
 	LINKS: '/api/links',
 	WORKSPACES: '/api/workspaces',

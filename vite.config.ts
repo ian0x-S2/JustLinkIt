@@ -22,6 +22,8 @@ export default defineConfig({
 				background_color: '#09090b',
 				display: 'standalone',
 				display_override: ['window-controls-overlay', 'standalone'],
+				scope: '/',
+				start_url: '/',
 				icons: [
 					{
 						src: 'favicon.svg',
