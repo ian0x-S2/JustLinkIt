@@ -15,6 +15,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import type { WorkspaceId } from '$lib/types';
 
 	const store = getContext<AppStore>('store');
 
@@ -102,8 +103,10 @@
 						{:else}
 							<span class="w-3 shrink-0"></span>
 						{/if}
-						<span class="flex-1 truncate text-left">{ws.name}</span>
-						<span class="hidden shrink truncate text-xs opacity-50 sm:inline">@{ws.slug}</span>
+						<span class="min-w-0 flex-1 truncate text-left">{ws.name}</span>
+						<span class="hidden max-w-25 shrink-0 truncate text-right text-xs opacity-50 sm:inline"
+							>@{ws.slug}</span
+						>
 					</button>
 
 					{#if isActive && sortedWorkspaces.length > 1}
