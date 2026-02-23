@@ -1,38 +1,47 @@
-# sv
+# LinkIt
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A local-first bookmark manager with a keyboard-driven TUI-style interface.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Workspaces** - Organize links into separate workspaces
+- **Favorites & Tags** - Mark links as favorites and add custom tags
+- **Import/Export** - Import and export your bookmarks as JSON
+- **Search & Filters** - Quick search and filter by tags, favorites, or workspace
+- **List/Grid View** - Toggle between list and grid display modes
+- **OpenGraph Metadata** - Automatically fetches title, description, image, and favicon
+- **PWA Support** - Install as a standalone app on your device
+- **Keyboard Shortcuts** - Navigate entirely with keyboard
 
-```sh
-# create a new project in the current directory
-npx sv create
+## Tech Stack
 
-# create a new project in my-app
-npx sv create my-app
+- SvelteKit 5 + Svelte 5 Runes
+- Bun runtime
+- SQLite + Drizzle ORM
+- TailwindCSS
+- PWA
+- [JesterKit](https://jesterkit.com/exe) for binary packaging
+
+## Getting Started
+
+```bash
+# Install dependencies
+bun install
+
+# Start development server
+bun run dev
 ```
 
-## Developing
+## Build
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```bash
+# Build for production
+bun run build
 
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+# Create binary with JesterKit
+bunx @jesterkit/exe-sveltekit
 ```
 
-## Building
+## License
 
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+MIT
