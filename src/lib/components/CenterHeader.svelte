@@ -194,6 +194,7 @@
 					<button
 						onclick={() => {
 							inlinePreview = null;
+							urlInput = '';
 							lastFetchedUrl = '';
 						}}
 						class="text-muted-foreground hover:text-foreground"
