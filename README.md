@@ -37,9 +37,39 @@ bun run dev
 ```bash
 # Build for production
 bun run build
+```
 
-# Create binary with JesterKit
-bunx @jesterkit/exe-sveltekit
+## Running as a Local Service (Linux)
+
+To ensure the app starts automatically and remains available as a local PWA, you can set it up as a systemd service.
+
+Create a file at `~/.config/systemd/user/linkit.service` (adjust paths to your project location):
+
+```ini
+[Unit]
+Description=LinkIt App
+After=network.target
+
+[Service]
+# Ensure the 'sqlite.db' file is present in the WorkingDirectory
+ExecStart=/path/to/your/project/dist/my-app
+WorkingDirectory=/path/to/your/project/dist
+Restart=always
+Environment=PORT=3000
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=default.target
+```
+
+**Note:** The application expects the SQLite database (`sqlite.db`) to be located in the same folder defined in `WorkingDirectory`. Ensure it exists or is initialized there before starting the service.
+
+Then run the following commands to enable and start the service:
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable linkit
+systemctl --user start linkit
 ```
 
 ## License
