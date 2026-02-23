@@ -18,6 +18,7 @@ export interface WorkspaceStore {
 	setActive(id: WorkspaceId): void;
 	add(name: string): Promise<Result<Workspace, ApiError>>;
 	remove(id: WorkspaceId): Promise<void>;
+	rename(id: WorkspaceId, newName: string): Promise<Result<Workspace, ApiError>>;
 	hydrate(workspaces: Workspace[], activeId: WorkspaceId): void;
 }
 
@@ -91,6 +92,38 @@ export function createWorkspaceStore(options: CreateWorkspaceStoreOptions): Work
 		}
 	}
 
+	async function rename(id: WorkspaceId, newName: string): Promise<Result<Workspace, ApiError>> {
+		const previousWorkspaces = [..._workspaces];
+		const workspaceIndex = _workspaces.findIndex((w) => w.id === id);
+
+		if (workspaceIndex === -1) {
+			return { ok: false, error: { message: 'Workspace not found', status: 404 } };
+		}
+
+		// Optimistic update
+		const updatedWorkspaces = [..._workspaces];
+		updatedWorkspaces[workspaceIndex] = {
+			...updatedWorkspaces[workspaceIndex],
+			name: newName
+		};
+		_workspaces = updatedWorkspaces;
+
+		const result = await repository.updateWorkspace(id, { name: newName });
+
+		if (!result.ok) {
+			_workspaces = previousWorkspaces;
+			logger.error(`Failed to rename workspace ${id}`, result.error);
+			return result;
+		}
+
+		// Update with actual server data (includes new slug etc)
+		const finalWorkspaces = [..._workspaces];
+		finalWorkspaces[workspaceIndex] = result.value;
+		_workspaces = finalWorkspaces;
+
+		return result;
+	}
+
 	return {
 		get workspaces() {
 			return workspaces;
@@ -107,6 +140,7 @@ export function createWorkspaceStore(options: CreateWorkspaceStoreOptions): Work
 		hydrate,
 		setActive,
 		add,
-		remove
+		remove,
+		rename
 	};
 }

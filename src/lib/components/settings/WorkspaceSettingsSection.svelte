@@ -21,6 +21,11 @@
 
 	let workspaceToDelete = $state<{ id: string; name: string } | null>(null);
 	let isDeleteDialogOpen = $state(false);
+	let workspaceToRename = $state<{ id: string; name: string } | null>(null);
+	let isRenameDialogOpen = $state(false);
+	let renameValue = $state('');
+	let isRenaming = $state(false);
+	let renameError = $state('');
 	let newWorkspaceName = $state('');
 	let isAddingWorkspace = $state(false);
 	let addError = $state('');
@@ -45,6 +50,36 @@
 			addError = 'Failed to create workspace';
 		} finally {
 			isAddingWorkspace = false;
+		}
+	}
+
+	function requestRenameWorkspace(id: string, name: string) {
+		workspaceToRename = { id, name };
+		renameValue = name;
+		renameError = '';
+		isRenameDialogOpen = true;
+	}
+
+	async function confirmRenameWorkspace() {
+		if (!workspaceToRename || !renameValue.trim()) return;
+
+		isRenaming = true;
+		renameError = '';
+		try {
+			const result = await store.workspaces.rename(
+				workspaceToRename.id as WorkspaceId,
+				renameValue.trim()
+			);
+			if (result.ok) {
+				isRenameDialogOpen = false;
+				workspaceToRename = null;
+			} else {
+				renameError = result.error.message;
+			}
+		} catch (e) {
+			renameError = 'Failed to rename workspace';
+		} finally {
+			isRenaming = false;
 		}
 	}
 
@@ -152,6 +187,13 @@
 				</div>
 
 				<div class="flex items-center gap-1">
+					<button
+						class="px-1 text-[10px] font-bold text-primary uppercase hover:bg-primary/20"
+						onclick={() => requestRenameWorkspace(ws.id, ws.name)}
+					>
+						[r]ename
+					</button>
+
 					{#if ws.id !== store.workspaces.activeId}
 						<button
 							class="px-1 text-[10px] font-bold text-primary uppercase hover:bg-primary/20"
@@ -178,19 +220,19 @@
 <Dialog.Root bind:open={isDeleteDialogOpen}>
 	<Dialog.Content
 		showCloseButton={false}
-		class="max-w-md overflow-hidden rounded-none border-2 border-border bg-background p-0 font-mono shadow-2xl"
+		class="max-w-96 overflow-hidden rounded-none border-2 border-foreground/30 bg-background p-0 font-mono shadow-2xl"
 	>
 		<div class="flex flex-col">
-			<div class="flex h-9 items-center justify-between border-b border-border bg-destructive px-3">
+			<div class="flex h-11 items-center justify-between border-b border-border bg-muted/50 px-4">
 				<div class="flex items-center gap-2">
-					<span class="text-[11px] font-bold tracking-tight text-destructive-foreground uppercase">
+					<span class="text-xs font-bold tracking-tight text-destructive uppercase">
 						Delete Workspace
 					</span>
 				</div>
-				<div class="flex items-center gap-4 text-[9px]">
-					<div class="flex items-center gap-1 text-destructive-foreground/70">
+				<div class="flex items-center gap-3 text-xs">
+					<div class="flex items-center gap-1 text-muted-foreground">
 						<span
-							class="border border-destructive-foreground/30 bg-destructive-foreground/10 px-1 py-0.5 text-[7px] font-bold text-destructive-foreground uppercase"
+							class="border border-border bg-muted px-1 py-0 text-xs font-bold text-foreground uppercase"
 							>esc</span
 						>
 						<span>close</span>
@@ -199,20 +241,20 @@
 						variant="ghost"
 						size="icon"
 						onclick={() => (isDeleteDialogOpen = false)}
-						class="h-6 w-6 rounded-none border border-transparent text-destructive-foreground hover:bg-white/20"
+						class="h-7 w-7 rounded-none border border-transparent hover:border-border hover:bg-muted"
 					>
-						<X class="h-3.5 w-3.5" />
+						<X class="h-4 w-4" />
 					</Button>
 				</div>
 			</div>
 
 			<div class="space-y-4 p-6">
-				<p class="text-[13px] leading-relaxed text-foreground">
-					Are you sure you want to delete <span class="font-bold text-destructive"
+				<p class="text-[12px] leading-relaxed text-muted-foreground">
+					Are you sure you want to delete <span class="font-bold text-foreground"
 						>[{workspaceToDelete?.name}]</span
 					>?
 				</p>
-				<div class="border border-destructive/20 bg-destructive/5 p-3">
+				<div class="border border-border bg-muted/20 px-3 py-2">
 					<p class="text-[11px] leading-tight text-muted-foreground italic">
 						{TUI.bullet} This action is irreversible. All links associated with this workspace will be
 						permanently removed from the local database.
@@ -220,7 +262,7 @@
 				</div>
 			</div>
 
-			<div class="flex items-center justify-end gap-2 border-t border-border bg-muted/20 px-4 py-3">
+			<div class="flex items-center justify-end gap-2 border-t border-border px-4 py-3">
 				<Button
 					variant="ghost"
 					onclick={() => (isDeleteDialogOpen = false)}
@@ -231,9 +273,82 @@
 				<Button
 					variant="destructive"
 					onclick={confirmDeleteWorkspace}
-					class="h-8 rounded-none px-4 text-[11px] font-bold uppercase shadow-sm active:scale-95"
+					class="h-8 rounded-none border border-destructive bg-destructive px-4 text-[11px] font-bold text-destructive-foreground uppercase shadow-sm active:scale-95"
 				>
 					Confirm Delete
+				</Button>
+			</div>
+		</div>
+	</Dialog.Content>
+</Dialog.Root>
+
+<Dialog.Root bind:open={isRenameDialogOpen}>
+	<Dialog.Content
+		showCloseButton={false}
+		class="max-w-96 overflow-hidden rounded-none border-2 border-foreground/30 bg-background p-0 font-mono shadow-2xl"
+	>
+		<div class="flex flex-col">
+			<div class="flex h-11 items-center justify-between border-b border-border bg-muted/50 px-4">
+				<div class="flex items-center gap-2">
+					<span class="text-xs font-bold tracking-tight text-foreground uppercase">
+						Rename Workspace
+					</span>
+				</div>
+				<div class="flex items-center gap-3 text-xs">
+					<div class="flex items-center gap-1 text-muted-foreground">
+						<span
+							class="border border-border bg-muted px-1 py-0 text-xs font-bold text-foreground uppercase"
+							>esc</span
+						>
+						<span>close</span>
+					</div>
+					<Button
+						variant="ghost"
+						size="icon"
+						onclick={() => (isRenameDialogOpen = false)}
+						class="h-7 w-7 rounded-none border border-transparent hover:border-border hover:bg-muted"
+					>
+						<X class="h-4 w-4" />
+					</Button>
+				</div>
+			</div>
+
+			<div class="space-y-4 p-6">
+				<div class="space-y-2">
+					<label for="rename-input" class="text-[11px] font-bold text-muted-foreground uppercase">
+						New Name
+					</label>
+					<Input
+						id="rename-input"
+						bind:value={renameValue}
+						placeholder="Workspace name..."
+						class="h-8 rounded-none border-border/20 bg-muted/20 font-mono text-[13px] transition-all focus-visible:ring-primary"
+						onkeydown={(e) => e.key === 'Enter' && confirmRenameWorkspace()}
+					/>
+					{#if renameError}
+						<p class="text-[11px] font-medium text-destructive">{renameError}</p>
+					{/if}
+				</div>
+			</div>
+
+			<div class="flex items-center justify-end gap-2 border-t border-border px-4 py-3">
+				<Button
+					variant="ghost"
+					onclick={() => (isRenameDialogOpen = false)}
+					class="h-8 rounded-none border border-border bg-background px-4 text-[11px] font-bold uppercase transition-colors hover:bg-muted"
+				>
+					Cancel
+				</Button>
+				<Button
+					variant="default"
+					onclick={confirmRenameWorkspace}
+					disabled={isRenaming || !renameValue.trim() || renameValue === workspaceToRename?.name}
+					class="h-8 rounded-none border border-primary bg-primary px-4 text-[11px] font-bold text-primary-foreground uppercase shadow-sm active:scale-95"
+				>
+					{#if isRenaming}
+						<Loader class="mr-2 h-3 w-3 animate-spin" />
+					{/if}
+					Save Changes
 				</Button>
 			</div>
 		</div>

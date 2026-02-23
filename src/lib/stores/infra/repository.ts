@@ -76,6 +76,13 @@ export class Repository {
 		return this.fetchWithRetry<void>(`${API_ENDPOINTS.WORKSPACES}/${id}`, { method: 'DELETE' });
 	}
 
+	async updateWorkspace(id: WorkspaceId, updates: { name: string }): Promise<Result<Workspace, ApiError>> {
+		return this.fetchWithRetry<Workspace>(`${API_ENDPOINTS.WORKSPACES}/${id}`, {
+			method: 'PATCH',
+			body: JSON.stringify(updates)
+		});
+	}
+
 	async migrate(data: { links: Link[]; workspaces: Workspace[] }): Promise<Result<void, ApiError>> {
 		return this.fetchWithRetry<void>(API_ENDPOINTS.MIGRATE, {
 			method: 'POST',
