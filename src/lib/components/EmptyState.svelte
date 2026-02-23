@@ -69,7 +69,7 @@
 		</div>
 
 		<h3 class="text-lg font-bold text-foreground">{config.title}</h3>
-		<p class="mt-2 max-w-[350px] text-sm leading-relaxed text-muted-foreground">
+		<p class="mt-2 max-w-87.5 text-sm leading-relaxed text-muted-foreground">
 			{config.description}
 		</p>
 

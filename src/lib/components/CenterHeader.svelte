@@ -234,7 +234,7 @@
 						variant="ghost"
 						onclick={handleSave}
 						disabled={isLoading}
-						class="h-auto p-0 font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
+						class="h-auto p-0 font-normal text-muted-foreground hover:bg-transparent! hover:text-foreground"
 					>
 						<span class="text-xs"
 							><span class="font-bold text-primary">[enter]</span> confirm & save</span
@@ -247,7 +247,7 @@
 							urlInput = '';
 							lastFetchedUrl = '';
 						}}
-						class="h-auto p-0 font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
+						class="h-auto p-0 font-normal text-muted-foreground hover:bg-transparent! hover:text-foreground"
 					>
 						<span class="text-xs"><span class="font-bold text-destructive">[esc]</span> cancel</span
 						>
