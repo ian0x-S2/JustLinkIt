@@ -14,7 +14,7 @@ A local-first bookmark manager with a TUI-style interface.
 
 ## Tech Stack
 
-- SvelteKit 5 + Svelte 5 Runes
+- SvelteKit + Svelte 5 Runes
 - Bun runtime
 - SQLite + Drizzle ORM
 - TailwindCSS
