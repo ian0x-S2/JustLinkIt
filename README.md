@@ -1,6 +1,6 @@
 # LinkIt
 
-A local-first bookmark manager with a keyboard-driven TUI-style interface.
+A local-first bookmark manager with a TUI-style interface.
 
 ## Features
 
@@ -11,7 +11,6 @@ A local-first bookmark manager with a keyboard-driven TUI-style interface.
 - **List/Grid View** - Toggle between list and grid display modes
 - **OpenGraph Metadata** - Automatically fetches title, description, image, and favicon
 - **PWA Support** - Install as a standalone app on your device
-- **Keyboard Shortcuts** - Navigate entirely with keyboard
 
 ## Tech Stack
 
