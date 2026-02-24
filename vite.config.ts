@@ -15,8 +15,8 @@ export default defineConfig({
 				enabled: false
 			},
 			manifest: {
-				name: 'Exe Link Manager',
-				short_name: 'Exe',
+				name: 'LinkIt',
+				short_name: 'LinkIt',
 				description: 'Local-first link and note manager',
 				theme_color: '#09090b',
 				background_color: '#09090b',
@@ -26,19 +26,25 @@ export default defineConfig({
 				start_url: '/',
 				icons: [
 					{
-						src: 'favicon.svg',
+						src: 'globe-pwa.png',
 						sizes: '192x192',
-						type: 'image/svg+xml'
+						type: 'image/png'
 					},
 					{
-						src: 'favicon.svg',
+						src: 'globe-pwa.png',
 						sizes: '512x512',
-						type: 'image/svg+xml'
+						type: 'image/png'
+					},
+					{
+						src: 'globe-pwa.png',
+						sizes: '1000x1000',
+						type: 'image/png',
+						purpose: 'any maskable'
 					}
 				]
 			},
 			workbox: {
-				globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+				globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,woff2}'],
 				navigateFallback: '/',
 				runtimeCaching: [
 					{
